@@ -8,7 +8,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Use Environment Variable for Render, fall back to your key for local testing
-API_KEY = os.environ.get("GEMINI_API_KEY", "AIzaSyDJdBgUbbH20kKHLfO49WASxfcW4IhSAvU")
+API_KEY = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
 
 # Using the top-tier model from your verified list
@@ -20,25 +20,29 @@ def home():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    if 'image' not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
-    
     try:
+        print("REQUEST RECEIVED")
+
+        if 'image' not in request.files:
+            print("NO IMAGE")
+            return jsonify({"error": "No image uploaded"}), 400
+
         file = request.files["image"]
+        print("FILE:", file.filename)
+
         img = Image.open(file)
-        
-        # NEXT LEVEL PROMPT: This makes your project look way more professional
-        prompt = (
-            "Analyze this plant image. Return exactly in this format:\n"
-            "Line 1: Disease Name\n"
-            "Line 2: Organic Solution (1 line)\n"
-            "Line 3: Chemical Solution (1 line)"
-        )
-        
+        print("IMAGE LOADED")
+
+        prompt = "Say plant disease"
+
         response = model.generate_content([prompt, img])
-        
-        if not response.text:
-            return jsonify({"disease": "Healthy", "solution": "No disease detected."})
+        print("RESPONSE:", response)
+
+        return jsonify({"disease": "ok", "solution": "ok"})
+
+    except Exception as e:
+        print("ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 
         # Smart parsing for the new prompt format
         lines = response.text.strip().split('\n')
