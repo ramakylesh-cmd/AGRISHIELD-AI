@@ -1,278 +1,80 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriShield AI - Smart Crop Doctor</title>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #040d02; color: white; min-height: 100vh; overflow-x: hidden; }
-    .bg-glow { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(80,180,30,0.07) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(40,120,10,0.06) 0%, transparent 60%); pointer-events: none; z-index: 0; }
-    .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(rgba(80,180,30,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(80,180,30,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-    .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; border-bottom: 1px solid rgba(80,180,30,0.12); backdrop-filter: blur(10px); background: rgba(4,13,2,0.6); position: sticky; top: 0; z-index: 10; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #5ab520, #2d7a08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .nav-logo span { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
-    .nav-logo span em { color: #7acd30; font-style: normal; }
-    .nav-badge { background: rgba(80,180,30,0.12); border: 1px solid rgba(80,180,30,0.25); color: #7acd30; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; letter-spacing: 0.05em; }
-    .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem 2rem; text-align: center; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px; margin-bottom: 1.5rem; letter-spacing: 0.06em; }
-    .hero-tag::before { content: ''; width: 6px; height: 6px; background: #7acd30; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 1rem; }
-    .hero h1 span { background: linear-gradient(135deg, #7acd30 0%, #4aad10 50%, #2d8a00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .main-card { background: rgba(10,22,5,0.8); border: 1px solid rgba(80,180,30,0.15); border-radius: 24px; width: 100%; max-width: 680px; margin: 0 auto; overflow: hidden; backdrop-filter: blur(20px); box-shadow: 0 0 80px rgba(80,180,30,0.06), 0 40px 80px rgba(0,0,0,0.4); }
-    .card-top { padding: 2rem 2rem 0; display: flex; align-items: center; justify-content: space-between; }
-    .card-title { font-size: 13px; font-weight: 600; color: #4a7a28; text-transform: uppercase; letter-spacing: 0.08em; }
-    .input-group { display: flex; flex-direction: column; gap: 1rem; margin: 1rem 2rem 0; }
-    .input-field { width: 100%; padding: 12px 16px; background: rgba(4,13,2,0.6); border: 1px solid rgba(80,180,30,0.2); border-radius: 12px; color: white; font-size: 14px; backdrop-filter: blur(10px); transition: all 0.2s; }
-    .input-field::placeholder { color: #5a7a40; }
-    .input-field:focus { outline: none; border-color: #7acd30; box-shadow: 0 0 0 3px rgba(122,205,48,0.1); }
-    .upload-zone { margin: 1.25rem 2rem; border: 2px dashed rgba(80,180,30,0.25); border-radius: 16px; padding: 3rem 2rem; text-align: center; cursor: pointer; position: relative; background: rgba(80,180,30,0.03); transition: all 0.2s; }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: rgba(80,180,30,0.5); background: rgba(80,180,30,0.07); }
-    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon-wrap { width: 64px; height: 64px; margin: 0 auto 1rem; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-    .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    .upload-sub { font-size: 13px; color: #4a7028; }
-    .btn-wrap { padding: 1.25rem 2rem 2rem; }
-    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); margin-bottom: 0.5rem; }
-    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(80,180,30,0.35); }
-    .btn:disabled { background: rgba(30,50,15,0.6); color: #3a5a20; box-shadow: none; cursor: not-allowed; }
-    .btn-icon { font-size: 18px; }
-    .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #preview-wrap { display: none; margin: 0 2rem 0; border-radius: 14px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); position: relative; }
-    #preview { width: 100%; max-height: 300px; object-fit: cover; display: block; }
-    .preview-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,13,2,0.6) 0%, transparent 50%); }
-    .preview-label { position: absolute; bottom: 12px; left: 14px; background: rgba(4,13,2,0.8); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
-    #result-card, #error-card { display: none; margin: 0 2rem 2rem; border-radius: 16px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); }
-    .result-header { background: linear-gradient(135deg, rgba(40,80,10,0.8), rgba(20,50,5,0.8)); padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(80,180,30,0.15); }
-    .result-dot-wrap { position: relative; }
-    .result-dot { width: 12px; height: 12px; border-radius: 50%; background: #7acd30; }
-    .result-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid rgba(122,205,48,0.3); animation: ripple 2s infinite; }
-    @keyframes ripple { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2);opacity:0} }
-    .result-tag { font-size: 10px; font-weight: 700; color: #5a9028; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
-    .disease-name { font-size: 18px; font-weight: 700; color: #c8f070; }
-    .result-body { background: rgba(10,22,5,0.9); padding: 1.25rem 1.5rem; }
-    .result-section-label { font-size: 10px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
-    .result-section-label::before { content: ''; width: 16px; height: 1px; background: #3a6018; }
-    .solution-text { font-size: 14px; color: #a8d880; line-height: 1.7; }
-    .result-meta { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-    .meta-pill { background: rgba(80,180,30,0.08); border: 1px solid rgba(80,180,30,0.15); color: #5a9030; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
-    .error-card { background: rgba(40,5,5,0.8); border: 1px solid rgba(150,30,30,0.3); padding: 1rem 1.25rem; font-size: 13px; color: #f08080; line-height: 1.6; }
-    footer { text-align: center; padding: 1.5rem; border-top: 1px solid rgba(80,180,30,0.08); font-size: 12px; color: #2a4a10; }
-  </style>
+<title>AgriShield AI</title>
 </head>
-<body>
-  <div class="bg-glow"></div>
-  <div class="grid-bg"></div>
-  <div class="page">
-    <nav>
-      <div class="nav-logo">
-        <div class="nav-logo-icon">🌱</div>
-        <span>Agri<em>Shield</em> AI</span>
-      </div>
-      <div class="nav-badge">🌦️ WEATHER + PDF REPORTS</div>
-    </nav>
-    <div class="hero">
-      <div class="hero-tag">AI-POWERED CROP DISEASE DETECTION</div>
-      <h1>Detect Plant Diseases<br><span>Instantly with Weather AI</span></h1>
-      <div class="main-card">
-        <div class="card-top">
-          <span class="card-title">Smart Crop Analysis</span>
-          <span style="font-size:12px;color:#3a6018;">Works for ANY city worldwide</span>
-        </div>
-        
-        <!-- City & Language Inputs -->
-        <div class="input-group">
-          <input type="text" id="cityInput" class="input-field" placeholder="📍 Enter your city (Chennai)" value="Chennai">
-          <select id="languageInput" class="input-field">
-            <option value="English">🇺🇸 English</option>
-            <option value="Tamil">🇮🇳 Tamil</option>
-            <option value="Hindi">🇮🇳 Hindi</option>
-          </select>
-        </div>
+<body style="background:black;color:white;text-align:center">
 
-        <div class="upload-zone" id="dropzone">
-          <input type="file" id="imageInput" accept="image/*">
-          <div class="upload-icon-wrap">📸</div>
-          <p class="upload-title">Drop your plant photo here</p>
-          <p class="upload-sub">or click to browse from your device</p>
-        </div>
-        
-        <div id="preview-wrap">
-          <img id="preview" src="" alt="Plant preview">
-          <div class="preview-overlay"></div>
-          <span class="preview-label">✓ Image ready</span>
-        </div>
-        
-        <div class="btn-wrap">
-          <button class="btn" id="detectBtn" onclick="upload()" disabled>
-            <span class="btn-icon" id="btn-icon">🔍</span>
-            <span id="btn-text">Select an image first</span>
-            <div class="spinner" id="spinner"></div>
-          </button>
-        </div>
-        
-        <div class="error-card" id="error-card"></div>
-        <div id="result-card">
-          <div class="result-header">
-            <div class="result-dot-wrap"><div class="result-dot"></div></div>
-            <div>
-              <p class="result-tag" id="diseaseTag">Analyzing...</p>
-              <p class="disease-name" id="result"></p>
-            </div>
-          </div>
-          <div class="result-body">
-            <p class="result-section-label">Recommended Treatment</p>
-            <p class="solution-text" id="solution"></p>
-            <p class="result-section-label">Weather Intelligence</p>
-            <p class="solution-text" id="insight"></p>
-            <div class="result-meta">
-              <span class="meta-pill" id="weatherPill"></span>
-              <span class="meta-pill" id="riskPill"></span>
-              <span class="meta-pill">🛡️ AgriShield Verified</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer>AgriShield AI — Hackathon 2026 Winner 🌱 Flask + Gemini + OpenWeatherMap + PDF Reports</footer>
-  </div>
+<h1>🌿 AgriShield AI</h1>
 
-  <script>
-    // ✅ NULL-SAFE element references
-    const input = document.getElementById('imageInput');
-    const btn = document.getElementById('detectBtn');
-    const btnText = document.getElementById('btn-text');
-    const btnIcon = document.getElementById('btn-icon');
-    const spinner = document.getElementById('spinner');
-    const previewWrap = document.getElementById('preview-wrap');
-    const dropzone = document.getElementById('dropzone');
-    const resultCard = document.getElementById('result-card');
-    const errorCard = document.getElementById('error-card');
+<input type="file" id="image"><br><br>
 
-    // Image upload handler
-    if (input) {
-      input.addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-          document.getElementById('preview').src = e.target.result;
-          previewWrap.style.display = 'block';
-          dropzone.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-        btn.disabled = false;
-        btnText.textContent = 'Analyze Plant Disease';
-        resultCard.style.display = 'none';
-        errorCard.style.display = 'none';
-      });
-    }
+<input id="cityInput" placeholder="Enter city (Chennai)" value="Chennai"><br><br>
 
-    // Drag & drop
-    if (dropzone) {
-      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-      dropzone.addEventListener('drop', e => { 
-        e.preventDefault(); 
-        dropzone.classList.remove('drag-over'); 
-        if (input) {
-          input.files = e.dataTransfer.files; 
-          input.dispatchEvent(new Event('change')); 
-        }
-      });
-    }
+<select id="languageInput">
+<option>English</option>
+<option>Tamil</option>
+<option>Hindi</option>
+</select><br><br>
 
-    // ✅ MAIN UPLOAD FUNCTION (NULL-SAFE)
-    function upload() {
-      const file = input ? input.files[0] : null;
-      if (!file) return;
-      
-      btnIcon.style.display = 'none';
-      btnText.textContent = 'Analyzing with Weather AI...';
-      spinner.style.display = 'block';
-      btn.disabled = true;
-      if (errorCard) errorCard.style.display = 'none';
+<button onclick="upload()">Analyze</button>
 
-      const formData = new FormData();
-      formData.append('image', file);
-      
-      // ✅ FIXED #1 - NULL SAFETY
-      const cityInput = document.getElementById('cityInput');
-      const langInput = document.getElementById('languageInput');
-      formData.append('city', cityInput ? cityInput.value || "Chennai" : "Chennai");
-      formData.append('language', langInput ? langInput.value || "English" : "English");
+<h2 id="result"></h2>
+<p id="solution"></p>
+<p id="weather"></p>
 
-      fetch(window.location.origin + "/predict", { method: 'POST', body: formData })
-        .then(res => {
-          if (!res.ok) return res.json().then(err => { throw new Error(err.error) });
-          return res.json();
-        })
-        .then(data => {
-          if (document.getElementById('result')) document.getElementById('result').innerText = data.disease;
-          if (document.getElementById('solution')) document.getElementById('solution').innerText = data.solution;
-          if (document.getElementById('insight')) document.getElementById('insight').innerText = data.insight;
-          if (document.getElementById('diseaseTag')) {
-            document.getElementById('diseaseTag').innerText = data.disease === 'Healthy' ? 'Healthy Plant' : 'Disease Detected';
-          }
-          if (document.getElementById('weatherPill')) document.getElementById('weatherPill').innerText = `🌦️ ${data.weather}`;
-          if (document.getElementById('riskPill')) document.getElementById('riskPill').innerText = `⚠️ ${data.risk} RISK`;
-          
-          // ✅ Remove existing download button
-          const existingBtn = document.getElementById("downloadBtn");
-          if (existingBtn) existingBtn.remove();
-          
-          // Add PDF download button
-          const downloadBtn = document.createElement('button');
-          downloadBtn.innerHTML = '📄 Download PDF Report';
-          downloadBtn.className = 'btn';
-          downloadBtn.id = "downloadBtn";
-          downloadBtn.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-          downloadBtn.onclick = () => downloadPDF(data);
-          document.querySelector('.btn-wrap').appendChild(downloadBtn);
-          
-          resultCard.style.display = 'block';
-          resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          btnText.textContent = 'Analyze Another Plant';
-        })
-        .catch((err) => {
-          if (errorCard) {
-            errorCard.innerHTML = '⚠️ <strong>Error:</strong> ' + err.message + '<br><small>Check API keys & internet connection</small>';
-            errorCard.style.display = 'block';
-          }
-          btnText.textContent = 'Try Again';
-        })
-        .finally(() => {
-          spinner.style.display = 'none';
-          btnIcon.style.display = 'inline';
-          btnIcon.textContent = '🔍';
-          btn.disabled = false;
-        });
-    }
+<button onclick="downloadPDF()">Download PDF</button>
 
-    function downloadPDF(data) {
-      fetch('/download-report', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      })
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `agrishield_report_${data.city}_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      })
-      .catch(err => alert('PDF download failed: ' + err.message));
-    }
-  </script>
+<script>
+let lastData = null;
+let lastFile = null;
+
+document.getElementById("image").addEventListener("change", function(){
+  lastFile = this.files[0];
+});
+
+function upload(){
+  const file = lastFile;
+  if(!file) return alert("Upload image");
+
+  const formData = new FormData();
+  formData.append("image", file);
+  formData.append("city", document.getElementById("cityInput").value || "Chennai");
+  formData.append("language", document.getElementById("languageInput").value);
+
+  fetch("/predict",{method:"POST",body:formData})
+  .then(res=>res.json())
+  .then(data=>{
+    lastData = data;
+
+    document.getElementById("result").innerText = data.disease;
+    document.getElementById("solution").innerText = data.solution;
+    document.getElementById("weather").innerText = data.weather;
+  });
+}
+
+document.getElementById("languageInput").addEventListener("change",()=>{
+  if(lastFile) upload();
+});
+
+function downloadPDF(){
+  if(!lastData) return;
+
+  fetch("/download-report",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(lastData)
+  })
+  .then(res=>res.blob())
+  .then(blob=>{
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "report.pdf";
+    a.click();
+  });
+}
+</script>
+
 </body>
 </html>
