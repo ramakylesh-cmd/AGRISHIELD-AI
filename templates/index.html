@@ -187,7 +187,7 @@
       const formData = new FormData();
       formData.append('image', file);
 
-      fetch('http://127.0.0.1:5000/predict', { method: 'POST', body: formData })
+      fetch(window.location.origin + "/predict", { method: 'POST', body: formData })
         .then(res => {
           if (!res.ok) return res.json().then(err => { throw new Error(err.error) });
           return res.json();
