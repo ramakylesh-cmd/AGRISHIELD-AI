@@ -4,3 +4,4 @@ pillow
 google-generativeai
 flask-cors
 reportlab
+gunicorn
