@@ -1,5 +1,6 @@
 flask
-flask-cors
+requests
+pillow
 google-generativeai
-Pillow
-gunicorn
+flask-cors
+reportlab
