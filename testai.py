@@ -1,7 +1,7 @@
 import google.generativeai as genai
 
 # Copy the key directly from AI Studio - don't type it manually!
-genai.configure(api_key="AIzaSyBVVXbiQeQdPEHIvWafthgGb5XMs-l-lWc")
+genai.configure(api_key="")
 
 print("--- AVAILABLE MODELS ---")
 try:
