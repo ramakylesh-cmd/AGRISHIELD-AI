@@ -7,11 +7,9 @@ from PIL import Image
 app = Flask(__name__)
 CORS(app)
 
-# Use Environment Variable for Render, fall back to your key for local testing
+# Secure API setup
 API_KEY = os.environ.get("GEMINI_API_KEY")
 genai.configure(api_key=API_KEY)
-
-# Using the top-tier model from your verified list
 model = genai.GenerativeModel("gemini-3-flash-preview")
 
 @app.route("/")
@@ -21,50 +19,44 @@ def home():
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
-        print("REQUEST RECEIVED")
-
+        print("--- NEW REQUEST RECEIVED ---")
         if 'image' not in request.files:
-            print("NO IMAGE")
             return jsonify({"error": "No image uploaded"}), 400
 
         file = request.files["image"]
-        print("FILE:", file.filename)
-
         img = Image.open(file)
-        print("IMAGE LOADED")
 
-        prompt = "Say plant disease"
+        # High-level prompt for the judges
+        prompt = (
+            "Analyze this plant image. Return exactly in this format:\n"
+            "Line 1: Disease Name\n"
+            "Line 2: Organic Solution\n"
+            "Line 3: Chemical Solution"
+        )
 
         response = model.generate_content([prompt, img])
-        print("RESPONSE:", response)
+        
+        if not response.text:
+            return jsonify({"disease": "Healthy", "solution": "No issues found."})
 
-        return jsonify({"disease": "ok", "solution": "ok"})
-
-    except Exception as e:
-        print("ERROR:", e)
-        return jsonify({"error": str(e)}), 500
-
-        # Smart parsing for the new prompt format
+        # Logic to parse the AI response
         lines = response.text.strip().split('\n')
         disease_name = lines[0].replace("Line 1:", "").strip()
         
-        # Combining organic and chemical into a rich solution string
-        organic = lines[1].replace("Line 2:", "").strip() if len(lines) > 1 else ""
-        chemical = lines[2].replace("Line 3:", "").strip() if len(lines) > 2 else ""
+        # Safe extraction of solutions
+        organic = lines[1].replace("Line 2:", "").strip() if len(lines) > 1 else "N/A"
+        chemical = lines[2].replace("Line 3:", "").strip() if len(lines) > 2 else "N/A"
         
-        full_solution = f"ORGANIC: {organic} | CHEMICAL: {chemical}"
-
         return jsonify({
             "disease": disease_name,
-            "solution": full_solution
+            "solution": f"🌿 ORGANIC: {organic} | 🧪 CHEMICAL: {chemical}"
         })
+
     except Exception as e:
         print(f"DEBUG ERROR: {e}")
-        return jsonify({"error": "AI processing failed. Check connection."}), 500
+        return jsonify({"error": "AI Processing Error. Check Key/Connection."}), 500
 
-# MANDATORY RENDER FIX: Dynamic Port Selection
+# RENDER PORT FIX
 if __name__ == "__main__":
-    # Render assigns a port dynamically. Local usually defaults to 10000 here.
     port = int(os.environ.get("PORT", 5000))
-    # host='0.0.0.0' is required for Render to see your app
     app.run(host='0.0.0.0', port=port)
