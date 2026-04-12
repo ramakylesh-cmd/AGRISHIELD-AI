@@ -1,10 +1,10 @@
 import os
 import requests
 import io
+import base64
 from flask import Flask, request, jsonify, render_template, send_file
 from flask_cors import CORS
-from google import genai
-from google.genai import types
+from groq import Groq
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 
@@ -12,14 +12,15 @@ app = Flask(__name__)
 CORS(app)
 
 # ✅ API KEYS
-GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
 
-if not GEMINI_API_KEY:
-    raise Exception("❌ CRITICAL: GEMINI_API_KEY environment variable missing!")
+if not GROQ_API_KEY:
+    raise Exception("❌ CRITICAL: GROQ_API_KEY environment variable missing!")
 
-# ✅ GENAI CLIENT (NEW SDK)
-client = genai.Client(api_key=GEMINI_API_KEY)
+# ✅ GROQ CLIENT
+client = Groq(api_key=GROQ_API_KEY)
+
 
 # ✅ WEATHER FUNCTION
 def get_weather(city):
@@ -35,10 +36,12 @@ def get_weather(city):
         print(f"⚠️ Weather error: {e}")
         return 25, 60
 
+
 # ✅ HOME ROUTE
 @app.route("/")
 def home():
     return render_template("index.html")
+
 
 # ✅ PREDICT ROUTE
 @app.route("/predict", methods=["POST"])
@@ -51,30 +54,49 @@ def predict():
         img_bytes = file.read()
         mime_type = file.mimetype or "image/jpeg"
 
+        # ✅ Convert image to base64 for Groq
+        img_b64 = base64.b64encode(img_bytes).decode("utf-8")
+        image_url = f"data:{mime_type};base64,{img_b64}"
+
         city = request.form.get("city", "Chennai").strip()
         language = request.form.get("language", "English").strip()
 
         temp, humidity = get_weather(city)
 
-        prompt = f"""
-Analyze this plant image for disease detection.
-Weather in {city}: {temp}°C, {humidity}% humidity
+        prompt = f"""You are an expert plant pathologist AI.
+Analyze this plant image carefully for any disease or health issues.
+Weather context in {city}: Temperature {temp}°C, Humidity {humidity}%
 
-Respond in {language} ONLY in this exact format (no extra text):
+Respond in {language} ONLY in this EXACT format, nothing else:
 Disease Name: [name or Healthy]
-Organic Solution: [solution]
-Chemical Solution: [solution]
-Risk Level: [LOW or MEDIUM or HIGH]
-"""
+Organic Solution: [specific organic treatment]
+Chemical Solution: [specific chemical treatment]
+Risk Level: [LOW or MEDIUM or HIGH]"""
 
-        image_part = types.Part.from_bytes(data=img_bytes, mime_type=mime_type)
-
-        response = client.models.generate_content(
-            model="gemini-2.0-flash",
-            contents=[prompt, image_part]
+        # ✅ GROQ API CALL WITH IMAGE
+        response = client.chat.completions.create(
+            model="llama-3.2-11b-vision-preview",
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "image_url",
+                            "image_url": {"url": image_url}
+                        },
+                        {
+                            "type": "text",
+                            "text": prompt
+                        }
+                    ]
+                }
+            ],
+            max_tokens=500,
+            temperature=0.1  # ✅ low temp = more structured output
         )
 
-        text = response.text if response.text else ""
+        text = response.choices[0].message.content or ""
+        print(f"🤖 Groq response: {text}")
         lines = text.strip().split("\n")
 
         def extract(key):
@@ -88,6 +110,7 @@ Risk Level: [LOW or MEDIUM or HIGH]
         chemical = extract("Chemical")
         risk = extract("Risk").upper()
 
+        # ✅ Sanitize risk
         if risk not in ["LOW", "MEDIUM", "HIGH"]:
             risk = "MEDIUM"
 
@@ -107,6 +130,7 @@ Risk Level: [LOW or MEDIUM or HIGH]
     except Exception as e:
         print(f"🔥 REAL ERROR: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 # ✅ PDF DOWNLOAD ROUTE
 @app.route("/download-report", methods=["POST"])
@@ -148,6 +172,7 @@ def download_report():
     except Exception as e:
         print(f"🔥 PDF Error: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 # ✅ RENDER SAFE RUN
 if __name__ == "__main__":
