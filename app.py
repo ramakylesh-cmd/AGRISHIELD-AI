@@ -5,7 +5,7 @@ from flask_cors import CORS
 import google.generativeai as genai
 from PIL import Image
 from reportlab.pdfgen import canvas
-from reportlab.lib.pagesizes import letter, A4
+from reportlab.lib.pagesizes import A4  # Removed unused 'letter'
 from reportlab.lib.colors import green, black, red
 from reportlab.lib.units import inch
 from datetime import datetime
@@ -19,10 +19,10 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY")
 WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
 
 if not GEMINI_API_KEY:
-    raise Exception("❌ CRITICAL: GEMINI_API_KEY environment variable missing!")  # ✅ FIXED #6
+    raise Exception("❌ CRITICAL: GEMINI_API_KEY environment variable missing!")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-3-flash-preview")
+model = genai.GenerativeModel("gemini-3-flash-preview")  # Kept as requested - upgrade SDK if issues
 
 def get_weather(city="Chennai"):
     """Get current weather data - BULLETPROOF"""
@@ -34,7 +34,6 @@ def get_weather(city="Chennai"):
         url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
         res = requests.get(url, timeout=5).json()
         
-        # ✅ FIXED #5 - Check if response has required keys
         if 'main' not in res or 'temp' not in res['main']:
             print("⚠️ Invalid weather response, using defaults")
             return 25, 60
@@ -47,14 +46,13 @@ def get_weather(city="Chennai"):
         return 25, 60
 
 def draw_multiline_text(c, text, x, y, max_width=400, line_height=14):
-    """✅ FIXED #3 - Handle long text with word wrapping"""
+    """Handle long text with word wrapping"""
     words = text.split()
     current_line = ""
     lines = []
     
     for word in words:
         test_line = current_line + word + " "
-        # Check if it fits (400px width ~80 chars)
         if c.stringWidth(test_line, "Helvetica", 11) < max_width:
             current_line = test_line
         else:
@@ -65,12 +63,11 @@ def draw_multiline_text(c, text, x, y, max_width=400, line_height=14):
     if current_line:
         lines.append(current_line.strip())
     
-    # Draw each line
     for i, line in enumerate(lines):
         c.drawString(x, y - (i * line_height), line)
 
 def generate_pdf_report(data):
-    """Generate professional PDF report - TEXT OVERFLOW FIXED"""
+    """Generate professional PDF report"""
     buffer = io.BytesIO()
     c = canvas.Canvas(buffer, pagesize=A4)
     width, height = A4
@@ -110,8 +107,8 @@ def generate_pdf_report(data):
     c.drawString(0.75*inch, y_pos, "🌦️ WEATHER INTELLIGENCE")
     c.setFillColor(black)
     c.setFont("Helvetica", 12)
-    draw_multiline_text(c, data['weather'], 1*inch, y_pos - 0.3*inch)  # ✅ WRAP
-    draw_multiline_text(c, data['insight'], 1*inch, y_pos - 0.8*inch)   # ✅ WRAP
+    draw_multiline_text(c, data['weather'], 1*inch, y_pos - 0.3*inch)
+    draw_multiline_text(c, data['insight'], 1*inch, y_pos - 0.8*inch)
     
     y_pos -= 1.8*inch
     
@@ -124,12 +121,12 @@ def generate_pdf_report(data):
     c.setFont("Helvetica-Bold", 12)
     c.drawString(1*inch, y_pos - 0.3*inch, "🌿 ORGANIC SOLUTION")
     c.setFont("Helvetica", 11)
-    draw_multiline_text(c, data['organic'], 1.2*inch, y_pos - 0.6*inch)  # ✅ FIXED #3
+    draw_multiline_text(c, data['organic'], 1.2*inch, y_pos - 0.6*inch)
     
     c.setFont("Helvetica-Bold", 12)
     c.drawString(1*inch, y_pos - 1.4*inch, "🧪 CHEMICAL SOLUTION")
     c.setFont("Helvetica", 11)
-    draw_multiline_text(c, data['chemical'], 1.2*inch, y_pos - 1.7*inch)  # ✅ FIXED #3
+    draw_multiline_text(c, data['chemical'], 1.2*inch, y_pos - 1.7*inch)
     
     y_pos -= 2.5*inch
     
@@ -180,11 +177,8 @@ Chemical Solution: [solution]
 Risk Level: [LOW/MEDIUM/HIGH]
 """
 
-        # ✅ FIXED #7 - Add timeout
-        response = model.generate_content(
-            [prompt, img], 
-            request_options={"timeout": 30}
-        )
+        # FIXED: Removed invalid 'request_options' - use latest SDK for better timeouts
+        response = model.generate_content([prompt, img])
         
         if not response.text:
             data = {
@@ -231,8 +225,8 @@ Risk Level: [LOW/MEDIUM/HIGH]
         return jsonify(data)
 
     except Exception as e:
-        print(f"❌ DEBUG ERROR: {e}")
-        return jsonify({"error": "AI Processing Error. Check API Keys."}), 500
+        print(f"🔥 REAL ERROR: {e}")  # Enhanced debug
+        return jsonify({"error": str(e)}), 500  # ✅ FIXED: Real error message
 
 @app.route("/download-report", methods=["POST"])
 def download_report():
@@ -252,4 +246,4 @@ def download_report():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host='0.0.0.0', port=port, debug=True)  # Added debug=True for local testing
