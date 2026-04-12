@@ -729,12 +729,13 @@
     <div id="result-card">
       <div class="result-head">
         <div class="result-head-left">
-          <div class="status-ring" id="statusIcon">🔬</div>
-          <div>
-            <p class="result-label" id="diseaseTag">Detected</p>
-            <p class="disease-name" id="diseaseName">—</p>
-          </div>
-        </div>
+  <div class="status-ring" id="statusIcon">🔬</div>
+  <div>
+    <p class="result-label" id="diseaseTag">Detected</p>
+    <p class="disease-name" id="diseaseName">—</p>
+    <p class="result-time">🕒 <span id="timeVal">--</span></p>
+  </div>
+</div>
         <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔊 Listen</button>
       </div>
       <div class="result-body">
@@ -1100,10 +1101,24 @@ function renderResult(data) {
   document.getElementById('chemicalText').textContent = data.chemical || 'No data.';
   document.getElementById('cropTipBox').textContent   = data.crop_tip ? `💡 ${data.crop_tip}` : '';
   document.getElementById('w-icon').textContent  = WEATHER_ICONS[data.condition] || '🌤️';
-  document.getElementById('w-cond').textContent  = data.condition;
-  document.getElementById('w-temp').textContent  = `${data.temp}°C`;
-  document.getElementById('w-hum').textContent   = `${data.humidity}%`;
-  document.getElementById('w-pres').textContent  = `${data.pressure} hPa`;
+ document.getElementById('w-cond').textContent = data.condition;
+document.getElementById('w-temp').textContent = `${data.temp}°C`;
+document.getElementById('w-hum').textContent = `${data.humidity}%`;
+document.getElementById('w-pres').textContent = `${data.pressure} hPa`;
+
+// ✅ Local timestamp (frontend fix)
+const now = new Date();
+const formattedTime = now.toLocaleString('en-IN', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hour12: true
+});
+
+const timeEl = document.getElementById('timeVal');
+if (timeEl) timeEl.textContent = formattedTime;
   document.getElementById('w-city-label').textContent = `📍 ${data.city}`;
   document.getElementById('weather-strip').style.display = 'block';
   document.getElementById('insightText').textContent = data.insight;
