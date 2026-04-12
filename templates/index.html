@@ -27,6 +27,7 @@
     .card-top { padding: 2rem 2rem 0; display: flex; align-items: center; justify-content: space-between; }
     .card-title { font-size: 13px; font-weight: 600; color: #4a7a28; text-transform: uppercase; letter-spacing: 0.08em; }
     .input-group { display: flex; flex-direction: column; gap: 1rem; margin: 1rem 2rem 0; }
+    .input-wrap { position: relative; }
     .input-field { width: 100%; padding: 12px 16px; background: rgba(4,13,2,0.6); border: 1px solid rgba(80,180,30,0.2); border-radius: 12px; color: white; font-size: 14px; backdrop-filter: blur(10px); transition: all 0.2s; }
     .input-field::placeholder { color: #5a7a40; }
     .input-field:focus { outline: none; border-color: #7acd30; box-shadow: 0 0 0 3px rgba(122,205,48,0.1); }
@@ -37,7 +38,7 @@
     .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
     .upload-sub { font-size: 13px; color: #4a7028; }
     .btn-wrap { padding: 1.25rem 2rem 2rem; }
-    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); margin-bottom: 0.5rem; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); }
     .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(80,180,30,0.35); }
     .btn:disabled { background: rgba(30,50,15,0.6); color: #3a5a20; box-shadow: none; cursor: not-allowed; }
     .btn-icon { font-size: 18px; }
@@ -62,6 +63,10 @@
     .result-meta { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
     .meta-pill { background: rgba(80,180,30,0.08); border: 1px solid rgba(80,180,30,0.15); color: #5a9030; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
     .error-card { background: rgba(40,5,5,0.8); border: 1px solid rgba(150,30,30,0.3); padding: 1rem 1.25rem; font-size: 13px; color: #f08080; line-height: 1.6; }
+    .stats-bar { display: flex; justify-content: center; gap: 3rem; padding: 2.5rem 2rem 3rem; margin-top: 1rem; }
+    .stat { text-align: center; }
+    .stat-num { font-size: 22px; font-weight: 800; color: #7acd30; }
+    .stat-label { font-size: 12px; color: #3a6018; margin-top: 2px; }
     footer { text-align: center; padding: 1.5rem; border-top: 1px solid rgba(80,180,30,0.08); font-size: 12px; color: #2a4a10; }
   </style>
 </head>
@@ -74,20 +79,22 @@
         <div class="nav-logo-icon">🌱</div>
         <span>Agri<em>Shield</em> AI</span>
       </div>
-      <div class="nav-badge">🌦️ WEATHER + PDF REPORTS</div>
+      <div class="nav-badge">🌦️ WEATHER-AWARE + MULTI-LANG</div>
     </nav>
     <div class="hero">
       <div class="hero-tag">AI-POWERED CROP DISEASE DETECTION</div>
-      <h1>Detect Plant Diseases<br><span>Instantly with Weather AI</span></h1>
+      <h1>Detect Plant Diseases<br><span>Instantly with AI + Weather</span></h1>
       <div class="main-card">
         <div class="card-top">
           <span class="card-title">Smart Crop Analysis</span>
-          <span style="font-size:12px;color:#3a6018;">Works for ANY city worldwide</span>
+          <span style="font-size:12px;color:#3a6018;">Works for ANY city</span>
         </div>
         
-        <!-- City & Language Inputs -->
+        <!-- 🌍 NEW: City & Language Inputs -->
         <div class="input-group">
-          <input type="text" id="cityInput" class="input-field" placeholder="📍 Enter your city (Chennai)" value="Chennai">
+          <div class="input-wrap">
+            <input type="text" id="cityInput" class="input-field" placeholder="📍 Enter your city (Chennai)" value="Chennai">
+          </div>
           <select id="languageInput" class="input-field">
             <option value="English">🇺🇸 English</option>
             <option value="Tamil">🇮🇳 Tamil</option>
@@ -128,7 +135,7 @@
           <div class="result-body">
             <p class="result-section-label">Recommended Treatment</p>
             <p class="solution-text" id="solution"></p>
-            <p class="result-section-label">Weather Intelligence</p>
+            <div class="result-section-label">Weather Insight</p>
             <p class="solution-text" id="insight"></p>
             <div class="result-meta">
               <span class="meta-pill" id="weatherPill"></span>
@@ -139,11 +146,10 @@
         </div>
       </div>
     </div>
-    <footer>AgriShield AI — Hackathon 2026 Winner 🌱 Flask + Gemini + OpenWeatherMap + PDF Reports</footer>
+    <footer>AgriShield AI — Hackathon 2026 Winner 🌱 Flask + Gemini + OpenWeatherMap</footer>
   </div>
 
   <script>
-    // ✅ NULL-SAFE element references
     const input = document.getElementById('imageInput');
     const btn = document.getElementById('detectBtn');
     const btnText = document.getElementById('btn-text');
@@ -154,58 +160,45 @@
     const resultCard = document.getElementById('result-card');
     const errorCard = document.getElementById('error-card');
 
-    // Image upload handler
-    if (input) {
-      input.addEventListener('change', function () {
-        const file = this.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = e => {
-          document.getElementById('preview').src = e.target.result;
-          previewWrap.style.display = 'block';
-          dropzone.style.display = 'none';
-        };
-        reader.readAsDataURL(file);
-        btn.disabled = false;
-        btnText.textContent = 'Analyze Plant Disease';
-        resultCard.style.display = 'none';
-        errorCard.style.display = 'none';
-      });
-    }
+    input.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('preview').src = e.target.result;
+        previewWrap.style.display = 'block';
+        dropzone.style.display = 'none';
+      };
+      reader.readAsDataURL(file);
+      btn.disabled = false;
+      btnText.textContent = 'Analyze Plant Disease';
+      resultCard.style.display = 'none';
+      errorCard.style.display = 'none';
+    });
 
-    // Drag & drop
-    if (dropzone) {
-      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-      dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-      dropzone.addEventListener('drop', e => { 
-        e.preventDefault(); 
-        dropzone.classList.remove('drag-over'); 
-        if (input) {
-          input.files = e.dataTransfer.files; 
-          input.dispatchEvent(new Event('change')); 
-        }
-      });
-    }
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', e => { 
+      e.preventDefault(); 
+      dropzone.classList.remove('drag-over'); 
+      input.files = e.dataTransfer.files; 
+      input.dispatchEvent(new Event('change')); 
+    });
 
-    // ✅ MAIN UPLOAD FUNCTION (NULL-SAFE)
     function upload() {
-      const file = input ? input.files[0] : null;
+      const file = input.files[0];
       if (!file) return;
       
       btnIcon.style.display = 'none';
       btnText.textContent = 'Analyzing with Weather AI...';
       spinner.style.display = 'block';
       btn.disabled = true;
-      if (errorCard) errorCard.style.display = 'none';
+      errorCard.style.display = 'none';
 
       const formData = new FormData();
       formData.append('image', file);
-      
-      // ✅ FIXED #1 - NULL SAFETY
-      const cityInput = document.getElementById('cityInput');
-      const langInput = document.getElementById('languageInput');
-      formData.append('city', cityInput ? cityInput.value || "Chennai" : "Chennai");
-      formData.append('language', langInput ? langInput.value || "English" : "English");
+      formData.append('city', document.getElementById('cityInput').value);
+      formData.append('language', document.getElementById('languageInput').value);
 
       fetch(window.location.origin + "/predict", { method: 'POST', body: formData })
         .then(res => {
@@ -213,37 +206,20 @@
           return res.json();
         })
         .then(data => {
-          if (document.getElementById('result')) document.getElementById('result').innerText = data.disease;
-          if (document.getElementById('solution')) document.getElementById('solution').innerText = data.solution;
-          if (document.getElementById('insight')) document.getElementById('insight').innerText = data.insight;
-          if (document.getElementById('diseaseTag')) {
-            document.getElementById('diseaseTag').innerText = data.disease === 'Healthy' ? 'Healthy Plant' : 'Disease Detected';
-          }
-          if (document.getElementById('weatherPill')) document.getElementById('weatherPill').innerText = `🌦️ ${data.weather}`;
-          if (document.getElementById('riskPill')) document.getElementById('riskPill').innerText = `⚠️ ${data.risk} RISK`;
-          
-          // ✅ Remove existing download button
-          const existingBtn = document.getElementById("downloadBtn");
-          if (existingBtn) existingBtn.remove();
-          
-          // Add PDF download button
-          const downloadBtn = document.createElement('button');
-          downloadBtn.innerHTML = '📄 Download PDF Report';
-          downloadBtn.className = 'btn';
-          downloadBtn.id = "downloadBtn";
-          downloadBtn.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-          downloadBtn.onclick = () => downloadPDF(data);
-          document.querySelector('.btn-wrap').appendChild(downloadBtn);
+          document.getElementById('result').innerText = data.disease;
+          document.getElementById('solution').innerText = data.solution;
+          document.getElementById('insight').innerText = data.insight;
+          document.getElementById('diseaseTag').innerText = data.disease === 'Healthy' ? 'Healthy Plant' : 'Disease Detected';
+          document.getElementById('weatherPill').innerText = `🌦️ ${data.weather}`;
+          document.getElementById('riskPill').innerText = `⚠️ ${data.risk} RISK`;
           
           resultCard.style.display = 'block';
           resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           btnText.textContent = 'Analyze Another Plant';
         })
         .catch((err) => {
-          if (errorCard) {
-            errorCard.innerHTML = '⚠️ <strong>Error:</strong> ' + err.message + '<br><small>Check API keys & internet connection</small>';
-            errorCard.style.display = 'block';
-          }
+          errorCard.innerHTML = '⚠️ <strong>Error:</strong> ' + err.message + '<br><small>Check API keys & internet connection</small>';
+          errorCard.style.display = 'block';
           btnText.textContent = 'Try Again';
         })
         .finally(() => {
@@ -252,26 +228,6 @@
           btnIcon.textContent = '🔍';
           btn.disabled = false;
         });
-    }
-
-    function downloadPDF(data) {
-      fetch('/download-report', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(data)
-      })
-      .then(response => response.blob())
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `agrishield_report_${data.city}_${new Date().toISOString().slice(0,19).replace(/:/g,'-')}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      })
-      .catch(err => alert('PDF download failed: ' + err.message));
     }
   </script>
 </body>
