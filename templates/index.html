@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>AgriShield AI — Smart Crop Doctor</title>
+  <!-- PWA -->
+  <link rel="manifest" href="/static/manifest.json">
+  <meta name="theme-color" content="#061202">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AgriShield AI">
+  <meta name="description" content="AI-powered crop disease detection with live weather intelligence">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
   <style>
@@ -218,7 +226,7 @@
        CONTROLS
     ══════════════════════════════════════════════ */
     .controls-row {
-      display:grid; grid-template-columns:1fr auto 1fr;
+      display:grid; grid-template-columns:1fr auto auto 1fr;
       gap:8px; padding:1rem 1.6rem 0; align-items:end;
     }
     .field { position:relative; }
@@ -654,7 +662,7 @@
       nav { padding:0.8rem 1rem; }
       .nav-pills { display:none; }
       .page-wrap { padding:1.25rem 0.75rem 2.5rem; }
-      .controls-row { grid-template-columns:1fr auto; }
+      .controls-row { grid-template-columns:1fr auto auto; }
       .controls-row .field:last-of-type { grid-column:1 / -1; }
       .meters-row { grid-template-columns:1fr; }
       .result-head { flex-direction:column; align-items:flex-start; }
@@ -665,7 +673,27 @@
       .cursor-dot, .cursor-ring, .cursor-glow { display: none !important; }
       a, button, input, select, label,
       .dropzone, .preview-change, .h-item,
-      .tab-btn, .cal-month, .gps-btn, .voice-btn { cursor: pointer !important; }
+      .tab-btn, .cal-month, .gps-btn, .voice-btn, .mic-btn { cursor: pointer !important; }
+    }
+
+    /* ══════════════════════════════════════════════
+       MIC VOICE BUTTON
+    ══════════════════════════════════════════════ */
+    .mic-btn {
+      padding: 10px 13px;
+      background: var(--lime-glow); border: 1px solid var(--lime-border);
+      border-radius: 10px; color: var(--lime); font-size: 15px;
+      cursor: none; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+      font-weight: 600; font-family: 'DM Sans', sans-serif; white-space: nowrap;
+    }
+    .mic-btn:hover { background: rgba(168,230,61,0.22); transform: scale(1.04); }
+    .mic-btn.listening {
+      background: rgba(255,80,50,0.15); border-color: rgba(255,80,50,0.4);
+      color: #ff7a60; animation: micPulse 0.8s ease-in-out infinite;
+    }
+    @keyframes micPulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,80,50,0); }
+      50% { box-shadow: 0 0 0 7px rgba(255,80,50,0.15); }
     }
 
     /* slideIn utility */
@@ -726,6 +754,7 @@
         <span class="field-icon">📍</span>
         <input type="text" id="cityInput" class="ctrl" placeholder="City name" value="Chennai">
       </div>
+      <button class="mic-btn" id="micBtn" onclick="startVoiceCity()" title="Speak city name">🎤</button>
       <button class="gps-btn" onclick="getGPS()" id="gpsBtn" title="Detect location">📡</button>
       <div class="field">
         <span class="field-icon">🌐</span>
@@ -754,7 +783,7 @@
     <!-- Upload -->
     <div class="upload-wrap">
       <div class="dropzone" id="dropzone">
-        <input type="file" id="imageInput" accept="image/*">
+        <input type="file" id="imageInput" accept="image/*" capture="environment">
         <div class="upload-icon">📸</div>
         <p class="upload-title">Drop your plant photo here</p>
         <p class="upload-sub">or click to browse your device</p>
@@ -865,7 +894,8 @@
      JAVASCRIPT — FULL GOD MODE
 ══════════════════════════════════════════ -->
 <script>
-/* ── Constants ── */
+/* ══════════════════════════════════════════
+   Constants ── */
 const WEATHER_ICONS = {
   Clear:'☀️', Clouds:'☁️', Rain:'🌧️', Drizzle:'🌦️',
   Thunderstorm:'⛈️', Snow:'❄️', Mist:'🌫️', Haze:'🌫️', Smoke:'🌫️', Fog:'🌫️'
@@ -885,6 +915,46 @@ let activeTab     = 'organic';
 let isSpeaking    = false;
 let scanHistory   = JSON.parse(localStorage.getItem('agrishield_v2') || '[]');
 let confHistory   = JSON.parse(localStorage.getItem('agrishield_conf') || '[]');
+
+/* ══════════════════════════════════════════
+   GOD MODE: VOICE INPUT FOR CITY NAME 🎤
+══════════════════════════════════════════ */
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+let recognition = null;
+if (SpeechRecognition) {
+  recognition = new SpeechRecognition();
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
+}
+
+function startVoiceCity() {
+  if (!recognition) {
+    showToast('⚠️ Voice not supported in this browser');
+    return;
+  }
+  const btn  = document.getElementById('micBtn');
+  const lang = document.getElementById('langInput').value;
+  recognition.lang = LANG_CODES[lang] || 'en-IN';
+  btn.classList.add('listening');
+  btn.textContent = '🔴';
+  showToast('🎤 Listening... say your city name');
+  recognition.start();
+  recognition.onresult = (e) => {
+    const city = e.results[0][0].transcript.trim();
+    document.getElementById('cityInput').value = city;
+    showToast(`📍 Got it: "${city}"`);
+  };
+  recognition.onend = () => {
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+  };
+  recognition.onerror = () => {
+    btn.classList.remove('listening');
+    btn.textContent = '🎤';
+    showToast('🎤 Voice error — try again or type city');
+  };
+}
 
 /* ══════════════════════════════════════════
    GOD MODE: CUSTOM CURSOR (3-layer)

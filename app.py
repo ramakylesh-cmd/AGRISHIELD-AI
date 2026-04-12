@@ -172,9 +172,9 @@ def download_report():
         buffer = io.BytesIO()
         styles = getSampleStyleSheet()
 
-        title_style = ParagraphStyle("AgriTitle", parent=styles["Title"], fontSize=20, spaceAfter=6, textColor=colors.HexColor("#2d7a08"))
+        title_style = ParagraphStyle("AgriTitle", parent=styles["Title"],    fontSize=20, spaceAfter=6,  textColor=colors.HexColor("#2d7a08"))
         head_style  = ParagraphStyle("AgriHead",  parent=styles["Heading2"], fontSize=12, spaceBefore=14, spaceAfter=4, textColor=colors.HexColor("#4a8a10"))
-        body_style  = ParagraphStyle("AgriBody",  parent=styles["BodyText"], fontSize=11, leading=16, spaceAfter=4)
+        body_style  = ParagraphStyle("AgriBody",  parent=styles["BodyText"], fontSize=11, leading=16,    spaceAfter=4)
 
         doc   = SimpleDocTemplate(buffer, leftMargin=inch, rightMargin=inch, topMargin=inch, bottomMargin=inch)
         story = []
@@ -224,6 +224,12 @@ def download_report():
     except Exception as e:
         print(f"🔥 PDF Error: {e}")
         return jsonify({"error": str(e)}), 500
+
+
+# ── PWA: serve manifest.json from static folder ──
+@app.route("/static/manifest.json")
+def manifest():
+    return app.send_static_file("manifest.json")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,35 @@
+{
+  "name": "AgriShield AI",
+  "short_name": "AgriShield",
+  "description": "AI-powered crop disease detection with live weather intelligence",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#061202",
+  "theme_color": "#061202",
+  "categories": ["agriculture", "health", "productivity"],
+  "icons": [
+    {
+      "src": "https://via.placeholder.com/192x192/061202/a8e63d?text=🌱",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://via.placeholder.com/512x512/061202/a8e63d?text=🌱",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Scan Plant",
+      "short_name": "Scan",
+      "description": "Scan a plant for disease",
+      "url": "/",
+      "icons": []
+    }
+  ]
+}
