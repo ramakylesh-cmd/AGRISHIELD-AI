@@ -11,59 +11,71 @@
     .bg-glow { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(80,180,30,0.07) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(40,120,10,0.06) 0%, transparent 60%); pointer-events: none; z-index: 0; }
     .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(rgba(80,180,30,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(80,180,30,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
     .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.25rem 3rem; border-bottom: 1px solid rgba(80,180,30,0.12); backdrop-filter: blur(10px); background: rgba(4,13,2,0.6); position: sticky; top: 0; z-index: 10; }
-    .nav-logo { display: flex; align-items: center; gap: 10px; }
-    .nav-logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #5ab520, #2d7a08); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .nav-logo span { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 4rem; border-bottom: 1px solid rgba(80,180,30,0.12); backdrop-filter: blur(10px); background: rgba(4,13,2,0.6); position: sticky; top: 0; z-index: 10; }
+    .nav-logo { display: flex; align-items: center; gap: 12px; }
+    .nav-logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #5ab520, #2d7a08); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .nav-logo span { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
     .nav-logo span em { color: #7acd30; font-style: normal; }
-    .nav-badge { background: rgba(80,180,30,0.12); border: 1px solid rgba(80,180,30,0.25); color: #7acd30; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; letter-spacing: 0.05em; }
-    .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4rem 2rem 2rem; text-align: center; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px; margin-bottom: 1.5rem; letter-spacing: 0.06em; }
-    .hero-tag::before { content: ''; width: 6px; height: 6px; background: #7acd30; border-radius: 50%; animation: pulse 2s infinite; }
+    .nav-badge { background: rgba(80,180,30,0.12); border: 1px solid rgba(80,180,30,0.25); color: #7acd30; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 100px; letter-spacing: 0.05em; }
+    .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 2rem 3rem; text-align: center; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 13px; font-weight: 600; padding: 6px 18px; border-radius: 100px; margin-bottom: 2rem; letter-spacing: 0.06em; }
+    .hero-tag::before { content: ''; width: 7px; height: 7px; background: #7acd30; border-radius: 50%; animation: pulse 2s infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-    .hero h1 { font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 800; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 1.5rem; }
     .hero h1 span { background: linear-gradient(135deg, #7acd30 0%, #4aad10 50%, #2d8a00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .main-card { background: rgba(10,22,5,0.8); border: 1px solid rgba(80,180,30,0.15); border-radius: 24px; width: 100%; max-width: 680px; margin: 0 auto; overflow: hidden; backdrop-filter: blur(20px); box-shadow: 0 0 80px rgba(80,180,30,0.06), 0 40px 80px rgba(0,0,0,0.4); }
-    .card-top { padding: 2rem 2rem 0; display: flex; align-items: center; justify-content: space-between; }
-    .card-title { font-size: 13px; font-weight: 600; color: #4a7a28; text-transform: uppercase; letter-spacing: 0.08em; }
-    .input-group { display: flex; flex-direction: column; gap: 1rem; margin: 1rem 2rem 0; }
-    .input-field { width: 100%; padding: 12px 16px; background: rgba(4,13,2,0.6); border: 1px solid rgba(80,180,30,0.2); border-radius: 12px; color: white; font-size: 14px; backdrop-filter: blur(10px); transition: all 0.2s; }
+    .main-card { background: rgba(10,22,5,0.8); border: 1px solid rgba(80,180,30,0.15); border-radius: 28px; width: 100%; max-width: 780px; margin: 0 auto; overflow: hidden; backdrop-filter: blur(20px); box-shadow: 0 0 80px rgba(80,180,30,0.06), 0 40px 80px rgba(0,0,0,0.4); }
+    .card-top { padding: 2.5rem 2.5rem 0; display: flex; align-items: center; justify-content: space-between; }
+    .card-title { font-size: 14px; font-weight: 600; color: #4a7a28; text-transform: uppercase; letter-spacing: 0.08em; }
+    .input-group { display: flex; gap: 1rem; margin: 1.25rem 2.5rem 0; }
+    .input-field { width: 100%; padding: 14px 18px; background: rgba(4,13,2,0.6); border: 1px solid rgba(80,180,30,0.2); border-radius: 14px; color: white; font-size: 15px; backdrop-filter: blur(10px); transition: all 0.2s; }
     .input-field::placeholder { color: #5a7a40; }
     .input-field:focus { outline: none; border-color: #7acd30; box-shadow: 0 0 0 3px rgba(122,205,48,0.1); }
     select.input-field option { background: #0a1605; color: white; }
-    .upload-zone { margin: 1.25rem 2rem; border: 2px dashed rgba(80,180,30,0.25); border-radius: 16px; padding: 3rem 2rem; text-align: center; cursor: pointer; position: relative; background: rgba(80,180,30,0.03); transition: all 0.2s; }
+    .upload-zone { margin: 1.5rem 2.5rem; border: 2px dashed rgba(80,180,30,0.25); border-radius: 20px; padding: 3.5rem 2rem; text-align: center; cursor: pointer; position: relative; background: rgba(80,180,30,0.03); transition: all 0.2s; }
     .upload-zone:hover, .upload-zone.drag-over { border-color: rgba(80,180,30,0.5); background: rgba(80,180,30,0.07); }
     .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon-wrap { width: 64px; height: 64px; margin: 0 auto 1rem; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
-    .upload-title { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-    .upload-sub { font-size: 13px; color: #4a7028; }
-    .btn-wrap { padding: 1.25rem 2rem 2rem; display: flex; flex-direction: column; gap: 10px; }
-    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); }
-    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 8px 32px rgba(80,180,30,0.35); }
+    .upload-icon-wrap { width: 72px; height: 72px; margin: 0 auto 1rem; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
+    .upload-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .upload-sub { font-size: 14px; color: #4a7028; }
+    .btn-wrap { padding: 1.5rem 2.5rem 2.5rem; display: flex; flex-direction: column; gap: 12px; }
+    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); }
+    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(80,180,30,0.35); }
     .btn:disabled { background: rgba(30,50,15,0.6); color: #3a5a20; box-shadow: none; cursor: not-allowed; }
-    .btn-icon { font-size: 18px; }
-    .spinner { display: none; width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
-    #preview-wrap { display: none; margin: 0 2rem 1rem; border-radius: 14px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); position: relative; }
-    #preview { width: 100%; max-height: 300px; object-fit: cover; display: block; }
+    #preview-wrap { display: none; margin: 0 2.5rem 1rem; border-radius: 16px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); position: relative; }
+    #preview { width: 100%; max-height: 340px; object-fit: cover; display: block; }
     .preview-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,13,2,0.6) 0%, transparent 50%); }
-    .preview-label { position: absolute; bottom: 12px; left: 14px; background: rgba(4,13,2,0.8); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
-    #result-card { display: none; margin: 0 2rem 2rem; border-radius: 16px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); }
-    .result-header { background: linear-gradient(135deg, rgba(40,80,10,0.8), rgba(20,50,5,0.8)); padding: 1.25rem 1.5rem; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(80,180,30,0.15); }
-    .result-dot-wrap { position: relative; }
-    .result-dot { width: 12px; height: 12px; border-radius: 50%; background: #7acd30; }
+    .preview-label { position: absolute; bottom: 14px; left: 16px; background: rgba(4,13,2,0.8); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
+    #result-card { display: none; margin: 0 2.5rem 2rem; border-radius: 18px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); }
+    .result-header { background: linear-gradient(135deg, rgba(40,80,10,0.8), rgba(20,50,5,0.8)); padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(80,180,30,0.15); }
+    .result-dot-wrap { position: relative; flex-shrink: 0; }
+    .result-dot { width: 14px; height: 14px; border-radius: 50%; background: #7acd30; }
     .result-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid rgba(122,205,48,0.3); animation: ripple 2s infinite; }
     @keyframes ripple { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2);opacity:0} }
-    .result-tag { font-size: 10px; font-weight: 700; color: #5a9028; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
-    .disease-name { font-size: 18px; font-weight: 700; color: #c8f070; }
-    .result-body { background: rgba(10,22,5,0.9); padding: 1.25rem 1.5rem; }
-    .result-section-label { font-size: 10px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; margin-top: 12px; display: flex; align-items: center; gap: 6px; }
-    .result-section-label::before { content: ''; width: 16px; height: 1px; background: #3a6018; }
-    .solution-text { font-size: 14px; color: #a8d880; line-height: 1.7; }
-    .result-meta { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
-    .meta-pill { background: rgba(80,180,30,0.08); border: 1px solid rgba(80,180,30,0.15); color: #5a9030; font-size: 11px; font-weight: 600; padding: 4px 12px; border-radius: 100px; }
-    #error-card { display: none; margin: 0 2rem 1.5rem; background: rgba(40,5,5,0.8); border: 1px solid rgba(150,30,30,0.3); border-radius: 12px; padding: 1rem 1.25rem; font-size: 13px; color: #f08080; line-height: 1.6; }
-    footer { text-align: center; padding: 1.5rem; border-top: 1px solid rgba(80,180,30,0.08); font-size: 12px; color: #2a4a10; margin-top: auto; }
+    .result-tag { font-size: 11px; font-weight: 700; color: #5a9028; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
+    .disease-name { font-size: 20px; font-weight: 700; color: #c8f070; }
+    .result-body { background: rgba(10,22,5,0.9); padding: 1.5rem 1.75rem; }
+    .result-section-label { font-size: 11px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; margin-top: 16px; display: flex; align-items: center; gap: 6px; }
+    .result-section-label::before { content: ''; width: 18px; height: 1px; background: #3a6018; }
+    .solution-text { font-size: 15px; color: #a8d880; line-height: 1.8; }
+
+    /* Confidence + Severity meters */
+    .meters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+    .meter-box { background: rgba(80,180,30,0.05); border: 1px solid rgba(80,180,30,0.12); border-radius: 14px; padding: 14px 16px; }
+    .meter-label { font-size: 11px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    .meter-value { font-size: 24px; font-weight: 800; color: #7acd30; margin-bottom: 8px; }
+    .meter-bar-bg { width: 100%; height: 8px; background: rgba(80,180,30,0.1); border-radius: 100px; overflow: hidden; }
+    .meter-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
+    .meter-bar-fill.confidence { background: linear-gradient(90deg, #4aad10, #7acd30); }
+    .meter-bar-fill.severity-low { background: linear-gradient(90deg, #4aad10, #7acd30); }
+    .meter-bar-fill.severity-med { background: linear-gradient(90deg, #f0a020, #f0c040); }
+    .meter-bar-fill.severity-high { background: linear-gradient(90deg, #c03020, #f05040); }
+
+    .result-meta { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+    .meta-pill { background: rgba(80,180,30,0.08); border: 1px solid rgba(80,180,30,0.15); color: #5a9030; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
+    #error-card { display: none; margin: 0 2.5rem 1.5rem; background: rgba(40,5,5,0.8); border: 1px solid rgba(150,30,30,0.3); border-radius: 14px; padding: 1.25rem 1.5rem; font-size: 14px; color: #f08080; line-height: 1.6; }
+    footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(80,180,30,0.08); font-size: 13px; color: #2a4a10; margin-top: auto; }
   </style>
 </head>
 <body>
@@ -75,7 +87,7 @@
         <div class="nav-logo-icon">🌱</div>
         <span>Agri<em>Shield</em> AI</span>
       </div>
-      <div class="nav-badge">🌦️ WEATHER + PDF REPORTS</div>
+      <div class="nav-badge">🌦️ WEATHER + PDF + AI DIAGNOSIS</div>
     </nav>
 
     <div class="hero">
@@ -85,11 +97,11 @@
       <div class="main-card">
         <div class="card-top">
           <span class="card-title">Smart Crop Analysis</span>
-          <span style="font-size:12px;color:#3a6018;">Works for ANY city worldwide</span>
+          <span style="font-size:13px;color:#3a6018;">Works for ANY city worldwide</span>
         </div>
 
         <div class="input-group">
-          <input type="text" id="cityInput" class="input-field" placeholder="📍 Enter your city (Chennai)" value="Chennai">
+          <input type="text" id="cityInput" class="input-field" placeholder="📍 City (Chennai)" value="Chennai">
           <select id="languageInput" class="input-field">
             <option value="English">🇺🇸 English</option>
             <option value="Tamil">🇮🇳 Tamil</option>
@@ -113,7 +125,6 @@
           <span class="preview-label">✓ Image ready</span>
         </div>
 
-        <!-- ✅ Error card INSIDE main card, ABOVE result -->
         <div id="error-card"></div>
 
         <div id="result-card">
@@ -129,6 +140,25 @@
             <p class="solution-text" id="solution"></p>
             <p class="result-section-label">Weather Intelligence</p>
             <p class="solution-text" id="insight"></p>
+
+            <!-- Confidence + Severity meters -->
+            <div class="meters-row">
+              <div class="meter-box">
+                <div class="meter-label">🎯 AI Confidence</div>
+                <div class="meter-value" id="confidenceVal">--%</div>
+                <div class="meter-bar-bg">
+                  <div class="meter-bar-fill confidence" id="confidenceBar" style="width:0%"></div>
+                </div>
+              </div>
+              <div class="meter-box">
+                <div class="meter-label">🔥 Severity Meter</div>
+                <div class="meter-value" id="severityVal">--/10</div>
+                <div class="meter-bar-bg">
+                  <div class="meter-bar-fill severity-low" id="severityBar" style="width:0%"></div>
+                </div>
+              </div>
+            </div>
+
             <div class="result-meta">
               <span class="meta-pill" id="weatherPill"></span>
               <span class="meta-pill" id="riskPill"></span>
@@ -143,19 +173,19 @@
             <span id="btn-text">Select an image first</span>
             <div class="spinner" id="spinner"></div>
           </button>
-          <!-- ✅ PDF button injected here dynamically -->
         </div>
       </div>
     </div>
 
     <footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq AI + OpenWeatherMap + PDF Reports</footer>
+  </div>
 
   <script>
-    const input    = document.getElementById('imageInput');
-    const btn      = document.getElementById('detectBtn');
-    const btnText  = document.getElementById('btn-text');
-    const btnIcon  = document.getElementById('btn-icon');
-    const spinner  = document.getElementById('spinner');
+    const input       = document.getElementById('imageInput');
+    const btn         = document.getElementById('detectBtn');
+    const btnText     = document.getElementById('btn-text');
+    const btnIcon     = document.getElementById('btn-icon');
+    const spinner     = document.getElementById('spinner');
     const previewWrap = document.getElementById('preview-wrap');
     const dropzone    = document.getElementById('dropzone');
     const resultCard  = document.getElementById('result-card');
@@ -175,7 +205,6 @@
       btnText.textContent = 'Analyze Plant Disease';
       resultCard.style.display = 'none';
       errorCard.style.display = 'none';
-      // Remove old PDF button if re-uploading
       const old = document.getElementById('downloadBtn');
       if (old) old.remove();
     });
@@ -210,22 +239,38 @@
         .then(({ ok, data }) => {
           if (!ok) throw new Error(data.error || 'Server error');
 
-          document.getElementById('result').innerText    = data.disease;
-          document.getElementById('solution').innerText  = data.solution;
-          document.getElementById('insight').innerText   = data.insight;
-          document.getElementById('diseaseTag').innerText = data.disease === 'Healthy' ? '✅ Healthy Plant' : '⚠️ Disease Detected';
+          document.getElementById('result').innerText     = data.disease;
+          document.getElementById('solution').innerText   = data.solution;
+          document.getElementById('insight').innerText    = data.insight;
+          document.getElementById('diseaseTag').innerText = data.disease.toLowerCase().includes('healthy') ? '✅ Healthy Plant' : '⚠️ Disease Detected';
           document.getElementById('weatherPill').innerText = `🌦️ ${data.weather}`;
           document.getElementById('riskPill').innerText    = `⚠️ ${data.risk} RISK`;
 
-          // ✅ PDF button — remove old one first
+          // Confidence meter
+          const conf = data.confidence || 75;
+          document.getElementById('confidenceVal').innerText = `${conf}%`;
+          setTimeout(() => {
+            document.getElementById('confidenceBar').style.width = `${conf}%`;
+          }, 100);
+
+          // Severity meter
+          const sev = data.severity || 5;
+          document.getElementById('severityVal').innerText = `${sev}/10`;
+          const sevBar = document.getElementById('severityBar');
+          sevBar.className = 'meter-bar-fill ' + (sev <= 3 ? 'severity-low' : sev <= 6 ? 'severity-med' : 'severity-high');
+          setTimeout(() => {
+            sevBar.style.width = `${sev * 10}%`;
+          }, 100);
+
+          // PDF button
           const old = document.getElementById('downloadBtn');
           if (old) old.remove();
           const dlBtn = document.createElement('button');
-          dlBtn.innerHTML   = '📄 Download PDF Report';
-          dlBtn.className   = 'btn';
-          dlBtn.id          = 'downloadBtn';
+          dlBtn.innerHTML = '📄 Download PDF Report';
+          dlBtn.className = 'btn';
+          dlBtn.id = 'downloadBtn';
           dlBtn.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-          dlBtn.onclick     = () => downloadPDF(data);
+          dlBtn.onclick = () => downloadPDF(data);
           document.querySelector('.btn-wrap').appendChild(dlBtn);
 
           resultCard.style.display = 'block';

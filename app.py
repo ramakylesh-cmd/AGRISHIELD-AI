@@ -11,18 +11,14 @@ from reportlab.lib.styles import getSampleStyleSheet
 app = Flask(__name__)
 CORS(app)
 
-# ✅ API KEYS
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
 
 if not GROQ_API_KEY:
     raise Exception("❌ CRITICAL: GROQ_API_KEY environment variable missing!")
 
-# ✅ GROQ CLIENT
 client = Groq(api_key=GROQ_API_KEY)
 
-
-# ✅ WEATHER FUNCTION
 def get_weather(city):
     try:
         if not WEATHER_API_KEY:
@@ -36,14 +32,10 @@ def get_weather(city):
         print(f"⚠️ Weather error: {e}")
         return 25, 60
 
-
-# ✅ HOME ROUTE
 @app.route("/")
 def home():
     return render_template("index.html")
 
-
-# ✅ PREDICT ROUTE
 @app.route("/predict", methods=["POST"])
 def predict():
     try:
@@ -53,8 +45,6 @@ def predict():
         file = request.files["image"]
         img_bytes = file.read()
         mime_type = file.mimetype or "image/jpeg"
-
-        # ✅ Convert image to base64 for Groq
         img_b64 = base64.b64encode(img_bytes).decode("utf-8")
         image_url = f"data:{mime_type};base64,{img_b64}"
 
@@ -63,36 +53,32 @@ def predict():
 
         temp, humidity = get_weather(city)
 
-        prompt = f"""You are an expert plant pathologist AI.
-Analyze this plant image carefully for any disease or health issues.
-Weather context in {city}: Temperature {temp}°C, Humidity {humidity}%
+        prompt = f"""You are an expert plant pathologist AI. Analyze this plant image carefully.
+Weather in {city}: {temp}°C, {humidity}% humidity
 
-Respond in {language} ONLY in this EXACT format, nothing else:
-Disease Name: [name or Healthy]
-Organic Solution: [specific organic treatment]
-Chemical Solution: [specific chemical treatment]
-Risk Level: [LOW or MEDIUM or HIGH]"""
+CRITICAL INSTRUCTION: You MUST respond ENTIRELY in {language} language. Every single word of your response must be in {language}. Do not use English if {language} is not English.
 
-        # ✅ GROQ API CALL WITH IMAGE
+Respond ONLY in this exact format with NO extra text:
+Disease Name: [name in {language}]
+Organic Solution: [solution in {language}]
+Chemical Solution: [solution in {language}]
+Risk Level: [LOW or MEDIUM or HIGH]
+Confidence: [number between 60 and 99]
+Severity: [number between 1 and 10]"""
+
         response = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[
                 {
                     "role": "user",
                     "content": [
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": image_url}
-                        },
-                        {
-                            "type": "text",
-                            "text": prompt
-                        }
+                        {"type": "image_url", "image_url": {"url": image_url}},
+                        {"type": "text", "text": prompt}
                     ]
                 }
             ],
-            max_tokens=500,
-            temperature=0.1  # ✅ low temp = more structured output
+            max_tokens=600,
+            temperature=0.2
         )
 
         text = response.choices[0].message.content or ""
@@ -105,12 +91,24 @@ Risk Level: [LOW or MEDIUM or HIGH]"""
                     return line.split(":", 1)[-1].strip()
             return "N/A"
 
-        disease = extract("Disease")
-        organic = extract("Organic")
+        disease  = extract("Disease")
+        organic  = extract("Organic")
         chemical = extract("Chemical")
-        risk = extract("Risk").upper()
+        risk     = extract("Risk").upper()
+        
+        # Parse confidence and severity as numbers
+        try:
+            confidence = int(''.join(filter(str.isdigit, extract("Confidence"))))
+            confidence = max(60, min(99, confidence))
+        except:
+            confidence = 75
+            
+        try:
+            severity = int(''.join(filter(str.isdigit, extract("Severity"))))
+            severity = max(1, min(10, severity))
+        except:
+            severity = 5
 
-        # ✅ Sanitize risk
         if risk not in ["LOW", "MEDIUM", "HIGH"]:
             risk = "MEDIUM"
 
@@ -121,6 +119,8 @@ Risk Level: [LOW or MEDIUM or HIGH]"""
             "organic": organic,
             "chemical": chemical,
             "risk": risk,
+            "confidence": confidence,
+            "severity": severity,
             "weather": f"{temp}°C, {humidity}%",
             "insight": insight,
             "city": city,
@@ -131,8 +131,6 @@ Risk Level: [LOW or MEDIUM or HIGH]"""
         print(f"🔥 REAL ERROR: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# ✅ PDF DOWNLOAD ROUTE
 @app.route("/download-report", methods=["POST"])
 def download_report():
     try:
@@ -149,6 +147,10 @@ def download_report():
         story.append(Paragraph(f"<b>Disease:</b> {data.get('disease', 'N/A')}", styles['BodyText']))
         story.append(Spacer(1, 6))
         story.append(Paragraph(f"<b>Risk Level:</b> {data.get('risk', 'N/A')}", styles['BodyText']))
+        story.append(Spacer(1, 6))
+        story.append(Paragraph(f"<b>Confidence:</b> {data.get('confidence', 'N/A')}%", styles['BodyText']))
+        story.append(Spacer(1, 6))
+        story.append(Paragraph(f"<b>Severity:</b> {data.get('severity', 'N/A')}/10", styles['BodyText']))
         story.append(Spacer(1, 6))
         story.append(Paragraph(f"<b>Weather:</b> {data.get('weather', 'N/A')}", styles['BodyText']))
         story.append(Spacer(1, 6))
@@ -173,8 +175,6 @@ def download_report():
         print(f"🔥 PDF Error: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# ✅ RENDER SAFE RUN
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
