@@ -1,7 +1,7 @@
 flask
-requests
-pillow
-google-genai
 flask-cors
+groq
+Pillow
 reportlab
+requests
 gunicorn
