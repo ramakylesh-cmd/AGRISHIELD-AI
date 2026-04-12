@@ -1,7 +1,7 @@
 flask
 requests
 pillow
-google-generativeai
+google-genai
 flask-cors
 reportlab
 gunicorn
