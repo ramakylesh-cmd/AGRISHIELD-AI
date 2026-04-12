@@ -3,315 +3,590 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>AgriShield AI - Smart Crop Doctor</title>
+  <title>AgriShield AI — Smart Crop Doctor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', system-ui, sans-serif; background: #040d02; color: white; min-height: 100vh; overflow-x: hidden; }
-    .bg-glow { position: fixed; inset: 0; background: radial-gradient(ellipse 80% 50% at 20% 20%, rgba(80,180,30,0.07) 0%, transparent 60%), radial-gradient(ellipse 60% 40% at 80% 80%, rgba(40,120,10,0.06) 0%, transparent 60%); pointer-events: none; z-index: 0; }
-    .grid-bg { position: fixed; inset: 0; background-image: linear-gradient(rgba(80,180,30,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(80,180,30,0.04) 1px, transparent 1px); background-size: 40px 40px; pointer-events: none; z-index: 0; }
-    .page { position: relative; z-index: 1; min-height: 100vh; display: flex; flex-direction: column; }
-    nav { display: flex; align-items: center; justify-content: space-between; padding: 1.5rem 4rem; border-bottom: 1px solid rgba(80,180,30,0.12); backdrop-filter: blur(10px); background: rgba(4,13,2,0.6); position: sticky; top: 0; z-index: 10; }
-    .nav-logo { display: flex; align-items: center; gap: 12px; }
-    .nav-logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #5ab520, #2d7a08); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-    .nav-logo span { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
-    .nav-logo span em { color: #7acd30; font-style: normal; }
-    .nav-badge { background: rgba(80,180,30,0.12); border: 1px solid rgba(80,180,30,0.25); color: #7acd30; font-size: 12px; font-weight: 600; padding: 6px 16px; border-radius: 100px; letter-spacing: 0.05em; }
-    .hero { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 5rem 2rem 3rem; text-align: center; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 6px; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 13px; font-weight: 600; padding: 6px 18px; border-radius: 100px; margin-bottom: 2rem; letter-spacing: 0.06em; }
-    .hero-tag::before { content: ''; width: 7px; height: 7px; background: #7acd30; border-radius: 50%; animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
-    .hero h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -2px; margin-bottom: 1.5rem; }
-    .hero h1 span { background: linear-gradient(135deg, #7acd30 0%, #4aad10 50%, #2d8a00 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .main-card { background: rgba(10,22,5,0.8); border: 1px solid rgba(80,180,30,0.15); border-radius: 28px; width: 100%; max-width: 780px; margin: 0 auto; overflow: hidden; backdrop-filter: blur(20px); box-shadow: 0 0 80px rgba(80,180,30,0.06), 0 40px 80px rgba(0,0,0,0.4); }
-    .card-top { padding: 2.5rem 2.5rem 0; display: flex; align-items: center; justify-content: space-between; }
-    .card-title { font-size: 14px; font-weight: 600; color: #4a7a28; text-transform: uppercase; letter-spacing: 0.08em; }
-    .input-group { display: flex; gap: 1rem; margin: 1.25rem 2.5rem 0; }
-    .input-field { width: 100%; padding: 14px 18px; background: rgba(4,13,2,0.6); border: 1px solid rgba(80,180,30,0.2); border-radius: 14px; color: white; font-size: 15px; backdrop-filter: blur(10px); transition: all 0.2s; }
-    .input-field::placeholder { color: #5a7a40; }
-    .input-field:focus { outline: none; border-color: #7acd30; box-shadow: 0 0 0 3px rgba(122,205,48,0.1); }
-    select.input-field option { background: #0a1605; color: white; }
-    .upload-zone { margin: 1.5rem 2.5rem; border: 2px dashed rgba(80,180,30,0.25); border-radius: 20px; padding: 3.5rem 2rem; text-align: center; cursor: pointer; position: relative; background: rgba(80,180,30,0.03); transition: all 0.2s; }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: rgba(80,180,30,0.5); background: rgba(80,180,30,0.07); }
-    .upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
-    .upload-icon-wrap { width: 72px; height: 72px; margin: 0 auto 1rem; background: rgba(80,180,30,0.1); border: 1px solid rgba(80,180,30,0.2); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-    .upload-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
-    .upload-sub { font-size: 14px; color: #4a7028; }
-    .btn-wrap { padding: 1.5rem 2.5rem 2.5rem; display: flex; flex-direction: column; gap: 12px; }
-    .btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px; background: linear-gradient(135deg, #5ab520 0%, #2d8a05 100%); color: white; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; letter-spacing: 0.02em; box-shadow: 0 4px 24px rgba(80,180,30,0.25); }
-    .btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(80,180,30,0.35); }
-    .btn:disabled { background: rgba(30,50,15,0.6); color: #3a5a20; box-shadow: none; cursor: not-allowed; }
-    .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    #preview-wrap { display: none; margin: 0 2.5rem 1rem; border-radius: 16px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); position: relative; }
-    #preview { width: 100%; max-height: 340px; object-fit: cover; display: block; }
-    .preview-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(4,13,2,0.6) 0%, transparent 50%); }
-    .preview-label { position: absolute; bottom: 14px; left: 16px; background: rgba(4,13,2,0.8); border: 1px solid rgba(80,180,30,0.2); color: #7acd30; font-size: 13px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
-    #result-card { display: none; margin: 0 2.5rem 2rem; border-radius: 18px; overflow: hidden; border: 1px solid rgba(80,180,30,0.2); }
-    .result-header { background: linear-gradient(135deg, rgba(40,80,10,0.8), rgba(20,50,5,0.8)); padding: 1.5rem 1.75rem; display: flex; align-items: center; gap: 14px; border-bottom: 1px solid rgba(80,180,30,0.15); }
-    .result-dot-wrap { position: relative; flex-shrink: 0; }
-    .result-dot { width: 14px; height: 14px; border-radius: 50%; background: #7acd30; }
-    .result-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; border: 1px solid rgba(122,205,48,0.3); animation: ripple 2s infinite; }
-    @keyframes ripple { 0%{transform:scale(1);opacity:1} 100%{transform:scale(2);opacity:0} }
-    .result-tag { font-size: 11px; font-weight: 700; color: #5a9028; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 4px; }
-    .disease-name { font-size: 20px; font-weight: 700; color: #c8f070; }
-    .result-body { background: rgba(10,22,5,0.9); padding: 1.5rem 1.75rem; }
-    .result-section-label { font-size: 11px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; margin-top: 16px; display: flex; align-items: center; gap: 6px; }
-    .result-section-label::before { content: ''; width: 18px; height: 1px; background: #3a6018; }
-    .solution-text { font-size: 15px; color: #a8d880; line-height: 1.8; }
+    :root {
+      --g1: #0a1f04;
+      --g2: #061202;
+      --lime: #a8e63d;
+      --lime2: #7cc220;
+      --lime3: #4f8a10;
+      --lime-glow: rgba(168,230,61,0.12);
+      --lime-border: rgba(168,230,61,0.18);
+      --text: #e8f5d0;
+      --muted: #5a7a3a;
+      --danger: #ff5e3a;
+      --warn: #f0a820;
+    }
 
-    /* Confidence + Severity meters */
-    .meters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
-    .meter-box { background: rgba(80,180,30,0.05); border: 1px solid rgba(80,180,30,0.12); border-radius: 14px; padding: 14px 16px; }
-    .meter-label { font-size: 11px; font-weight: 700; color: #3a6018; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
-    .meter-value { font-size: 24px; font-weight: 800; color: #7acd30; margin-bottom: 8px; }
-    .meter-bar-bg { width: 100%; height: 8px; background: rgba(80,180,30,0.1); border-radius: 100px; overflow: hidden; }
-    .meter-bar-fill { height: 100%; border-radius: 100px; transition: width 1s ease; }
-    .meter-bar-fill.confidence { background: linear-gradient(90deg, #4aad10, #7acd30); }
-    .meter-bar-fill.severity-low { background: linear-gradient(90deg, #4aad10, #7acd30); }
-    .meter-bar-fill.severity-med { background: linear-gradient(90deg, #f0a020, #f0c040); }
-    .meter-bar-fill.severity-high { background: linear-gradient(90deg, #c03020, #f05040); }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .result-meta { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
-    .meta-pill { background: rgba(80,180,30,0.08); border: 1px solid rgba(80,180,30,0.15); color: #5a9030; font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
-    #error-card { display: none; margin: 0 2.5rem 1.5rem; background: rgba(40,5,5,0.8); border: 1px solid rgba(150,30,30,0.3); border-radius: 14px; padding: 1.25rem 1.5rem; font-size: 14px; color: #f08080; line-height: 1.6; }
-    footer { text-align: center; padding: 2rem; border-top: 1px solid rgba(80,180,30,0.08); font-size: 13px; color: #2a4a10; margin-top: auto; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--g2);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .canvas-bg {
+      position: fixed; inset: 0; z-index: 0;
+      background:
+        radial-gradient(ellipse 70% 60% at 15% 10%, rgba(100,200,30,0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 85%, rgba(60,150,10,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(80,180,20,0.03) 0%, transparent 70%);
+    }
+    .grid-overlay {
+      position: fixed; inset: 0; z-index: 0;
+      background-image:
+        linear-gradient(rgba(168,230,61,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,230,61,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .orb { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; animation: floatOrb 12s ease-in-out infinite; }
+    .orb1 { width: 300px; height: 300px; background: rgba(120,200,30,0.04); top: 10%; left: 5%; animation-delay: 0s; }
+    .orb2 { width: 200px; height: 200px; background: rgba(80,160,20,0.05); bottom: 20%; right: 10%; animation-delay: 4s; }
+    .orb3 { width: 150px; height: 150px; background: rgba(160,230,40,0.04); top: 50%; left: 40%; animation-delay: 8s; }
+    @keyframes floatOrb { 0%,100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-30px) scale(1.1); } }
+
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.25rem 3rem;
+      background: rgba(6,18,2,0.75);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--lime-border);
+    }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-mark { width: 42px; height: 42px; background: linear-gradient(135deg, var(--lime2), var(--lime3)); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 0 20px rgba(168,230,61,0.2); }
+    .logo-text { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .logo-text em { color: var(--lime); font-style: normal; }
+    .nav-pills { display: flex; gap: 8px; }
+    .nav-pill { background: var(--lime-glow); border: 1px solid var(--lime-border); color: var(--lime2); font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 100px; letter-spacing: 0.06em; display: flex; align-items: center; gap: 5px; }
+    .pulse-dot { width: 6px; height: 6px; background: var(--lime); border-radius: 50%; animation: blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .hero { position: relative; z-index: 1; padding: 4rem 1.5rem 2rem; text-align: center; }
+    .hero-eyebrow { display: inline-flex; align-items: center; gap: 8px; background: var(--lime-glow); border: 1px solid var(--lime-border); color: var(--lime); font-size: 12px; font-weight: 600; padding: 6px 18px; border-radius: 100px; letter-spacing: 0.1em; margin-bottom: 1.75rem; animation: fadeInDown 0.6s ease; }
+    .hero h1 { font-family: 'Syne', sans-serif; font-size: clamp(2.2rem, 5vw, 4.2rem); font-weight: 800; line-height: 1.08; letter-spacing: -2px; margin-bottom: 1rem; animation: fadeInUp 0.7s ease; }
+    .hero h1 .gradient-text { background: linear-gradient(135deg, #a8e63d 0%, #6ab820 60%, #3d7a05 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .hero-sub { color: var(--muted); font-size: 16px; font-weight: 300; margin-bottom: 3rem; animation: fadeInUp 0.8s ease; font-style: italic; }
+
+    @keyframes fadeInDown { from { opacity:0; transform:translateY(-16px) } to { opacity:1; transform:translateY(0) } }
+    @keyframes fadeInUp   { from { opacity:0; transform:translateY(16px) }  to { opacity:1; transform:translateY(0) } }
+
+    .main-card { position: relative; z-index: 1; width: 100%; max-width: 860px; margin: 0 auto; background: rgba(8,20,3,0.85); border: 1px solid var(--lime-border); border-radius: 28px; backdrop-filter: blur(24px); box-shadow: 0 0 100px rgba(100,200,30,0.06), 0 40px 80px rgba(0,0,0,0.5); overflow: hidden; }
+
+    .section-top { padding: 1.75rem 2.25rem 1.25rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(168,230,61,0.06); }
+    .section-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--lime3); text-transform: uppercase; letter-spacing: 0.1em; }
+    .status-tag { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+
+    .controls-row { display: grid; grid-template-columns: 1fr 1fr auto; gap: 10px; padding: 1.25rem 2.25rem 0; }
+    .field { position: relative; }
+    .field-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; pointer-events: none; z-index: 1; }
+    input.ctrl, select.ctrl { width: 100%; padding: 13px 16px 13px 40px; background: rgba(4,12,2,0.7); border: 1px solid rgba(168,230,61,0.15); border-radius: 13px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; transition: all 0.2s; appearance: none; -webkit-appearance: none; }
+    input.ctrl::placeholder { color: var(--muted); }
+    input.ctrl:focus, select.ctrl:focus { outline: none; border-color: rgba(168,230,61,0.4); box-shadow: 0 0 0 3px rgba(168,230,61,0.08); background: rgba(4,12,2,0.9); }
+    select.ctrl option { background: #0a1f04; color: white; }
+    .gps-btn { padding: 13px 18px; background: var(--lime-glow); border: 1px solid var(--lime-border); border-radius: 13px; color: var(--lime); font-size: 18px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+    .gps-btn:hover { background: rgba(168,230,61,0.2); }
+
+    #weather-strip { display: none; margin: 1rem 2.25rem 0; background: linear-gradient(135deg, rgba(40,90,10,0.3), rgba(20,60,5,0.2)); border: 1px solid rgba(168,230,61,0.12); border-radius: 16px; padding: 1rem 1.5rem; animation: slideIn 0.4s ease; }
+    @keyframes slideIn { from { opacity:0; transform:translateY(-8px) } to { opacity:1; transform:translateY(0) } }
+    .weather-grid { display: flex; align-items: center; justify-content: space-around; }
+    .w-item { display: flex; flex-direction: column; align-items: center; gap: 4px; flex: 1; position: relative; }
+    .w-item:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 10%; height: 80%; width: 1px; background: rgba(168,230,61,0.08); }
+    .w-emoji { font-size: 22px; }
+    .w-val { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; color: var(--lime); }
+    .w-key { font-size: 10px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+    .city-name-tag { text-align: center; font-size: 11px; color: var(--muted); margin-top: 8px; font-style: italic; }
+
+    .upload-wrap { padding: 1.5rem 2.25rem 0; }
+    .dropzone { border: 2px dashed rgba(168,230,61,0.2); border-radius: 20px; padding: 3.5rem 2rem; text-align: center; cursor: pointer; position: relative; background: rgba(168,230,61,0.02); transition: all 0.25s; }
+    .dropzone:hover, .dropzone.drag-over { border-color: rgba(168,230,61,0.45); background: rgba(168,230,61,0.06); }
+    .dropzone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-icon { width: 68px; height: 68px; margin: 0 auto 1rem; background: linear-gradient(135deg, rgba(168,230,61,0.12), rgba(100,180,20,0.08)); border: 1px solid rgba(168,230,61,0.2); border-radius: 18px; display: flex; align-items: center; justify-content: center; font-size: 30px; transition: transform 0.2s; }
+    .dropzone:hover .upload-icon { transform: scale(1.05) rotate(-3deg); }
+    .upload-title { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .upload-sub { font-size: 13px; color: var(--muted); }
+    .upload-formats { display: flex; gap: 6px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
+    .format-chip { background: rgba(168,230,61,0.06); border: 1px solid rgba(168,230,61,0.12); color: var(--muted); font-size: 10px; font-weight: 600; padding: 3px 10px; border-radius: 100px; letter-spacing: 0.06em; }
+
+    #preview-wrap { display: none; margin: 1.5rem 2.25rem 0; border-radius: 18px; overflow: hidden; border: 1px solid rgba(168,230,61,0.15); position: relative; }
+    #preview { width: 100%; max-height: 320px; object-fit: cover; display: block; }
+    .preview-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(6,18,2,0.7) 0%, transparent 50%); }
+    .preview-chip { position: absolute; bottom: 14px; left: 14px; background: rgba(6,18,2,0.85); border: 1px solid rgba(168,230,61,0.25); color: var(--lime); font-size: 12px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
+    .preview-change { position: absolute; bottom: 14px; right: 14px; background: rgba(6,18,2,0.7); border: 1px solid rgba(168,230,61,0.15); color: var(--muted); font-size: 11px; padding: 5px 12px; border-radius: 100px; cursor: pointer; }
+    .preview-change:hover { color: var(--lime); border-color: var(--lime-border); }
+
+    #risk-banner { display: none; margin: 1rem 2.25rem 0; border-radius: 13px; padding: 12px 18px; font-size: 13px; font-weight: 600; align-items: center; gap: 10px; }
+    #risk-banner.high { background: rgba(255,60,20,0.1); border: 1px solid rgba(255,60,20,0.3); color: #ff7a60; }
+    #risk-banner.medium { background: rgba(240,168,32,0.1); border: 1px solid rgba(240,168,32,0.3); color: #f0c860; }
+    #risk-banner.low { background: rgba(100,200,30,0.1); border: 1px solid rgba(100,200,30,0.25); color: var(--lime); }
+
+    #error-card { display: none; margin: 1rem 2.25rem 0; background: rgba(50,10,5,0.8); border: 1px solid rgba(200,50,30,0.3); border-radius: 13px; padding: 1rem 1.25rem; font-size: 13px; color: #f08070; line-height: 1.7; }
+
+    #result-card { display: none; margin: 1.5rem 2.25rem 0; border-radius: 20px; overflow: hidden; border: 1px solid rgba(168,230,61,0.15); animation: slideIn 0.5s ease; }
+    .result-head { background: linear-gradient(135deg, rgba(30,70,8,0.9), rgba(16,45,4,0.9)); padding: 1.5rem 1.75rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(168,230,61,0.1); flex-wrap: wrap; gap: 12px; }
+    .result-head-left { display: flex; align-items: center; gap: 16px; }
+    .status-ring { width: 44px; height: 44px; border-radius: 50%; background: linear-gradient(135deg, var(--lime2), var(--lime3)); display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; box-shadow: 0 0 20px rgba(168,230,61,0.25); animation: pulseRing 2s ease-in-out infinite; }
+    @keyframes pulseRing { 0%,100% { box-shadow: 0 0 20px rgba(168,230,61,0.25); } 50% { box-shadow: 0 0 35px rgba(168,230,61,0.4); } }
+    .result-label { font-size: 11px; font-weight: 700; color: var(--lime3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+    .disease-name { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; color: #d0f080; line-height: 1.2; }
+    .voice-btn { background: rgba(168,230,61,0.1); border: 1px solid rgba(168,230,61,0.25); color: var(--lime2); padding: 9px 16px; border-radius: 11px; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.2s; white-space: nowrap; font-family: 'DM Sans', sans-serif; }
+    .voice-btn:hover { background: rgba(168,230,61,0.2); }
+    .voice-btn.playing { color: #fff; background: rgba(168,230,61,0.3); }
+
+    .result-body { background: rgba(6,16,2,0.9); padding: 1.5rem 1.75rem; }
+    .section-label { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 10px; margin-top: 18px; display: flex; align-items: center; gap: 8px; }
+    .section-label::before { content: ''; width: 20px; height: 1px; background: rgba(168,230,61,0.2); }
+
+    .treatment-tabs { display: flex; gap: 6px; margin-bottom: 12px; margin-top: 6px; }
+    .tab-btn { padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; border: 1px solid transparent; transition: all 0.2s; background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; }
+    .tab-btn.active { background: rgba(168,230,61,0.1); border-color: rgba(168,230,61,0.2); color: var(--lime); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    .solution-text { font-size: 14px; color: rgba(200,240,140,0.9); line-height: 1.85; }
+    .crop-tip { background: rgba(168,230,61,0.05); border: 1px solid rgba(168,230,61,0.1); border-left: 3px solid var(--lime3); border-radius: 10px; padding: 12px 16px; margin-top: 10px; font-size: 13px; color: var(--lime2); line-height: 1.7; }
+
+    .meters-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
+    .meter-box { background: rgba(168,230,61,0.03); border: 1px solid rgba(168,230,61,0.1); border-radius: 14px; padding: 14px 16px; }
+    .meter-lbl { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .meter-val { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--lime); margin-bottom: 8px; }
+    .bar-bg { width: 100%; height: 7px; background: rgba(168,230,61,0.08); border-radius: 100px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 100px; transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .bar-conf { background: linear-gradient(90deg, #4aad10, #a8e63d); }
+    .bar-sev-low { background: linear-gradient(90deg, #4aad10, #7cc220); }
+    .bar-sev-med { background: linear-gradient(90deg, #f0a020, #f0c840); }
+    .bar-sev-high { background: linear-gradient(90deg, #c03020, #f05040); }
+
+    .meta-pills { display: flex; gap: 7px; margin-top: 16px; flex-wrap: wrap; }
+    .mpill { background: rgba(168,230,61,0.06); border: 1px solid rgba(168,230,61,0.12); color: var(--muted); font-size: 11px; font-weight: 600; padding: 5px 14px; border-radius: 100px; }
+
+    #calendar-section { display: none; padding: 0 1.75rem 1.5rem; background: rgba(6,16,2,0.9); border-top: 1px solid rgba(168,230,61,0.06); }
+    .section-label.cal { margin-top: 1.5rem; }
+    .calendar-grid { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .cal-month { flex-shrink: 0; background: rgba(168,230,61,0.04); border: 1px solid rgba(168,230,61,0.1); border-radius: 10px; padding: 8px 14px; text-align: center; min-width: 70px; }
+    .cal-month.now { border-color: rgba(168,230,61,0.35); background: rgba(168,230,61,0.08); }
+    .cal-mon { font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; }
+    .cal-icon { font-size: 18px; margin: 4px 0; }
+    .cal-act { font-size: 10px; color: var(--lime3); }
+
+    #history-section { display: none; margin: 0 2.25rem; }
+    .history-hdr { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 10px; }
+    .history-list { display: flex; flex-direction: column; gap: 7px; }
+    .h-item { background: rgba(168,230,61,0.04); border: 1px solid rgba(168,230,61,0.1); border-radius: 11px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; transition: all 0.2s; }
+    .h-item:hover { background: rgba(168,230,61,0.08); }
+    .h-dis { color: rgba(200,240,140,0.9); font-weight: 600; font-size: 13px; }
+    .h-meta { color: var(--muted); font-size: 11px; }
+    .h-risk { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .h-risk.LOW { background: rgba(100,200,30,0.1); color: var(--lime2); }
+    .h-risk.MEDIUM { background: rgba(240,168,32,0.1); color: #f0c840; }
+    .h-risk.HIGH { background: rgba(255,60,20,0.1); color: #ff7a60; }
+
+    .btn-area { padding: 1.5rem 2.25rem 2.25rem; display: flex; flex-direction: column; gap: 10px; }
+    .btn-primary { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 17px; border: none; border-radius: 15px; background: linear-gradient(135deg, #6ab820 0%, #3d8005 100%); color: white; font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.25s; letter-spacing: 0.02em; box-shadow: 0 4px 28px rgba(100,184,32,0.25); }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 36px rgba(100,184,32,0.4); }
+    .btn-primary:disabled { background: rgba(30,50,15,0.6); color: var(--muted); box-shadow: none; cursor: not-allowed; }
+    .btn-pdf { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 15px; border: none; border-radius: 15px; background: linear-gradient(135deg, #e06020, #b84010); color: white; font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; cursor: pointer; transition: all 0.25s; box-shadow: 0 4px 20px rgba(200,80,30,0.2); }
+    .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,80,30,0.35); }
+    .spinner { display: none; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.25); border-top-color: white; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg) } }
+
+    footer { position: relative; z-index: 1; text-align: center; padding: 2rem; border-top: 1px solid rgba(168,230,61,0.06); font-size: 12px; color: #2a4a12; margin-top: 3rem; }
+
+    @media (max-width: 640px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-pills { display: none; }
+      .hero { padding: 2.5rem 1rem 1.5rem; }
+      .controls-row { grid-template-columns: 1fr auto; }
+      .controls-row .field:last-of-type { grid-column: 1 / -1; }
+      .section-top, .controls-row, .upload-wrap, #weather-strip, #preview-wrap,
+      #error-card, #result-card, #history-section, .btn-area, #risk-banner { margin-left: 1.25rem; margin-right: 1.25rem; }
+      .meters-row { grid-template-columns: 1fr; }
+      .result-head { flex-direction: column; align-items: flex-start; }
+      .disease-name { font-size: 16px; }
+      .main-card { border-radius: 20px; }
+    }
   </style>
 </head>
 <body>
-  <div class="bg-glow"></div>
-  <div class="grid-bg"></div>
-  <div class="page">
-    <nav>
-      <div class="nav-logo">
-        <div class="nav-logo-icon">🌱</div>
-        <span>Agri<em>Shield</em> AI</span>
+<div class="canvas-bg"></div>
+<div class="grid-overlay"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div class="orb orb3"></div>
+
+<nav>
+  <div class="logo">
+    <div class="logo-mark">🌱</div>
+    <div class="logo-text">Agri<em>Shield</em> AI</div>
+  </div>
+  <div class="nav-pills">
+    <div class="nav-pill"><div class="pulse-dot"></div> LIVE AI</div>
+    <div class="nav-pill">🌦️ WEATHER</div>
+    <div class="nav-pill">📄 PDF</div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow"><div class="pulse-dot"></div> AI-POWERED CROP DISEASE DETECTION</div>
+  <h1>Detect. Diagnose.<br><span class="gradient-text">Protect Your Harvest.</span></h1>
+  <p class="hero-sub">Upload a plant photo — get instant AI diagnosis with live weather intelligence</p>
+
+  <div class="main-card">
+    <div class="section-top">
+      <span class="section-title">Smart Crop Analysis</span>
+      <span class="status-tag"><span style="color:var(--lime)">●</span> &nbsp;Ready</span>
+    </div>
+
+    <div class="controls-row">
+      <div class="field">
+        <span class="field-icon">📍</span>
+        <input type="text" id="cityInput" class="ctrl" placeholder="City name" value="Chennai">
       </div>
-      <div class="nav-badge">🌦️ WEATHER + PDF + AI DIAGNOSIS</div>
-    </nav>
+      <button class="gps-btn" onclick="getGPS()" title="Detect my location" id="gpsBtn">📡</button>
+      <div class="field">
+        <span class="field-icon">🌐</span>
+        <select id="langInput" class="ctrl">
+          <option value="English">English</option>
+          <option value="Tamil">Tamil</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Telugu">Telugu</option>
+          <option value="Kannada">Kannada</option>
+          <option value="Malayalam">Malayalam</option>
+        </select>
+      </div>
+    </div>
 
-    <div class="hero">
-      <div class="hero-tag">AI-POWERED CROP DISEASE DETECTION</div>
-      <h1>Detect Plant Diseases<br><span>Instantly with Weather AI</span></h1>
+    <div id="weather-strip">
+      <div class="weather-grid">
+        <div class="w-item"><span class="w-emoji" id="w-icon">🌤️</span><span class="w-val" id="w-cond">--</span><span class="w-key">Condition</span></div>
+        <div class="w-item"><span class="w-emoji">🌡️</span><span class="w-val" id="w-temp">--°C</span><span class="w-key">Temp</span></div>
+        <div class="w-item"><span class="w-emoji">💧</span><span class="w-val" id="w-hum">--%</span><span class="w-key">Humidity</span></div>
+        <div class="w-item"><span class="w-emoji">🔵</span><span class="w-val" id="w-pres">-- hPa</span><span class="w-key">Pressure</span></div>
+      </div>
+      <div class="city-name-tag" id="w-city-label">--</div>
+    </div>
 
-      <div class="main-card">
-        <div class="card-top">
-          <span class="card-title">Smart Crop Analysis</span>
-          <span style="font-size:13px;color:#3a6018;">Works for ANY city worldwide</span>
-        </div>
-
-        <div class="input-group">
-          <input type="text" id="cityInput" class="input-field" placeholder="📍 City (Chennai)" value="Chennai">
-          <select id="languageInput" class="input-field">
-            <option value="English">🇺🇸 English</option>
-            <option value="Tamil">🇮🇳 Tamil</option>
-            <option value="Hindi">🇮🇳 Hindi</option>
-            <option value="Telugu">🇮🇳 Telugu</option>
-            <option value="Kannada">🇮🇳 Kannada</option>
-            <option value="Malayalam">🇮🇳 Malayalam</option>
-          </select>
-        </div>
-
-        <div class="upload-zone" id="dropzone">
-          <input type="file" id="imageInput" accept="image/*">
-          <div class="upload-icon-wrap">📸</div>
-          <p class="upload-title">Drop your plant photo here</p>
-          <p class="upload-sub">or click to browse from your device</p>
-        </div>
-
-        <div id="preview-wrap">
-          <img id="preview" src="" alt="Plant preview">
-          <div class="preview-overlay"></div>
-          <span class="preview-label">✓ Image ready</span>
-        </div>
-
-        <div id="error-card"></div>
-
-        <div id="result-card">
-          <div class="result-header">
-            <div class="result-dot-wrap"><div class="result-dot"></div></div>
-            <div>
-              <p class="result-tag" id="diseaseTag">Analyzing...</p>
-              <p class="disease-name" id="result"></p>
-            </div>
-          </div>
-          <div class="result-body">
-            <p class="result-section-label">Recommended Treatment</p>
-            <p class="solution-text" id="solution"></p>
-            <p class="result-section-label">Weather Intelligence</p>
-            <p class="solution-text" id="insight"></p>
-
-            <!-- Confidence + Severity meters -->
-            <div class="meters-row">
-              <div class="meter-box">
-                <div class="meter-label">🎯 AI Confidence</div>
-                <div class="meter-value" id="confidenceVal">--%</div>
-                <div class="meter-bar-bg">
-                  <div class="meter-bar-fill confidence" id="confidenceBar" style="width:0%"></div>
-                </div>
-              </div>
-              <div class="meter-box">
-                <div class="meter-label">🔥 Severity Meter</div>
-                <div class="meter-value" id="severityVal">--/10</div>
-                <div class="meter-bar-bg">
-                  <div class="meter-bar-fill severity-low" id="severityBar" style="width:0%"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="result-meta">
-              <span class="meta-pill" id="weatherPill"></span>
-              <span class="meta-pill" id="riskPill"></span>
-              <span class="meta-pill">🛡️ AgriShield Verified</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="btn-wrap">
-          <button class="btn" id="detectBtn" onclick="upload()" disabled>
-            <span class="btn-icon" id="btn-icon">🔍</span>
-            <span id="btn-text">Select an image first</span>
-            <div class="spinner" id="spinner"></div>
-          </button>
+    <div class="upload-wrap">
+      <div class="dropzone" id="dropzone">
+        <input type="file" id="imageInput" accept="image/*">
+        <div class="upload-icon">📸</div>
+        <p class="upload-title">Drop your plant photo here</p>
+        <p class="upload-sub">or click to browse your device</p>
+        <div class="upload-formats">
+          <span class="format-chip">JPG</span><span class="format-chip">PNG</span>
+          <span class="format-chip">WEBP</span><span class="format-chip">HEIC</span>
         </div>
       </div>
     </div>
 
-    <footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq AI + OpenWeatherMap + PDF Reports</footer>
+    <div id="preview-wrap">
+      <img id="preview" src="" alt="Plant preview">
+      <div class="preview-overlay"></div>
+      <span class="preview-chip">✓ Image ready</span>
+      <span class="preview-change" onclick="resetImage()">Change ↩</span>
+    </div>
+
+    <div id="risk-banner"></div>
+    <div id="error-card"></div>
+
+    <div id="result-card">
+      <div class="result-head">
+        <div class="result-head-left">
+          <div class="status-ring" id="statusIcon">🔬</div>
+          <div>
+            <p class="result-label" id="diseaseTag">Detected</p>
+            <p class="disease-name" id="diseaseName">—</p>
+          </div>
+        </div>
+        <button class="voice-btn" id="voiceBtn" onclick="speak()">🔊 Listen</button>
+      </div>
+      <div class="result-body">
+        <p class="section-label">Treatment</p>
+        <div class="treatment-tabs">
+          <button class="tab-btn active" onclick="switchTab('organic')">🌿 Organic</button>
+          <button class="tab-btn" onclick="switchTab('chemical')">🧪 Chemical</button>
+        </div>
+        <div class="tab-content active" id="tab-organic"><p class="solution-text" id="organicText">—</p></div>
+        <div class="tab-content" id="tab-chemical"><p class="solution-text" id="chemicalText">—</p></div>
+        <div class="crop-tip" id="cropTipBox"></div>
+        <p class="section-label">Weather Intelligence</p>
+        <p class="solution-text" id="insightText">—</p>
+        <p class="section-label">Diagnostics</p>
+        <div class="meters-row">
+          <div class="meter-box">
+            <div class="meter-lbl">🎯 AI Confidence</div>
+            <div class="meter-val" id="confVal">--%</div>
+            <div class="bar-bg"><div class="bar-fill bar-conf" id="confBar" style="width:0%"></div></div>
+          </div>
+          <div class="meter-box">
+            <div class="meter-lbl">🔥 Severity</div>
+            <div class="meter-val" id="sevVal">--/10</div>
+            <div class="bar-bg"><div class="bar-fill bar-sev-low" id="sevBar" style="width:0%"></div></div>
+          </div>
+        </div>
+        <div class="meta-pills">
+          <span class="mpill" id="mWeather"></span>
+          <span class="mpill" id="mRisk"></span>
+          <span class="mpill" id="mTime"></span>
+          <span class="mpill">🛡️ AgriShield Verified</span>
+        </div>
+      </div>
+      <div id="calendar-section">
+        <p class="section-label cal">📅 Crop Care Calendar</p>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </div>
+
+    <div id="history-section">
+      <div style="padding: 1.25rem 0 0">
+        <p class="history-hdr">📋 Recent Scans</p>
+        <div class="history-list" id="historyList"></div>
+      </div>
+    </div>
+
+    <div class="btn-area">
+      <button class="btn-primary" id="analyzeBtn" onclick="analyze()" disabled>
+        <span id="btnIcon">🔍</span>
+        <span id="btnText">Select an image first</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </div>
   </div>
+</div>
 
-  <script>
-    const input       = document.getElementById('imageInput');
-    const btn         = document.getElementById('detectBtn');
-    const btnText     = document.getElementById('btn-text');
-    const btnIcon     = document.getElementById('btn-icon');
-    const spinner     = document.getElementById('spinner');
-    const previewWrap = document.getElementById('preview-wrap');
-    const dropzone    = document.getElementById('dropzone');
-    const resultCard  = document.getElementById('result-card');
-    const errorCard   = document.getElementById('error-card');
+<footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + PDF Reports</footer>
 
-    input.addEventListener('change', function () {
-      const file = this.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = e => {
-        document.getElementById('preview').src = e.target.result;
-        previewWrap.style.display = 'block';
-        dropzone.style.display = 'none';
-      };
-      reader.readAsDataURL(file);
-      btn.disabled = false;
-      btnText.textContent = 'Analyze Plant Disease';
-      resultCard.style.display = 'none';
-      errorCard.style.display = 'none';
-      const old = document.getElementById('downloadBtn');
-      if (old) old.remove();
-    });
+<script>
+  const WEATHER_ICONS = { Clear:'☀️', Clouds:'☁️', Rain:'🌧️', Drizzle:'🌦️', Thunderstorm:'⛈️', Snow:'❄️', Mist:'🌫️', Haze:'🌫️', Smoke:'🌫️', Fog:'🌫️' };
+  const LANG_CODES    = { English:'en-IN', Tamil:'ta-IN', Hindi:'hi-IN', Telugu:'te-IN', Kannada:'kn-IN', Malayalam:'ml-IN' };
+  const MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const CAL_ICONS = ['🌱','🌿','☀️','💧','🌾','✂️','🌧️','🧪','🌱','🌿','🌾','❄️'];
+  const CAL_ACTS  = ['Sow seeds','Thin seedlings','Fertilize','Irrigate','Spray pesticide','Prune','Harvest','Test soil','Sow seeds','Mulch','Harvest','Rest field'];
 
-    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-    dropzone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropzone.classList.remove('drag-over');
-      input.files = e.dataTransfer.files;
-      input.dispatchEvent(new Event('change'));
-    });
+  let lastResult  = null;
+  let scanHistory = JSON.parse(localStorage.getItem('agrishield_v2') || '[]');
 
-    function upload() {
-      const file = input.files[0];
-      if (!file) return;
-
-      btnIcon.style.display = 'none';
-      btnText.textContent = 'Analyzing with Weather AI...';
-      spinner.style.display = 'block';
-      btn.disabled = true;
-      errorCard.style.display = 'none';
-      resultCard.style.display = 'none';
-
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('city', document.getElementById('cityInput').value.trim() || 'Chennai');
-      formData.append('language', document.getElementById('languageInput').value || 'English');
-
-      fetch('/predict', { method: 'POST', body: formData })
-        .then(res => res.json().then(data => ({ ok: res.ok, data })))
-        .then(({ ok, data }) => {
-          if (!ok) throw new Error(data.error || 'Server error');
-
-          document.getElementById('result').innerText     = data.disease;
-          document.getElementById('solution').innerText   = data.solution;
-          document.getElementById('insight').innerText    = data.insight;
-          document.getElementById('diseaseTag').innerText = data.disease.toLowerCase().includes('healthy') ? '✅ Healthy Plant' : '⚠️ Disease Detected';
-          document.getElementById('weatherPill').innerText = `🌦️ ${data.weather}`;
-          document.getElementById('riskPill').innerText    = `⚠️ ${data.risk} RISK`;
-
-          // Confidence meter
-          const conf = data.confidence || 75;
-          document.getElementById('confidenceVal').innerText = `${conf}%`;
-          setTimeout(() => {
-            document.getElementById('confidenceBar').style.width = `${conf}%`;
-          }, 100);
-
-          // Severity meter
-          const sev = data.severity || 5;
-          document.getElementById('severityVal').innerText = `${sev}/10`;
-          const sevBar = document.getElementById('severityBar');
-          sevBar.className = 'meter-bar-fill ' + (sev <= 3 ? 'severity-low' : sev <= 6 ? 'severity-med' : 'severity-high');
-          setTimeout(() => {
-            sevBar.style.width = `${sev * 10}%`;
-          }, 100);
-
-          // PDF button
-          const old = document.getElementById('downloadBtn');
-          if (old) old.remove();
-          const dlBtn = document.createElement('button');
-          dlBtn.innerHTML = '📄 Download PDF Report';
-          dlBtn.className = 'btn';
-          dlBtn.id = 'downloadBtn';
-          dlBtn.style.background = 'linear-gradient(135deg, #ff6b35, #f7931e)';
-          dlBtn.onclick = () => downloadPDF(data);
-          document.querySelector('.btn-wrap').appendChild(dlBtn);
-
-          resultCard.style.display = 'block';
-          resultCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          btnText.textContent = 'Analyze Another Plant';
+  function getGPS() {
+    const btn = document.getElementById('gpsBtn');
+    btn.textContent = '⏳';
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`, {
+          headers: { 'User-Agent': 'AgriShieldAI/1.0' }
         })
-        .catch(err => {
-          errorCard.innerHTML = `⚠️ <strong>Error:</strong> ${err.message}<br><small>Check API keys & internet connection</small>`;
-          errorCard.style.display = 'block';
-          btnText.textContent = 'Try Again';
+        .then(r => r.json())
+        .then(d => {
+          const city = d.address.city || d.address.town || d.address.village || 'Chennai';
+          document.getElementById('cityInput').value = city;
+          btn.textContent = '✅';
+          setTimeout(() => btn.textContent = '📡', 2000);
         })
-        .finally(() => {
-          spinner.style.display = 'none';
-          btnIcon.style.display = 'inline';
-          btnIcon.textContent = '🔍';
-          btn.disabled = false;
-        });
-    }
+        .catch(() => { btn.textContent = '📡'; });
+      },
+      () => { btn.textContent = '📡'; alert('GPS denied. Enter city manually.'); }
+    );
+  }
 
-    function downloadPDF(data) {
-      fetch('/download-report', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) =>
+      b.classList.toggle('active', (i === 0 && tab === 'organic') || (i === 1 && tab === 'chemical'))
+    );
+    document.getElementById('tab-organic').classList.toggle('active', tab === 'organic');
+    document.getElementById('tab-chemical').classList.toggle('active', tab === 'chemical');
+  }
+
+  const imageInput = document.getElementById('imageInput');
+  const dropzone   = document.getElementById('dropzone');
+
+  imageInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById('preview').src = e.target.result;
+      document.getElementById('preview-wrap').style.display = 'block';
+      dropzone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    document.getElementById('analyzeBtn').disabled = false;
+    document.getElementById('btnText').textContent = 'Analyze Plant Disease';
+    document.getElementById('result-card').style.display = 'none';
+    document.getElementById('error-card').style.display = 'none';
+    document.getElementById('risk-banner').style.display = 'none';
+    const pdf = document.getElementById('pdfBtn');
+    if (pdf) pdf.remove();
+  });
+
+  dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', e => {
+    e.preventDefault(); dropzone.classList.remove('drag-over');
+    imageInput.files = e.dataTransfer.files;
+    imageInput.dispatchEvent(new Event('change'));
+  });
+
+  function resetImage() {
+    imageInput.value = '';
+    document.getElementById('preview-wrap').style.display = 'none';
+    dropzone.style.display = 'block';
+    document.getElementById('analyzeBtn').disabled = true;
+    document.getElementById('btnText').textContent = 'Select an image first';
+  }
+
+  function analyze() {
+    const file = imageInput.files[0];
+    if (!file) return;
+    document.getElementById('btnIcon').style.display = 'none';
+    document.getElementById('btnText').textContent = 'Analyzing with Weather AI...';
+    document.getElementById('spinner').style.display = 'block';
+    document.getElementById('analyzeBtn').disabled = true;
+    document.getElementById('error-card').style.display = 'none';
+    document.getElementById('result-card').style.display = 'none';
+    document.getElementById('risk-banner').style.display = 'none';
+
+    const fd = new FormData();
+    fd.append('image',    file);
+    fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
+    fd.append('language', document.getElementById('langInput').value);
+
+    fetch('/predict', { method: 'POST', body: fd })
+      .then(r => r.json().then(d => ({ ok: r.ok, d })))
+      .then(({ ok, d }) => { if (!ok) throw new Error(d.error || 'Server error'); renderResult(d); })
+      .catch(err => {
+        const ec = document.getElementById('error-card');
+        ec.innerHTML = `⚠️ <strong>Error:</strong> ${err.message}<br><small style="opacity:0.7">Check your API keys & internet connection</small>`;
+        ec.style.display = 'block';
+        document.getElementById('btnText').textContent = 'Try Again';
       })
-      .then(res => {
-        if (!res.ok) throw new Error('PDF generation failed');
-        return res.blob();
-      })
-      .then(blob => {
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `AgriShield_${data.city}_${Date.now()}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      })
-      .catch(err => alert('PDF download failed: ' + err.message));
+      .finally(() => {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('btnIcon').style.display = 'inline';
+        document.getElementById('btnIcon').textContent = '🔍';
+        document.getElementById('analyzeBtn').disabled = false;
+      });
+  }
+
+  function renderResult(data) {
+    lastResult = data;
+    const isHealthy = data.disease.toLowerCase().includes('health');
+    document.getElementById('statusIcon').textContent  = isHealthy ? '✅' : '⚠️';
+    document.getElementById('diseaseTag').textContent  = isHealthy ? 'HEALTHY PLANT' : 'DISEASE DETECTED';
+    document.getElementById('diseaseName').textContent = data.disease;
+    document.getElementById('organicText').textContent  = data.organic  || 'No data.';
+    document.getElementById('chemicalText').textContent = data.chemical || 'No data.';
+    document.getElementById('cropTipBox').textContent   = data.crop_tip ? `💡 ${data.crop_tip}` : '';
+    document.getElementById('w-icon').textContent       = WEATHER_ICONS[data.condition] || '🌤️';
+    document.getElementById('w-cond').textContent       = data.condition;
+    document.getElementById('w-temp').textContent       = `${data.temp}°C`;
+    document.getElementById('w-hum').textContent        = `${data.humidity}%`;
+    document.getElementById('w-pres').textContent       = `${data.pressure} hPa`;
+    document.getElementById('w-city-label').textContent = `📍 ${data.city}`;
+    document.getElementById('weather-strip').style.display = 'block';
+    document.getElementById('insightText').textContent  = data.insight;
+
+    const conf = data.confidence || 75;
+    const sev  = data.severity   || 5;
+    document.getElementById('confVal').textContent = `${conf}%`;
+    document.getElementById('sevVal').textContent  = `${sev}/10`;
+    setTimeout(() => {
+      document.getElementById('confBar').style.width = `${conf}%`;
+      const sb = document.getElementById('sevBar');
+      sb.className = 'bar-fill ' + (sev <= 3 ? 'bar-sev-low' : sev <= 6 ? 'bar-sev-med' : 'bar-sev-high');
+      sb.style.width = `${sev * 10}%`;
+    }, 120);
+
+    document.getElementById('mWeather').textContent = `🌦️ ${data.weather}`;
+    document.getElementById('mRisk').textContent    = `⚠️ ${data.risk} RISK`;
+    document.getElementById('mTime').textContent    = `🕐 ${data.timestamp}`;
+
+    const banner = document.getElementById('risk-banner');
+    const msgs   = { HIGH:'🚨 HIGH RISK — Immediate action required. Apply treatment within 24 hours.', MEDIUM:'⚠️ MEDIUM RISK — Monitor closely and apply treatment within 3–5 days.', LOW:'✅ LOW RISK — Plant looks manageable. Follow preventive care routine.' };
+    banner.className   = data.risk.toLowerCase();
+    banner.textContent = msgs[data.risk] || msgs.MEDIUM;
+    banner.style.display = 'flex';
+
+    renderCalendar();
+    scanHistory.unshift({ disease: data.disease, risk: data.risk, city: data.city, time: data.timestamp });
+    if (scanHistory.length > 6) scanHistory.pop();
+    localStorage.setItem('agrishield_v2', JSON.stringify(scanHistory));
+    renderHistory();
+
+    const old = document.getElementById('pdfBtn');
+    if (old) old.remove();
+    const pdfBtn = document.createElement('button');
+    pdfBtn.id        = 'pdfBtn';
+    pdfBtn.className = 'btn-pdf';
+    pdfBtn.innerHTML = '📄 Download PDF Report';
+    pdfBtn.onclick   = () => downloadPDF(data);
+    document.querySelector('.btn-area').appendChild(pdfBtn);
+
+    document.getElementById('result-card').style.display = 'block';
+    document.getElementById('calendar-section').style.display = 'block';
+    document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    document.getElementById('btnText').textContent = 'Analyze Another Plant';
+  }
+
+  function renderCalendar() {
+    const now  = new Date().getMonth();
+    const grid = document.getElementById('calendarGrid');
+    grid.innerHTML = '';
+    for (let i = 0; i < 12; i++) {
+      const m = document.createElement('div');
+      m.className = 'cal-month' + (i === now ? ' now' : '');
+      m.innerHTML = `<div class="cal-mon">${MONTHS[i]}</div><div class="cal-icon">${CAL_ICONS[i]}</div><div class="cal-act">${CAL_ACTS[i]}</div>`;
+      grid.appendChild(m);
     }
-  </script>
+  }
+
+  function renderHistory() {
+    if (!scanHistory.length) return;
+    document.getElementById('history-section').style.display = 'block';
+    document.getElementById('historyList').innerHTML = scanHistory.map(s => `
+      <div class="h-item">
+        <div><div class="h-dis">${s.disease}</div><div class="h-meta">📍 ${s.city} · 🕐 ${s.time}</div></div>
+        <span class="h-risk ${s.risk}">${s.risk}</span>
+      </div>`).join('');
+  }
+  renderHistory();
+
+  function speak() {
+    if (!lastResult) return;
+    const voiceBtn = document.getElementById('voiceBtn');
+    const lang  = document.getElementById('langInput').value;
+    const text  = `Disease detected: ${lastResult.disease}. Risk level: ${lastResult.risk}. Treatment: ${lastResult.organic}`;
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang  = LANG_CODES[lang] || 'en-IN';
+    utter.rate  = 0.88;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utter);
+    voiceBtn.textContent = '🔊 Playing...';
+    voiceBtn.classList.add('playing');
+    utter.onend = () => { voiceBtn.textContent = '🔊 Listen'; voiceBtn.classList.remove('playing'); };
+  }
+
+  function downloadPDF(data) {
+    const payload = { ...data };
+    delete payload.image_b64;
+    fetch('/download-report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    })
+    .then(r => { if (!r.ok) throw new Error('PDF generation failed'); return r.blob(); })
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a   = document.createElement('a');
+      a.href = url; a.download = `AgriShield_${data.city}_${Date.now()}.pdf`;
+      document.body.appendChild(a); a.click();
+      URL.revokeObjectURL(url); document.body.removeChild(a);
+    })
+    .catch(err => alert('PDF error: ' + err.message));
+  }
+</script>
 </body>
 </html>
