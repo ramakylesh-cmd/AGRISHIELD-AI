@@ -3,7 +3,7 @@ import re
 import requests
 import io
 import base64
-from flask import Flask, request, jsonify, render_template, send_file
+from flask import Flask, request, jsonify, render_template, send_file, send_from_directory
 from flask_cors import CORS
 from groq import Groq
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
@@ -231,6 +231,11 @@ def download_report():
 def manifest():
     return app.send_static_file("manifest.json")
 
+# ── PWA: serve service worker ──
+@app.route("/static/sw.js")
+def sw():
+    return send_from_directory('static', 'sw.js',
+                               mimetype='application/javascript')
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))

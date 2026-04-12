@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>AgriShield AI — Smart Crop Doctor</title>
-  <!-- PWA -->
   <link rel="manifest" href="/static/manifest.json">
   <meta name="theme-color" content="#061202">
   <meta name="mobile-web-app-capable" content="yes">
@@ -15,9 +14,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
   <style>
-    /* ══════════════════════════════════════════════
-       ROOT TOKENS
-    ══════════════════════════════════════════════ */
     :root {
       --g1: #0a1f04;
       --g2: #061202;
@@ -44,57 +40,34 @@
       cursor: none;
     }
 
-    /* ══════════════════════════════════════════════
-       CUSTOM CURSOR — GOD MODE
-    ══════════════════════════════════════════════ */
     .cursor-dot {
-      position: fixed;
-      width: 7px; height: 7px;
-      background: var(--lime);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99999;
+      position: fixed; width: 7px; height: 7px;
+      background: var(--lime); border-radius: 50%;
+      pointer-events: none; z-index: 99999;
       transform: translate(-50%, -50%);
       box-shadow: 0 0 8px var(--lime), 0 0 18px rgba(168,230,61,0.6);
-      transition: transform 0.08s ease;
-      will-change: left, top;
+      transition: transform 0.08s ease; will-change: left, top;
     }
     .cursor-ring {
-      position: fixed;
-      width: 28px; height: 28px;
-      border: 1.5px solid rgba(168,230,61,0.45);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 99998;
+      position: fixed; width: 28px; height: 28px;
+      border: 1.5px solid rgba(168,230,61,0.45); border-radius: 50%;
+      pointer-events: none; z-index: 99998;
       transform: translate(-50%, -50%);
       transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, left 0.06s ease, top 0.06s ease;
       will-change: left, top;
     }
-    .cursor-ring.hovering {
-      width: 44px; height: 44px;
-      border-color: rgba(168,230,61,0.7);
-    }
-    /* cursor glow — FIXED: z-index 0 so it never covers UI */
+    .cursor-ring.hovering { width: 44px; height: 44px; border-color: rgba(168,230,61,0.7); }
     .cursor-glow {
-      position: fixed;
-      width: 380px; height: 380px;
+      position: fixed; width: 380px; height: 380px;
       background: radial-gradient(circle, rgba(168,230,61,0.07) 0%, transparent 70%);
-      pointer-events: none;
-      z-index: 0;
-      transform: translate(-50%, -50%);
-      will-change: left, top;
+      pointer-events: none; z-index: 0;
+      transform: translate(-50%, -50%); will-change: left, top;
       transition: left 0.15s ease, top 0.15s ease;
     }
-    /* Restore pointer for interactive elements */
     a, button, input, select, label,
     .dropzone, .preview-change, .h-item,
-    .tab-btn, .cal-month, .gps-btn, .voice-btn {
-      cursor: none;
-    }
+    .tab-btn, .cal-month, .gps-btn, .voice-btn { cursor: none; }
 
-    /* ══════════════════════════════════════════════
-       BACKGROUND
-    ══════════════════════════════════════════════ */
     .canvas-bg {
       position: fixed; inset: 0; z-index: 0;
       background:
@@ -114,14 +87,11 @@
       pointer-events: none; z-index: 0;
       animation: floatOrb 12s ease-in-out infinite;
     }
-    .orb1 { width:300px; height:300px; background:rgba(120,200,30,0.04); top:10%;  left:5%;  animation-delay:0s; }
-    .orb2 { width:200px; height:200px; background:rgba(80,160,20,0.05);  bottom:20%; right:10%; animation-delay:4s; }
-    .orb3 { width:150px; height:150px; background:rgba(160,230,40,0.04); top:50%;  left:40%; animation-delay:8s; }
+    .orb1 { width:300px; height:300px; background:rgba(120,200,30,0.04); top:10%; left:5%; animation-delay:0s; }
+    .orb2 { width:200px; height:200px; background:rgba(80,160,20,0.05); bottom:20%; right:10%; animation-delay:4s; }
+    .orb3 { width:150px; height:150px; background:rgba(160,230,40,0.04); top:50%; left:40%; animation-delay:8s; }
     @keyframes floatOrb { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.1)} }
 
-    /* ══════════════════════════════════════════════
-       NAV
-    ══════════════════════════════════════════════ */
     nav {
       position: sticky; top: 0; z-index: 200;
       display: flex; align-items: center; justify-content: space-between;
@@ -157,18 +127,12 @@
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
-    /* ══════════════════════════════════════════════
-       LAYOUT
-    ══════════════════════════════════════════════ */
     .page-wrap {
       position:relative; z-index:1;
       max-width:780px; margin:0 auto;
       padding:2rem 1.5rem 5rem;
     }
 
-    /* ══════════════════════════════════════════════
-       HERO
-    ══════════════════════════════════════════════ */
     .hero { text-align:center; padding-bottom:1.75rem; }
     .hero-eyebrow {
       display:inline-flex; align-items:center; gap:8px;
@@ -196,9 +160,6 @@
     @keyframes fadeInDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
     @keyframes fadeInUp   { from{opacity:0;transform:translateY(18px)}  to{opacity:1;transform:translateY(0)} }
 
-    /* ══════════════════════════════════════════════
-       MAIN CARD
-    ══════════════════════════════════════════════ */
     .main-card {
       background:rgba(8,20,3,0.88);
       border:1px solid var(--lime-border);
@@ -206,13 +167,10 @@
       backdrop-filter:blur(28px);
       box-shadow:0 0 80px rgba(100,200,30,0.05), 0 32px 64px rgba(0,0,0,0.55);
       overflow:hidden;
-      /* GOD MODE: 3D tilt base */
       transform-style: preserve-3d;
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .main-card.tilt {
-      box-shadow: 0 0 100px rgba(100,200,30,0.08), 0 40px 80px rgba(0,0,0,0.6);
-    }
+    .main-card.tilt { box-shadow: 0 0 100px rgba(100,200,30,0.08), 0 40px 80px rgba(0,0,0,0.6); }
 
     .section-top {
       padding:1.1rem 1.6rem 0.9rem;
@@ -222,9 +180,6 @@
     .section-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--lime3); text-transform:uppercase; letter-spacing:0.1em; }
     .status-tag { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
 
-    /* ══════════════════════════════════════════════
-       CONTROLS
-    ══════════════════════════════════════════════ */
     .controls-row {
       display:grid; grid-template-columns:1fr auto auto 1fr;
       gap:8px; padding:1rem 1.6rem 0; align-items:end;
@@ -256,9 +211,6 @@
     }
     .gps-btn:hover { background:rgba(168,230,61,0.22); transform:scale(1.05); }
 
-    /* ══════════════════════════════════════════════
-       WEATHER STRIP
-    ══════════════════════════════════════════════ */
     #weather-strip {
       display:none; margin:0.8rem 1.6rem 0;
       background:linear-gradient(135deg,rgba(40,90,10,0.3),rgba(20,60,5,0.2));
@@ -280,23 +232,17 @@
     .w-key { font-size:9px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
     .city-name-tag { text-align:center; font-size:10px; color:var(--muted); margin-top:6px; font-style:italic; }
 
-    /* ══════════════════════════════════════════════
-       UPLOAD / DROPZONE
-    ══════════════════════════════════════════════ */
+    /* ── UPLOAD AREA ── */
     .upload-wrap { padding:0.9rem 1.6rem 0; }
     .dropzone {
       border:2px dashed rgba(168,230,61,0.2);
-      border-radius:14px; padding:2.5rem 1.5rem;
-      text-align:center; cursor:none; position:relative;
+      border-radius:14px; padding:2.2rem 1.5rem;
+      text-align:center; cursor:default; position:relative;
       background:rgba(168,230,61,0.02); transition:all 0.25s;
     }
-    .dropzone:hover, .dropzone.drag-over {
+    .dropzone.drag-over {
       border-color:rgba(168,230,61,0.5);
       background:rgba(168,230,61,0.06);
-    }
-    .dropzone input {
-      position:absolute; inset:0; opacity:0;
-      cursor:none; width:100%; height:100%;
     }
     .upload-icon {
       width:52px; height:52px; margin:0 auto 0.75rem;
@@ -305,19 +251,39 @@
       border-radius:13px; display:flex; align-items:center; justify-content:center;
       font-size:24px; transition:transform 0.2s;
     }
-    .dropzone:hover .upload-icon { transform:scale(1.06) rotate(-4deg); }
     .upload-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; margin-bottom:4px; }
     .upload-sub { font-size:12px; color:var(--muted); }
-    .upload-formats { display:flex; gap:5px; justify-content:center; margin-top:9px; flex-wrap:wrap; }
+
+    /* ── TWO UPLOAD BUTTONS ── */
+    .upload-btn-row {
+      display:flex; gap:10px; justify-content:center;
+      margin-top:14px; flex-wrap:wrap;
+    }
+    .upload-btn {
+      padding:10px 22px;
+      border-radius:10px; font-family:'DM Sans',sans-serif;
+      font-size:13px; font-weight:600; cursor:none;
+      transition:all 0.2s; display:flex; align-items:center; gap:7px;
+      border:none;
+    }
+    .upload-btn-camera {
+      background:rgba(168,230,61,0.14); border:1px solid rgba(168,230,61,0.35);
+      color:var(--lime);
+    }
+    .upload-btn-camera:hover { background:rgba(168,230,61,0.26); transform:translateY(-2px); }
+    .upload-btn-gallery {
+      background:rgba(168,230,61,0.06); border:1px solid rgba(168,230,61,0.18);
+      color:var(--lime2);
+    }
+    .upload-btn-gallery:hover { background:rgba(168,230,61,0.14); transform:translateY(-2px); }
+
+    .upload-formats { display:flex; gap:5px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
     .format-chip {
       background:rgba(168,230,61,0.06); border:1px solid rgba(168,230,61,0.12);
       color:var(--muted); font-size:9px; font-weight:600;
       padding:2px 8px; border-radius:100px; letter-spacing:0.06em;
     }
 
-    /* ══════════════════════════════════════════════
-       PREVIEW — SCAN LINE FIXED
-    ══════════════════════════════════════════════ */
     #preview-wrap {
       display:none; margin:0.9rem 1.6rem 0;
       border-radius:13px; overflow:hidden;
@@ -328,16 +294,13 @@
     .preview-overlay {
       position:absolute; inset:0;
       background:linear-gradient(to top, rgba(6,18,2,0.7) 0%, transparent 50%);
-      z-index:1; /* above image */
+      z-index:1;
     }
-    /* BUGFIX: scan-line z-index 2 — always above image AND overlay */
     .scan-line {
-      position:absolute;
-      width:100%; height:2px;
+      position:absolute; width:100%; height:2px;
       background:linear-gradient(90deg, transparent, rgba(168,230,61,0.8), transparent);
       box-shadow:0 0 8px rgba(168,230,61,0.6);
-      z-index:2; /* FIXED */
-      top:0;
+      z-index:2; top:0;
       animation:scanMove 2.2s linear infinite;
       pointer-events:none;
     }
@@ -356,9 +319,6 @@
     }
     .preview-change:hover { color:var(--lime); border-color:rgba(168,230,61,0.3); }
 
-    /* ══════════════════════════════════════════════
-       BANNERS
-    ══════════════════════════════════════════════ */
     #risk-banner {
       display:none; margin:0.7rem 1.6rem 0;
       border-radius:10px; padding:9px 14px;
@@ -383,21 +343,15 @@
       align-items:center; gap:8px;
     }
 
-    /* ══════════════════════════════════════════════
-       RESULT CARD
-    ══════════════════════════════════════════════ */
     #result-card {
       display:none; position:relative;
       margin:0.9rem 1.6rem 0;
       border-radius:17px; overflow:hidden;
       border:1px solid rgba(168,230,61,0.15);
-      /* GOD MODE: starts hidden for entrance anim */
       opacity:0; transform:translateY(12px) scale(0.98);
       transition:opacity 0.5s ease, transform 0.5s ease;
     }
-    #result-card.show {
-      opacity:1; transform:translateY(0) scale(1);
-    }
+    #result-card.show { opacity:1; transform:translateY(0) scale(1); }
 
     .result-head {
       background:linear-gradient(135deg,rgba(30,70,8,0.9),rgba(16,45,4,0.9));
@@ -437,9 +391,6 @@
       50%{box-shadow:0 0 0 6px rgba(255,80,50,0.15)}
     }
 
-    /* ══════════════════════════════════════════════
-       RESULT BODY
-    ══════════════════════════════════════════════ */
     .result-body { background:rgba(6,16,2,0.9); padding:1.1rem 1.4rem; }
     .section-label {
       font-size:9px; font-weight:700; color:var(--muted);
@@ -456,13 +407,10 @@
       transition:all 0.2s; background:transparent;
       color:var(--muted); font-family:'DM Sans',sans-serif;
     }
-    .tab-btn.active {
-      background:rgba(168,230,61,0.1); border-color:rgba(168,230,61,0.22); color:var(--lime);
-    }
+    .tab-btn.active { background:rgba(168,230,61,0.1); border-color:rgba(168,230,61,0.22); color:var(--lime); }
     .tab-content { display:none; }
     .tab-content.active { display:block; }
 
-    /* GOD MODE: typewriter text */
     .solution-text {
       font-size:13px; color:rgba(200,240,140,0.9); line-height:1.85;
       white-space:pre-wrap;
@@ -474,14 +422,10 @@
       font-size:12px; color:var(--lime2); line-height:1.7;
     }
 
-    /* ══════════════════════════════════════════════
-       DIAGNOSTICS METERS
-    ══════════════════════════════════════════════ */
     .meters-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:5px; }
     .meter-box {
       background:rgba(168,230,61,0.03); border:1px solid rgba(168,230,61,0.1);
-      border-radius:11px; padding:11px 13px;
-      transition:border-color 0.3s;
+      border-radius:11px; padding:11px 13px; transition:border-color 0.3s;
     }
     .meter-box:hover { border-color:rgba(168,230,61,0.22); }
     .meter-lbl { font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:5px; }
@@ -493,9 +437,6 @@
     .bar-sev-med  { background:linear-gradient(90deg,#f0a020,#f0c840); }
     .bar-sev-high { background:linear-gradient(90deg,#c03020,#f05040); }
 
-    /* ══════════════════════════════════════════════
-       GOD MODE: CONFIDENCE CHART
-    ══════════════════════════════════════════════ */
     #conf-chart-wrap {
       margin-top:14px;
       background:rgba(168,230,61,0.03); border:1px solid rgba(168,230,61,0.1);
@@ -506,8 +447,7 @@
     .mc-bar {
       flex:1; border-radius:4px 4px 0 0;
       background:linear-gradient(180deg,rgba(168,230,61,0.5),rgba(100,180,20,0.3));
-      transition:height 1s ease;
-      position:relative;
+      transition:height 1s ease; position:relative;
     }
     .mc-bar.active-bar {
       background:linear-gradient(180deg,var(--lime),var(--lime2));
@@ -523,9 +463,6 @@
       padding:3px 10px; border-radius:100px;
     }
 
-    /* ══════════════════════════════════════════════
-       CALENDAR
-    ══════════════════════════════════════════════ */
     #calendar-section {
       display:none; padding:0 1.4rem 1.1rem;
       background:rgba(6,16,2,0.9); border-top:1px solid rgba(168,230,61,0.06);
@@ -548,9 +485,6 @@
     .cal-icon { font-size:15px; margin:3px 0; }
     .cal-act { font-size:8px; color:var(--lime3); }
 
-    /* ══════════════════════════════════════════════
-       HISTORY
-    ══════════════════════════════════════════════ */
     #history-section { display:none; margin:0 1.6rem; }
     .history-hdr {
       font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
@@ -571,9 +505,6 @@
     .h-risk.MEDIUM { background:rgba(240,168,32,0.1); color:#f0c840; }
     .h-risk.HIGH   { background:rgba(255,60,20,0.1);  color:#ff7a60; }
 
-    /* ══════════════════════════════════════════════
-       BUTTONS
-    ══════════════════════════════════════════════ */
     .btn-area { padding:1.1rem 1.6rem 1.6rem; display:flex; flex-direction:column; gap:7px; }
     .btn-primary {
       position:relative; overflow:hidden;
@@ -584,15 +515,8 @@
       cursor:none; transition:all 0.25s; letter-spacing:0.02em;
       box-shadow:0 4px 22px rgba(100,184,32,0.25);
     }
-    .btn-primary:hover:not(:disabled) {
-      transform:translateY(-2px);
-      box-shadow:0 10px 32px rgba(100,184,32,0.45);
-    }
-    .btn-primary:disabled {
-      background:rgba(30,50,15,0.6); color:var(--muted);
-      box-shadow:none; cursor:not-allowed;
-    }
-    /* Ripple */
+    .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 32px rgba(100,184,32,0.45); }
+    .btn-primary:disabled { background:rgba(30,50,15,0.6); color:var(--muted); box-shadow:none; cursor:not-allowed; }
     .btn-primary .ripple {
       position:absolute; border-radius:50%;
       background:rgba(255,255,255,0.25);
@@ -618,7 +542,6 @@
     }
     @keyframes spin { to{transform:rotate(360deg)} }
 
-    /* Translating overlay */
     .translating-overlay {
       position:absolute; inset:0;
       background:rgba(6,16,2,0.88);
@@ -631,9 +554,6 @@
       border-radius:50%; animation:spin 0.8s linear infinite;
     }
 
-    /* ══════════════════════════════════════════════
-       GOD MODE: TOAST NOTIFICATION
-    ══════════════════════════════════════════════ */
     #toast {
       position:fixed; bottom:2rem; right:1.5rem; z-index:10000;
       background:rgba(8,22,3,0.95); border:1px solid rgba(168,230,61,0.3);
@@ -646,18 +566,12 @@
     }
     #toast.show { transform:translateY(0); opacity:1; }
 
-    /* ══════════════════════════════════════════════
-       FOOTER
-    ══════════════════════════════════════════════ */
     footer {
       position:relative; z-index:1; text-align:center;
       padding:1.25rem; border-top:1px solid rgba(168,230,61,0.06);
       font-size:11px; color:#2a4a12; margin-top:2rem;
     }
 
-    /* ══════════════════════════════════════════════
-       RESPONSIVE
-    ══════════════════════════════════════════════ */
     @media (max-width:640px) {
       nav { padding:0.8rem 1rem; }
       .nav-pills { display:none; }
@@ -668,17 +582,14 @@
       .result-head { flex-direction:column; align-items:flex-start; }
       .disease-name { font-size:14px; }
       .main-card { border-radius:16px; }
-      /* FIX: restore system cursor on mobile/touch — accessibility */
       body { cursor: auto !important; }
       .cursor-dot, .cursor-ring, .cursor-glow { display: none !important; }
       a, button, input, select, label,
       .dropzone, .preview-change, .h-item,
-      .tab-btn, .cal-month, .gps-btn, .voice-btn, .mic-btn { cursor: pointer !important; }
+      .tab-btn, .cal-month, .gps-btn, .voice-btn,
+      .mic-btn, .upload-btn { cursor: pointer !important; }
     }
 
-    /* ══════════════════════════════════════════════
-       MIC VOICE BUTTON
-    ══════════════════════════════════════════════ */
     .mic-btn {
       padding: 10px 13px;
       background: var(--lime-glow); border: 1px solid var(--lime-border);
@@ -696,28 +607,23 @@
       50% { box-shadow: 0 0 0 7px rgba(255,80,50,0.15); }
     }
 
-    /* slideIn utility */
     @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
   </style>
 </head>
 <body>
 
-<!-- ── Custom Cursor ── -->
 <div class="cursor-dot"  id="cursorDot"></div>
 <div class="cursor-ring" id="cursorRing"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
 
-<!-- ── Background ── -->
 <div class="canvas-bg"></div>
 <div class="grid-overlay"></div>
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 <div class="orb orb3"></div>
 
-<!-- ── Toast ── -->
 <div id="toast">✅ Done</div>
 
-<!-- ══════════════ NAV ══════════════ -->
 <nav>
   <div class="logo">
     <div class="logo-mark">🌱</div>
@@ -730,17 +636,14 @@
   </div>
 </nav>
 
-<!-- ══════════════ PAGE ══════════════ -->
 <div class="page-wrap">
 
-  <!-- Hero -->
   <div class="hero">
     <div class="hero-eyebrow"><div class="pulse-dot"></div> AI-POWERED CROP DISEASE DETECTION</div>
     <h1>Detect. Diagnose.<br><span class="gradient-text">Protect Your Harvest.</span></h1>
     <p class="hero-sub">Upload a plant photo — get instant AI diagnosis with live weather intelligence</p>
   </div>
 
-  <!-- Main Card -->
   <div class="main-card" id="mainCard">
 
     <div class="section-top">
@@ -748,7 +651,6 @@
       <span class="status-tag"><span style="color:var(--lime)">●</span>&nbsp; Ready</span>
     </div>
 
-    <!-- Controls -->
     <div class="controls-row">
       <div class="field">
         <span class="field-icon">📍</span>
@@ -769,7 +671,6 @@
       </div>
     </div>
 
-    <!-- Weather Strip -->
     <div id="weather-strip">
       <div class="weather-grid">
         <div class="w-item"><span class="w-emoji" id="w-icon">🌤️</span><span class="w-val" id="w-cond">--</span><span class="w-key">Condition</span></div>
@@ -780,13 +681,24 @@
       <div class="city-name-tag" id="w-city-label">--</div>
     </div>
 
-    <!-- Upload -->
+    <!-- ══ UPLOAD SECTION — TWO BUTTONS ══ -->
     <div class="upload-wrap">
+      <!-- Hidden file inputs — no capture = gallery, capture=environment = camera -->
+      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="galleryInput" accept="image/*" style="display:none">
+
       <div class="dropzone" id="dropzone">
-        <input type="file" id="imageInput" accept="image/*" capture="environment">
         <div class="upload-icon">📸</div>
-        <p class="upload-title">Drop your plant photo here</p>
-        <p class="upload-sub">or click to browse your device</p>
+        <p class="upload-title">Choose how to upload your plant photo</p>
+        <p class="upload-sub">Camera for live scan · Gallery for saved photo · or drag & drop below</p>
+        <div class="upload-btn-row">
+          <button class="upload-btn upload-btn-camera" onclick="document.getElementById('cameraInput').click()">
+            📸 Open Camera
+          </button>
+          <button class="upload-btn upload-btn-gallery" onclick="document.getElementById('galleryInput').click()">
+            🖼️ Open Gallery
+          </button>
+        </div>
         <div class="upload-formats">
           <span class="format-chip">JPG</span><span class="format-chip">PNG</span>
           <span class="format-chip">WEBP</span><span class="format-chip">HEIC</span>
@@ -794,7 +706,6 @@
       </div>
     </div>
 
-    <!-- Preview — SCAN LINE INSIDE -->
     <div id="preview-wrap">
       <div class="scan-line"></div>
       <img id="preview" src="" alt="Plant preview">
@@ -803,12 +714,10 @@
       <span class="preview-change" onclick="resetImage()">Change ↩</span>
     </div>
 
-    <!-- Bars -->
     <div id="lang-translate-bar">🌐 <span id="langBarText">Retranslating results...</span></div>
     <div id="risk-banner"></div>
     <div id="error-card"></div>
 
-    <!-- Result Card -->
     <div id="result-card">
       <div class="result-head">
         <div class="result-head-left">
@@ -847,7 +756,6 @@
           </div>
         </div>
 
-        <!-- GOD MODE: Mini confidence chart -->
         <div id="conf-chart-wrap">
           <div class="chart-title">📊 Scan Confidence History</div>
           <div class="mini-chart" id="miniChart"></div>
@@ -868,7 +776,6 @@
       </div>
     </div>
 
-    <!-- History -->
     <div id="history-section">
       <div style="padding:0.9rem 0 0">
         <p class="history-hdr">📋 Recent Scans</p>
@@ -876,7 +783,6 @@
       </div>
     </div>
 
-    <!-- Buttons -->
     <div class="btn-area">
       <button class="btn-primary" id="analyzeBtn" onclick="analyze()" disabled>
         <span id="btnIcon">🔍</span>
@@ -885,17 +791,12 @@
       </button>
     </div>
 
-  </div><!-- /main-card -->
-</div><!-- /page-wrap -->
+  </div>
+</div>
 
 <footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + PDF Reports</footer>
 
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT — FULL GOD MODE
-══════════════════════════════════════════ -->
 <script>
-/* ══════════════════════════════════════════
-   Constants ── */
 const WEATHER_ICONS = {
   Clear:'☀️', Clouds:'☁️', Rain:'🌧️', Drizzle:'🌦️',
   Thunderstorm:'⛈️', Snow:'❄️', Mist:'🌫️', Haze:'🌫️', Smoke:'🌫️', Fog:'🌫️'
@@ -904,11 +805,10 @@ const LANG_CODES = {
   English:'en-IN', Tamil:'ta-IN', Hindi:'hi-IN',
   Telugu:'te-IN', Kannada:'kn-IN', Malayalam:'ml-IN'
 };
-const MONTHS   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const CAL_ICONS = ['🌱','🌿','☀️','💧','🌾','✂️','🌧️','🧪','🌱','🌿','🌾','❄️'];
 const CAL_ACTS  = ['Sow seeds','Thin seedlings','Fertilize','Irrigate','Spray','Prune','Harvest','Test soil','Sow seeds','Mulch','Harvest','Rest'];
 
-/* ── State ── */
 let lastResult    = null;
 let lastImageFile = null;
 let activeTab     = 'organic';
@@ -916,9 +816,7 @@ let isSpeaking    = false;
 let scanHistory   = JSON.parse(localStorage.getItem('agrishield_v2') || '[]');
 let confHistory   = JSON.parse(localStorage.getItem('agrishield_conf') || '[]');
 
-/* ══════════════════════════════════════════
-   GOD MODE: VOICE INPUT FOR CITY NAME 🎤
-══════════════════════════════════════════ */
+/* ── VOICE INPUT FOR CITY ── */
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 let recognition = null;
 if (SpeechRecognition) {
@@ -929,10 +827,7 @@ if (SpeechRecognition) {
 }
 
 function startVoiceCity() {
-  if (!recognition) {
-    showToast('⚠️ Voice not supported in this browser');
-    return;
-  }
+  if (!recognition) { showToast('⚠️ Voice not supported in this browser'); return; }
   const btn  = document.getElementById('micBtn');
   const lang = document.getElementById('langInput').value;
   recognition.lang = LANG_CODES[lang] || 'en-IN';
@@ -945,61 +840,42 @@ function startVoiceCity() {
     document.getElementById('cityInput').value = city;
     showToast(`📍 Got it: "${city}"`);
   };
-  recognition.onend = () => {
-    btn.classList.remove('listening');
-    btn.textContent = '🎤';
-  };
-  recognition.onerror = () => {
-    btn.classList.remove('listening');
-    btn.textContent = '🎤';
-    showToast('🎤 Voice error — try again or type city');
-  };
+  recognition.onend  = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; };
+  recognition.onerror = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; showToast('🎤 Voice error — try again or type city'); };
 }
 
-/* ══════════════════════════════════════════
-   GOD MODE: CUSTOM CURSOR (3-layer)
-══════════════════════════════════════════ */
+/* ── CUSTOM CURSOR ── */
 (function() {
   const dot  = document.getElementById('cursorDot');
   const ring = document.getElementById('cursorRing');
   const glow = document.getElementById('cursorGlow');
   if (!dot) return;
-
-  // Smooth ring follow with slight lag
   let rx = 0, ry = 0, mx = 0, my = 0;
   function lerp(a,b,t){ return a + (b-a)*t; }
-
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;
     dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
     glow.style.left = mx + 'px'; glow.style.top = my + 'px';
   });
-
   (function animRing() {
-    rx = lerp(rx, mx, 0.14);
-    ry = lerp(ry, my, 0.14);
-    ring.style.left = rx + 'px';
-    ring.style.top  = ry + 'px';
+    rx = lerp(rx, mx, 0.14); ry = lerp(ry, my, 0.14);
+    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
     requestAnimationFrame(animRing);
   })();
-
-  // Hover expand
   document.querySelectorAll('button,a,.dropzone,.h-item,.tab-btn,.cal-month,.preview-change').forEach(el => {
     el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
     el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
   });
 })();
 
-/* ══════════════════════════════════════════
-   GOD MODE: 3D CARD TILT
-══════════════════════════════════════════ */
+/* ── 3D CARD TILT ── */
 (function() {
   const card = document.getElementById('mainCard');
   if (!card) return;
   card.addEventListener('mousemove', e => {
-    const r  = card.getBoundingClientRect();
-    const x  = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
-    const y  = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
+    const y = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
     card.style.transform = `perspective(1200px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg)`;
     card.classList.add('tilt');
   });
@@ -1009,9 +885,7 @@ function startVoiceCity() {
   });
 })();
 
-/* ══════════════════════════════════════════
-   GOD MODE: RIPPLE on BUTTON
-══════════════════════════════════════════ */
+/* ── RIPPLE ── */
 document.getElementById('analyzeBtn').addEventListener('click', function(e) {
   const r   = this.getBoundingClientRect();
   const rpl = document.createElement('span');
@@ -1021,28 +895,19 @@ document.getElementById('analyzeBtn').addEventListener('click', function(e) {
   setTimeout(() => rpl.remove(), 600);
 });
 
-/* ══════════════════════════════════════════
-   TOAST HELPER
-══════════════════════════════════════════ */
+/* ── TOAST ── */
 function showToast(msg, duration = 2800) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  t.textContent = msg; t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), duration);
 }
 
-/* ══════════════════════════════════════════
-   VOICE
-══════════════════════════════════════════ */
-function toggleVoice() {
-  isSpeaking ? stopVoice() : speak();
-}
+/* ── VOICE OUTPUT ── */
+function toggleVoice() { isSpeaking ? stopVoice() : speak(); }
 function stopVoice() {
-  window.speechSynthesis.cancel();
-  isSpeaking = false;
+  window.speechSynthesis.cancel(); isSpeaking = false;
   const btn = document.getElementById('voiceBtn');
-  btn.innerHTML = '🔊 Listen';
-  btn.classList.remove('playing');
+  btn.innerHTML = '🔊 Listen'; btn.classList.remove('playing');
 }
 function speak() {
   if (!lastResult) return;
@@ -1050,42 +915,30 @@ function speak() {
   const text = activeTab === 'chemical'
     ? `${lastResult.disease}. ${lastResult.chemical}`
     : `${lastResult.disease}. ${lastResult.organic}`;
-  const utter  = new SpeechSynthesisUtterance(text);
-  utter.lang   = LANG_CODES[lang] || 'en-IN';
-  utter.rate   = 0.88;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(utter);
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = LANG_CODES[lang] || 'en-IN'; utter.rate = 0.88;
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
   isSpeaking = true;
   const btn = document.getElementById('voiceBtn');
-  btn.innerHTML = '⏹ Stop';
-  btn.classList.add('playing');
+  btn.innerHTML = '⏹ Stop'; btn.classList.add('playing');
   utter.onend = utter.onerror = stopVoice;
 }
 
-/* ══════════════════════════════════════════
-   TAB SWITCH
-══════════════════════════════════════════ */
+/* ── TAB SWITCH ── */
 function switchTab(tab) {
-  activeTab = tab;
-  stopVoice();
+  activeTab = tab; stopVoice();
   document.querySelectorAll('.tab-btn').forEach((b,i) =>
     b.classList.toggle('active', i === (tab === 'organic' ? 0 : 1))
   );
   document.getElementById('tab-organic').classList.toggle('active', tab === 'organic');
   document.getElementById('tab-chemical').classList.toggle('active', tab === 'chemical');
-  // GOD MODE FIX: typewriter on EVERY tab switch (not just initial render)
   if (lastResult) {
-    if (tab === 'organic') {
-      typewrite(document.getElementById('organicText'), lastResult.organic || 'No data.');
-    } else {
-      typewrite(document.getElementById('chemicalText'), lastResult.chemical || 'No data.');
-    }
+    if (tab === 'organic') typewrite(document.getElementById('organicText'), lastResult.organic || 'No data.');
+    else typewrite(document.getElementById('chemicalText'), lastResult.chemical || 'No data.');
   }
 }
 
-/* ══════════════════════════════════════════
-   LANGUAGE RETRANSLATE
-══════════════════════════════════════════ */
+/* ── LANGUAGE RETRANSLATE ── */
 function onLangChange() {
   stopVoice();
   if (!lastResult || !lastImageFile) return;
@@ -1093,43 +946,38 @@ function onLangChange() {
   const bar  = document.getElementById('lang-translate-bar');
   document.getElementById('langBarText').textContent = `Translating to ${lang}...`;
   bar.style.display = 'flex';
-
   const overlay = document.createElement('div');
-  overlay.className = 'translating-overlay';
-  overlay.id = 'transOverlay';
+  overlay.className = 'translating-overlay'; overlay.id = 'transOverlay';
   overlay.innerHTML = '<div class="translating-spinner"></div>';
   document.getElementById('result-card').appendChild(overlay);
-
   const fd = new FormData();
-  fd.append('image',    lastImageFile);
-  fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
+  fd.append('image', lastImageFile);
+  fd.append('city',  document.getElementById('cityInput').value.trim() || 'Chennai');
   fd.append('language', lang);
-
   fetch('/predict', { method:'POST', body:fd })
     .then(r => r.json().then(d => ({ ok:r.ok, d })))
     .then(({ok,d}) => {
       if (!ok) throw new Error(d.error || 'Server error');
-      renderResult(d);
-      bar.style.display = 'none';
+      renderResult(d); bar.style.display = 'none';
       showToast(`🌐 Translated to ${lang}`);
     })
     .catch(err => {
       bar.style.display = 'none';
       const ec = document.getElementById('error-card');
-      ec.innerHTML = `⚠️ Retranslation failed: ${err.message}`;
-      ec.style.display = 'block';
+      ec.innerHTML = `⚠️ Retranslation failed: ${err.message}`; ec.style.display = 'block';
     })
     .finally(() => { const ov = document.getElementById('transOverlay'); if(ov) ov.remove(); });
 }
 
 /* ══════════════════════════════════════════
-   IMAGE INPUT
+   IMAGE INPUT — CAMERA + GALLERY (FIXED)
 ══════════════════════════════════════════ */
-const imageInput = document.getElementById('imageInput');
-const dropzone   = document.getElementById('dropzone');
+const cameraInput  = document.getElementById('cameraInput');
+const galleryInput = document.getElementById('galleryInput');
+const dropzone     = document.getElementById('dropzone');
 
-imageInput.addEventListener('change', function() {
-  const file = this.files[0];
+/* Shared handler — called by both inputs */
+function handleFile(file) {
   if (!file) return;
   lastImageFile = file;
   const reader = new FileReader();
@@ -1150,18 +998,24 @@ imageInput.addEventListener('change', function() {
   stopVoice();
   const pdf = document.getElementById('pdfBtn');
   if (pdf) pdf.remove();
-});
+}
 
+cameraInput.addEventListener('change',  function() { handleFile(this.files[0]); });
+galleryInput.addEventListener('change', function() { handleFile(this.files[0]); });
+
+/* Drag & drop still works on desktop */
 dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
 dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
 dropzone.addEventListener('drop', e => {
   e.preventDefault(); dropzone.classList.remove('drag-over');
-  imageInput.files = e.dataTransfer.files;
-  imageInput.dispatchEvent(new Event('change'));
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
 });
 
 function resetImage() {
-  lastImageFile = null; imageInput.value = '';
+  lastImageFile = null;
+  cameraInput.value  = '';
+  galleryInput.value = '';
   document.getElementById('preview-wrap').style.display = 'none';
   dropzone.style.display = 'block';
   document.getElementById('analyzeBtn').disabled = true;
@@ -1169,9 +1023,7 @@ function resetImage() {
   stopVoice();
 }
 
-/* ══════════════════════════════════════════
-   ANALYZE
-══════════════════════════════════════════ */
+/* ── ANALYZE ── */
 const aiMsgs = [
   'Scanning leaf texture...', 'Detecting disease patterns...',
   'Matching AI database...', 'Generating treatment plan...',
@@ -1180,11 +1032,8 @@ const aiMsgs = [
 let aiIdx = 0, aiTimer = null;
 
 function analyze() {
-  const file = imageInput.files[0];
-  if (!file) return;
-  lastImageFile = file;
+  if (!lastImageFile) return;
   stopVoice();
-
   document.getElementById('btnIcon').style.display = 'none';
   document.getElementById('spinner').style.display = 'block';
   document.getElementById('analyzeBtn').disabled = true;
@@ -1193,20 +1042,16 @@ function analyze() {
   document.getElementById('result-card').classList.remove('show');
   document.getElementById('risk-banner').style.display = 'none';
   document.getElementById('lang-translate-bar').style.display = 'none';
-
-  // GOD MODE: cycling loading messages
   aiIdx = 0;
   document.getElementById('btnText').textContent = aiMsgs[0];
   aiTimer = setInterval(() => {
     aiIdx = (aiIdx + 1) % aiMsgs.length;
     document.getElementById('btnText').textContent = aiMsgs[aiIdx];
   }, 1300);
-
   const fd = new FormData();
-  fd.append('image',    file);
+  fd.append('image',    lastImageFile);
   fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
   fd.append('language', document.getElementById('langInput').value);
-
   fetch('/predict', { method:'POST', body:fd })
     .then(r => r.json().then(d => ({ ok:r.ok, d })))
     .then(({ok,d}) => { if(!ok) throw new Error(d.error || 'Server error'); renderResult(d); })
@@ -1226,39 +1071,26 @@ function analyze() {
     });
 }
 
-/* ══════════════════════════════════════════
-   GOD MODE: TYPEWRITER EFFECT
-══════════════════════════════════════════ */
+/* ── TYPEWRITER ── */
 function typewrite(el, text, speed = 18) {
-  el.textContent = '';
-  let i = 0;
+  el.textContent = ''; let i = 0;
   const t = setInterval(() => {
     el.textContent += text[i++];
     if (i >= text.length) clearInterval(t);
   }, speed);
 }
 
-/* ══════════════════════════════════════════
-   RENDER RESULT
-══════════════════════════════════════════ */
+/* ── RENDER RESULT ── */
 function renderResult(data) {
-  lastResult = data;   // ← SET FIRST so switchTab typewriter has data
-  stopVoice();
-  activeTab = 'organic';
-  switchTab('organic'); // now fires typewriter correctly
-
+  lastResult = data;
+  stopVoice(); activeTab = 'organic'; switchTab('organic');
   const isHealthy = data.disease.toLowerCase().includes('health');
   document.getElementById('statusIcon').textContent  = isHealthy ? '✅' : '⚠️';
   document.getElementById('diseaseTag').textContent  = isHealthy ? 'HEALTHY PLANT' : 'DISEASE DETECTED';
   document.getElementById('diseaseName').textContent = data.disease;
-
-  // GOD MODE: typewriter handled by switchTab above
-  // chemical text pre-loaded silently (typewriter fires on tab click)
-  document.getElementById('organicText').textContent  = '';   // cleared; switchTab fills it
+  document.getElementById('organicText').textContent  = '';
   document.getElementById('chemicalText').textContent = data.chemical || 'No data.';
   document.getElementById('cropTipBox').textContent   = data.crop_tip ? `💡 ${data.crop_tip}` : '';
-
-  // Weather strip
   document.getElementById('w-icon').textContent  = WEATHER_ICONS[data.condition] || '🌤️';
   document.getElementById('w-cond').textContent  = data.condition;
   document.getElementById('w-temp').textContent  = `${data.temp}°C`;
@@ -1267,8 +1099,6 @@ function renderResult(data) {
   document.getElementById('w-city-label').textContent = `📍 ${data.city}`;
   document.getElementById('weather-strip').style.display = 'block';
   document.getElementById('insightText').textContent = data.insight;
-
-  // Meters
   const conf = data.confidence || 75;
   const sev  = data.severity   || 5;
   animateCounter('confVal', 0, conf, 900, '%');
@@ -1279,13 +1109,9 @@ function renderResult(data) {
     sb.className = 'bar-fill ' + (sev<=3?'bar-sev-low':sev<=6?'bar-sev-med':'bar-sev-high');
     sb.style.width = `${sev * 10}%`;
   }, 150);
-
-  // Meta pills
   document.getElementById('mWeather').textContent = `🌦️ ${data.weather}`;
   document.getElementById('mRisk').textContent    = `⚠️ ${data.risk} RISK`;
   document.getElementById('mTime').textContent    = `🕐 ${data.timestamp}`;
-
-  // Risk banner
   const banner = document.getElementById('risk-banner');
   const msgs = {
     HIGH:   '🚨 HIGH RISK — Immediate action required. Apply treatment within 24 hours.',
@@ -1295,21 +1121,15 @@ function renderResult(data) {
   banner.className   = data.risk.toLowerCase();
   banner.textContent = msgs[data.risk] || msgs.MEDIUM;
   banner.style.display = 'flex';
-
-  // GOD MODE: confidence history chart
   confHistory.push(conf);
   if (confHistory.length > 7) confHistory.shift();
   localStorage.setItem('agrishield_conf', JSON.stringify(confHistory));
   renderMiniChart(conf);
-
-  // Calendar & history
   renderCalendar();
   scanHistory.unshift({ disease:data.disease, risk:data.risk, city:data.city, time:data.timestamp });
   if (scanHistory.length > 6) scanHistory.pop();
   localStorage.setItem('agrishield_v2', JSON.stringify(scanHistory));
   renderHistory();
-
-  // PDF button
   const old = document.getElementById('pdfBtn');
   if (old) old.remove();
   const pdfBtn = document.createElement('button');
@@ -1317,21 +1137,16 @@ function renderResult(data) {
   pdfBtn.innerHTML = '📄 Download PDF Report';
   pdfBtn.onclick = () => downloadPDF(data);
   document.querySelector('.btn-area').appendChild(pdfBtn);
-
-  // Show result card with animation
   const rc = document.getElementById('result-card');
   rc.style.display = 'block';
   document.getElementById('calendar-section').style.display = 'block';
   requestAnimationFrame(() => requestAnimationFrame(() => rc.classList.add('show')));
   rc.scrollIntoView({ behavior:'smooth', block:'nearest' });
-
   document.getElementById('btnText').textContent = 'Analyze Another Plant';
   showToast(`🎯 Analysis complete — ${data.risk} risk detected`);
 }
 
-/* ══════════════════════════════════════════
-   GOD MODE: MINI CONFIDENCE CHART
-══════════════════════════════════════════ */
+/* ── MINI CHART ── */
 function renderMiniChart(current) {
   const chart  = document.getElementById('miniChart');
   const labels = document.getElementById('chartLabels');
@@ -1344,17 +1159,13 @@ function renderMiniChart(current) {
     bar.style.height = '0px';
     chart.appendChild(bar);
     setTimeout(() => { bar.style.height = `${(v / max) * 45}px`; }, 100 + i * 60);
-
     const lbl = document.createElement('span');
     lbl.textContent = `#${i+1}`;
     labels.appendChild(lbl);
   });
 }
 
-/* ══════════════════════════════════════════
-   ANIMATE COUNTER (replaces animateValue)
-   — BUGFIX: handles '/10' suffix correctly
-══════════════════════════════════════════ */
+/* ── ANIMATE COUNTER ── */
 function animateCounter(id, start, end, duration, suffix = '') {
   const el = document.getElementById(id);
   if (!el) return;
@@ -1367,9 +1178,7 @@ function animateCounter(id, start, end, duration, suffix = '') {
   }, 16);
 }
 
-/* ══════════════════════════════════════════
-   CALENDAR
-══════════════════════════════════════════ */
+/* ── CALENDAR ── */
 function renderCalendar() {
   const now  = new Date().getMonth();
   const grid = document.getElementById('calendarGrid');
@@ -1382,9 +1191,7 @@ function renderCalendar() {
   }
 }
 
-/* ══════════════════════════════════════════
-   HISTORY
-══════════════════════════════════════════ */
+/* ── HISTORY ── */
 function renderHistory() {
   if (!scanHistory.length) return;
   document.getElementById('history-section').style.display = 'block';
@@ -1396,9 +1203,7 @@ function renderHistory() {
 }
 renderHistory();
 
-/* ══════════════════════════════════════════
-   GPS
-══════════════════════════════════════════ */
+/* ── GPS ── */
 function getGPS() {
   const btn = document.getElementById('gpsBtn');
   btn.textContent = '⏳';
@@ -1421,9 +1226,7 @@ function getGPS() {
   );
 }
 
-/* ══════════════════════════════════════════
-   PDF DOWNLOAD
-══════════════════════════════════════════ */
+/* ── PDF ── */
 function downloadPDF(data) {
   showToast('📄 Generating PDF...');
   const payload = { ...data }; delete payload.image_b64;
