@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -12,7 +13,9 @@
   <meta name="apple-mobile-web-app-title" content="AgriShield AI">
   <meta name="description" content="AI-powered crop disease detection with live weather intelligence">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --g1: #0a1f04;
@@ -20,16 +23,25 @@
       --lime: #a8e63d;
       --lime2: #7cc220;
       --lime3: #4f8a10;
-      --lime-glow: rgba(168,230,61,0.12);
-      --lime-border: rgba(168,230,61,0.18);
+      --lime-glow: rgba(168, 230, 61, 0.12);
+      --lime-border: rgba(168, 230, 61, 0.18);
       --text: #e8f5d0;
       --muted: #5a7a3a;
       --danger: #ff5e3a;
       --warn: #f0a820;
     }
 
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
 
     body {
       font-family: 'DM Sans', sans-serif;
@@ -41,1273 +53,2213 @@
     }
 
     .cursor-dot {
-      position: fixed; width: 7px; height: 7px;
-      background: var(--lime); border-radius: 50%;
-      pointer-events: none; z-index: 99999;
+      position: fixed;
+      width: 7px;
+      height: 7px;
+      background: var(--lime);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99999;
       transform: translate(-50%, -50%);
-      box-shadow: 0 0 8px var(--lime), 0 0 18px rgba(168,230,61,0.6);
-      transition: transform 0.08s ease; will-change: left, top;
+      box-shadow: 0 0 8px var(--lime), 0 0 18px rgba(168, 230, 61, 0.6);
+      transition: transform 0.08s ease;
+      will-change: left, top;
     }
+
     .cursor-ring {
-      position: fixed; width: 28px; height: 28px;
-      border: 1.5px solid rgba(168,230,61,0.45); border-radius: 50%;
-      pointer-events: none; z-index: 99998;
+      position: fixed;
+      width: 28px;
+      height: 28px;
+      border: 1.5px solid rgba(168, 230, 61, 0.45);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 99998;
       transform: translate(-50%, -50%);
       transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, left 0.06s ease, top 0.06s ease;
       will-change: left, top;
     }
-    .cursor-ring.hovering { width: 44px; height: 44px; border-color: rgba(168,230,61,0.7); }
+
+    .cursor-ring.hovering {
+      width: 44px;
+      height: 44px;
+      border-color: rgba(168, 230, 61, 0.7);
+    }
+
     .cursor-glow {
-      position: fixed; width: 380px; height: 380px;
-      background: radial-gradient(circle, rgba(168,230,61,0.07) 0%, transparent 70%);
-      pointer-events: none; z-index: 0;
-      transform: translate(-50%, -50%); will-change: left, top;
+      position: fixed;
+      width: 380px;
+      height: 380px;
+      background: radial-gradient(circle, rgba(168, 230, 61, 0.07) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      transform: translate(-50%, -50%);
+      will-change: left, top;
       transition: left 0.15s ease, top 0.15s ease;
     }
-    a, button, input, select, label,
-    .dropzone, .preview-change, .h-item,
-    .tab-btn, .cal-month, .gps-btn, .voice-btn { cursor: none; }
+
+    a,
+    button,
+    input,
+    select,
+    label,
+    .dropzone,
+    .preview-change,
+    .h-item,
+    .tab-btn,
+    .cal-month,
+    .gps-btn,
+    .voice-btn {
+      cursor: none;
+    }
 
     .canvas-bg {
-      position: fixed; inset: 0; z-index: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background:
-        radial-gradient(ellipse 70% 60% at 15% 10%, rgba(100,200,30,0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 85% 85%, rgba(60,150,10,0.06) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(80,180,20,0.03) 0%, transparent 70%);
+        radial-gradient(ellipse 70% 60% at 15% 10%, rgba(100, 200, 30, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 85% 85%, rgba(60, 150, 10, 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 30% at 50% 50%, rgba(80, 180, 20, 0.03) 0%, transparent 70%);
     }
+
     .grid-overlay {
-      position: fixed; inset: 0; z-index: 0;
+      position: fixed;
+      inset: 0;
+      z-index: 0;
       background-image:
-        linear-gradient(rgba(168,230,61,0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(168,230,61,0.03) 1px, transparent 1px);
+        linear-gradient(rgba(168, 230, 61, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168, 230, 61, 0.03) 1px, transparent 1px);
       background-size: 48px 48px;
     }
+
     .orb {
-      position: fixed; border-radius: 50%; filter: blur(80px);
-      pointer-events: none; z-index: 0;
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
       animation: floatOrb 12s ease-in-out infinite;
     }
-    .orb1 { width:300px; height:300px; background:rgba(120,200,30,0.04); top:10%; left:5%; animation-delay:0s; }
-    .orb2 { width:200px; height:200px; background:rgba(80,160,20,0.05); bottom:20%; right:10%; animation-delay:4s; }
-    .orb3 { width:150px; height:150px; background:rgba(160,230,40,0.04); top:50%; left:40%; animation-delay:8s; }
-    @keyframes floatOrb { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-30px) scale(1.1)} }
+
+    .orb1 {
+      width: 300px;
+      height: 300px;
+      background: rgba(120, 200, 30, 0.04);
+      top: 10%;
+      left: 5%;
+      animation-delay: 0s;
+    }
+
+    .orb2 {
+      width: 200px;
+      height: 200px;
+      background: rgba(80, 160, 20, 0.05);
+      bottom: 20%;
+      right: 10%;
+      animation-delay: 4s;
+    }
+
+    .orb3 {
+      width: 150px;
+      height: 150px;
+      background: rgba(160, 230, 40, 0.04);
+      top: 50%;
+      left: 40%;
+      animation-delay: 8s;
+    }
+
+    @keyframes floatOrb {
+
+      0%,
+      100% {
+        transform: translateY(0) scale(1)
+      }
+
+      50% {
+        transform: translateY(-30px) scale(1.1)
+      }
+    }
 
     nav {
-      position: sticky; top: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
       padding: 0.85rem 2rem;
-      background: rgba(6,18,2,0.8);
+      background: rgba(6, 18, 2, 0.8);
       backdrop-filter: blur(24px);
       border-bottom: 1px solid var(--lime-border);
     }
-    .logo { display:flex; align-items:center; gap:12px; }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
     .logo-mark {
-      width:38px; height:38px;
+      width: 38px;
+      height: 38px;
       background: linear-gradient(135deg, var(--lime2), var(--lime3));
-      border-radius:10px; display:flex; align-items:center; justify-content:center;
-      font-size:20px; box-shadow: 0 0 20px rgba(168,230,61,0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 0 20px rgba(168, 230, 61, 0.2);
       animation: logoBreath 3s ease-in-out infinite;
     }
+
     @keyframes logoBreath {
-      0%,100%{box-shadow:0 0 20px rgba(168,230,61,0.2)}
-      50%{box-shadow:0 0 35px rgba(168,230,61,0.45)}
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(168, 230, 61, 0.2)
+      }
+
+      50% {
+        box-shadow: 0 0 35px rgba(168, 230, 61, 0.45)
+      }
     }
-    .logo-text { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; letter-spacing:-0.5px; }
-    .logo-text em { color:var(--lime); font-style:normal; }
-    .nav-pills { display:flex; gap:8px; }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text em {
+      color: var(--lime);
+      font-style: normal;
+    }
+
+    .nav-pills {
+      display: flex;
+      gap: 8px;
+    }
+
     .nav-pill {
-      background:var(--lime-glow); border:1px solid var(--lime-border);
-      color:var(--lime2); font-size:11px; font-weight:600;
-      padding:4px 12px; border-radius:100px; letter-spacing:0.06em;
-      display:flex; align-items:center; gap:5px;
+      background: var(--lime-glow);
+      border: 1px solid var(--lime-border);
+      color: var(--lime2);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 5px;
     }
+
     .pulse-dot {
-      width:6px; height:6px; background:var(--lime);
-      border-radius:50%; animation:blink 1.5s ease-in-out infinite;
+      width: 6px;
+      height: 6px;
+      background: var(--lime);
+      border-radius: 50%;
+      animation: blink 1.5s ease-in-out infinite;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.25
+      }
+    }
 
     .page-wrap {
-      position:relative; z-index:1;
-      max-width:780px; margin:0 auto;
-      padding:2rem 1.5rem 5rem;
+      position: relative;
+      z-index: 1;
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 5rem;
     }
 
-    .hero { text-align:center; padding-bottom:1.75rem; }
+    .hero {
+      text-align: center;
+      padding-bottom: 1.75rem;
+    }
+
     .hero-eyebrow {
-      display:inline-flex; align-items:center; gap:8px;
-      background:var(--lime-glow); border:1px solid var(--lime-border);
-      color:var(--lime); font-size:11px; font-weight:600;
-      padding:5px 16px; border-radius:100px; letter-spacing:0.1em;
-      margin-bottom:1.25rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--lime-glow);
+      border: 1px solid var(--lime-border);
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 16px;
+      border-radius: 100px;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.25rem;
       animation: fadeInDown 0.6s ease both;
     }
+
     .hero h1 {
-      font-family:'Syne',sans-serif;
-      font-size:clamp(1.9rem,4vw,3.1rem);
-      font-weight:800; line-height:1.1; letter-spacing:-1.5px;
-      margin-bottom:0.6rem;
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.9rem, 4vw, 3.1rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 0.6rem;
       animation: fadeInUp 0.7s ease 0.1s both;
     }
+
     .gradient-text {
-      background:linear-gradient(135deg,#a8e63d 0%,#6ab820 55%,#3d7a05 100%);
-      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      background: linear-gradient(135deg, #a8e63d 0%, #6ab820 55%, #3d7a05 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
+
     .hero-sub {
-      color:var(--muted); font-size:13px; font-weight:300; font-style:italic;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 300;
+      font-style: italic;
       animation: fadeInUp 0.8s ease 0.2s both;
     }
-    @keyframes fadeInDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
-    @keyframes fadeInUp   { from{opacity:0;transform:translateY(18px)}  to{opacity:1;transform:translateY(0)} }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
 
     .main-card {
-      background:rgba(8,20,3,0.88);
-      border:1px solid var(--lime-border);
-      border-radius:22px;
-      backdrop-filter:blur(28px);
-      box-shadow:0 0 80px rgba(100,200,30,0.05), 0 32px 64px rgba(0,0,0,0.55);
-      overflow:hidden;
+      background: rgba(8, 20, 3, 0.88);
+      border: 1px solid var(--lime-border);
+      border-radius: 22px;
+      backdrop-filter: blur(28px);
+      box-shadow: 0 0 80px rgba(100, 200, 30, 0.05), 0 32px 64px rgba(0, 0, 0, 0.55);
+      overflow: hidden;
       transform-style: preserve-3d;
       transition: transform 0.4s ease, box-shadow 0.4s ease;
     }
-    .main-card.tilt { box-shadow: 0 0 100px rgba(100,200,30,0.08), 0 40px 80px rgba(0,0,0,0.6); }
+
+    .main-card.tilt {
+      box-shadow: 0 0 100px rgba(100, 200, 30, 0.08), 0 40px 80px rgba(0, 0, 0, 0.6);
+    }
 
     .section-top {
-      padding:1.1rem 1.6rem 0.9rem;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(168,230,61,0.06);
+      padding: 1.1rem 1.6rem 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(168, 230, 61, 0.06);
     }
-    .section-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; color:var(--lime3); text-transform:uppercase; letter-spacing:0.1em; }
-    .status-tag { display:flex; align-items:center; gap:6px; font-size:11px; color:var(--muted); }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--lime3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .status-tag {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
 
     .controls-row {
-      display:grid; grid-template-columns:1fr auto auto 1fr;
-      gap:8px; padding:1rem 1.6rem 0; align-items:end;
+      display: grid;
+      grid-template-columns: 1fr auto auto 1fr;
+      gap: 8px;
+      padding: 1rem 1.6rem 0;
+      align-items: end;
     }
-    .field { position:relative; }
+
+    .field {
+      position: relative;
+    }
+
     .field-icon {
-      position:absolute; left:11px; top:50%; transform:translateY(-50%);
-      font-size:13px; pointer-events:none; z-index:1;
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      pointer-events: none;
+      z-index: 1;
     }
-    input.ctrl, select.ctrl {
-      width:100%; padding:10px 12px 10px 33px;
-      background:rgba(4,12,2,0.75); border:1px solid rgba(168,230,61,0.15);
-      border-radius:10px; color:var(--text);
-      font-family:'DM Sans',sans-serif; font-size:13px;
-      transition:all 0.2s; appearance:none; -webkit-appearance:none;
+
+    input.ctrl,
+    select.ctrl {
+      width: 100%;
+      padding: 10px 12px 10px 33px;
+      background: rgba(4, 12, 2, 0.75);
+      border: 1px solid rgba(168, 230, 61, 0.15);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      transition: all 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
     }
-    input.ctrl::placeholder { color:var(--muted); }
-    input.ctrl:focus, select.ctrl:focus {
-      outline:none; border-color:rgba(168,230,61,0.4);
-      box-shadow:0 0 0 3px rgba(168,230,61,0.08);
-      background:rgba(4,12,2,0.95);
+
+    input.ctrl::placeholder {
+      color: var(--muted);
     }
-    select.ctrl option { background:#0a1f04; color:white; }
+
+    input.ctrl:focus,
+    select.ctrl:focus {
+      outline: none;
+      border-color: rgba(168, 230, 61, 0.4);
+      box-shadow: 0 0 0 3px rgba(168, 230, 61, 0.08);
+      background: rgba(4, 12, 2, 0.95);
+    }
+
+    select.ctrl option {
+      background: #0a1f04;
+      color: white;
+    }
+
     .gps-btn {
-      padding:10px 14px;
-      background:var(--lime-glow); border:1px solid var(--lime-border);
-      border-radius:10px; color:var(--lime); font-size:15px;
-      cursor:none; transition:all 0.2s; display:flex; align-items:center;
+      padding: 10px 14px;
+      background: var(--lime-glow);
+      border: 1px solid var(--lime-border);
+      border-radius: 10px;
+      color: var(--lime);
+      font-size: 15px;
+      cursor: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
     }
-    .gps-btn:hover { background:rgba(168,230,61,0.22); transform:scale(1.05); }
+
+    .gps-btn:hover {
+      background: rgba(168, 230, 61, 0.22);
+      transform: scale(1.05);
+    }
 
     #weather-strip {
-      display:none; margin:0.8rem 1.6rem 0;
-      background:linear-gradient(135deg,rgba(40,90,10,0.3),rgba(20,60,5,0.2));
-      border:1px solid rgba(168,230,61,0.12);
-      border-radius:13px; padding:0.8rem 1.1rem;
-      animation:slideIn 0.4s ease;
+      display: none;
+      margin: 0.8rem 1.6rem 0;
+      background: linear-gradient(135deg, rgba(40, 90, 10, 0.3), rgba(20, 60, 5, 0.2));
+      border: 1px solid rgba(168, 230, 61, 0.12);
+      border-radius: 13px;
+      padding: 0.8rem 1.1rem;
+      animation: slideIn 0.4s ease;
     }
-    .weather-grid { display:flex; align-items:center; justify-content:space-around; }
+
+    .weather-grid {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
     .w-item {
-      display:flex; flex-direction:column; align-items:center;
-      gap:3px; flex:1; position:relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      flex: 1;
+      position: relative;
     }
+
     .w-item:not(:last-child)::after {
-      content:''; position:absolute; right:0; top:10%;
-      height:80%; width:1px; background:rgba(168,230,61,0.08);
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 10%;
+      height: 80%;
+      width: 1px;
+      background: rgba(168, 230, 61, 0.08);
     }
-    .w-emoji { font-size:17px; }
-    .w-val { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; color:var(--lime); }
-    .w-key { font-size:9px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; }
-    .city-name-tag { text-align:center; font-size:10px; color:var(--muted); margin-top:6px; font-style:italic; }
+
+    .w-emoji {
+      font-size: 17px;
+    }
+
+    .w-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--lime);
+    }
+
+    .w-key {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .city-name-tag {
+      text-align: center;
+      font-size: 10px;
+      color: var(--muted);
+      margin-top: 6px;
+      font-style: italic;
+    }
 
     /* ── UPLOAD AREA ── */
-    .upload-wrap { padding:0.9rem 1.6rem 0; }
+    .upload-wrap {
+      padding: 0.9rem 1.6rem 0;
+    }
+
     .dropzone {
-      border:2px dashed rgba(168,230,61,0.2);
-      border-radius:14px; padding:2.2rem 1.5rem;
-      text-align:center; cursor:default; position:relative;
-      background:rgba(168,230,61,0.02); transition:all 0.25s;
+      border: 2px dashed rgba(168, 230, 61, 0.2);
+      border-radius: 14px;
+      padding: 2.2rem 1.5rem;
+      text-align: center;
+      cursor: default;
+      position: relative;
+      background: rgba(168, 230, 61, 0.02);
+      transition: all 0.25s;
     }
+
     .dropzone.drag-over {
-      border-color:rgba(168,230,61,0.5);
-      background:rgba(168,230,61,0.06);
+      border-color: rgba(168, 230, 61, 0.5);
+      background: rgba(168, 230, 61, 0.06);
     }
+
     .upload-icon {
-      width:52px; height:52px; margin:0 auto 0.75rem;
-      background:linear-gradient(135deg,rgba(168,230,61,0.12),rgba(100,180,20,0.08));
-      border:1px solid rgba(168,230,61,0.2);
-      border-radius:13px; display:flex; align-items:center; justify-content:center;
-      font-size:24px; transition:transform 0.2s;
+      width: 52px;
+      height: 52px;
+      margin: 0 auto 0.75rem;
+      background: linear-gradient(135deg, rgba(168, 230, 61, 0.12), rgba(100, 180, 20, 0.08));
+      border: 1px solid rgba(168, 230, 61, 0.2);
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: transform 0.2s;
     }
-    .upload-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; margin-bottom:4px; }
-    .upload-sub { font-size:12px; color:var(--muted); }
+
+    .upload-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .upload-sub {
+      font-size: 12px;
+      color: var(--muted);
+    }
 
     /* ── TWO UPLOAD BUTTONS ── */
     .upload-btn-row {
-      display:flex; gap:10px; justify-content:center;
-      margin-top:14px; flex-wrap:wrap;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 14px;
+      flex-wrap: wrap;
     }
-    .upload-btn {
-      padding:10px 22px;
-      border-radius:10px; font-family:'DM Sans',sans-serif;
-      font-size:13px; font-weight:600; cursor:none;
-      transition:all 0.2s; display:flex; align-items:center; gap:7px;
-      border:none;
-    }
-    .upload-btn-camera {
-      background:rgba(168,230,61,0.14); border:1px solid rgba(168,230,61,0.35);
-      color:var(--lime);
-    }
-    .upload-btn-camera:hover { background:rgba(168,230,61,0.26); transform:translateY(-2px); }
-    .upload-btn-gallery {
-      background:rgba(168,230,61,0.06); border:1px solid rgba(168,230,61,0.18);
-      color:var(--lime2);
-    }
-    .upload-btn-gallery:hover { background:rgba(168,230,61,0.14); transform:translateY(-2px); }
 
-    .upload-formats { display:flex; gap:5px; justify-content:center; margin-top:10px; flex-wrap:wrap; }
+    .upload-btn {
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border: none;
+    }
+
+    .upload-btn-camera {
+      background: rgba(168, 230, 61, 0.14);
+      border: 1px solid rgba(168, 230, 61, 0.35);
+      color: var(--lime);
+    }
+
+    .upload-btn-camera:hover {
+      background: rgba(168, 230, 61, 0.26);
+      transform: translateY(-2px);
+    }
+
+    .upload-btn-gallery {
+      background: rgba(168, 230, 61, 0.06);
+      border: 1px solid rgba(168, 230, 61, 0.18);
+      color: var(--lime2);
+    }
+
+    .upload-btn-gallery:hover {
+      background: rgba(168, 230, 61, 0.14);
+      transform: translateY(-2px);
+    }
+
+    .upload-formats {
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
     .format-chip {
-      background:rgba(168,230,61,0.06); border:1px solid rgba(168,230,61,0.12);
-      color:var(--muted); font-size:9px; font-weight:600;
-      padding:2px 8px; border-radius:100px; letter-spacing:0.06em;
+      background: rgba(168, 230, 61, 0.06);
+      border: 1px solid rgba(168, 230, 61, 0.12);
+      color: var(--muted);
+      font-size: 9px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
     }
 
     #preview-wrap {
-      display:none; margin:0.9rem 1.6rem 0;
-      border-radius:13px; overflow:hidden;
-      border:1px solid rgba(168,230,61,0.15);
-      position:relative;
+      display: none;
+      margin: 0.9rem 1.6rem 0;
+      border-radius: 13px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 230, 61, 0.15);
+      position: relative;
     }
-    #preview { width:100%; max-height:240px; object-fit:cover; display:block; }
+
+    #preview {
+      width: 100%;
+      max-height: 240px;
+      object-fit: cover;
+      display: block;
+    }
+
     .preview-overlay {
-      position:absolute; inset:0;
-      background:linear-gradient(to top, rgba(6,18,2,0.7) 0%, transparent 50%);
-      z-index:1;
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(6, 18, 2, 0.7) 0%, transparent 50%);
+      z-index: 1;
     }
+
     .scan-line {
-      position:absolute; width:100%; height:2px;
-      background:linear-gradient(90deg, transparent, rgba(168,230,61,0.8), transparent);
-      box-shadow:0 0 8px rgba(168,230,61,0.6);
-      z-index:2; top:0;
-      animation:scanMove 2.2s linear infinite;
-      pointer-events:none;
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(168, 230, 61, 0.8), transparent);
+      box-shadow: 0 0 8px rgba(168, 230, 61, 0.6);
+      z-index: 2;
+      top: 0;
+      animation: scanMove 2.2s linear infinite;
+      pointer-events: none;
     }
-    @keyframes scanMove { 0%{top:0} 100%{top:100%} }
+
+    @keyframes scanMove {
+      0% {
+        top: 0
+      }
+
+      100% {
+        top: 100%
+      }
+    }
+
     .preview-chip {
-      position:absolute; bottom:11px; left:11px; z-index:3;
-      background:rgba(6,18,2,0.85); border:1px solid rgba(168,230,61,0.25);
-      color:var(--lime); font-size:11px; font-weight:600;
-      padding:3px 11px; border-radius:100px;
+      position: absolute;
+      bottom: 11px;
+      left: 11px;
+      z-index: 3;
+      background: rgba(6, 18, 2, 0.85);
+      border: 1px solid rgba(168, 230, 61, 0.25);
+      color: var(--lime);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 11px;
+      border-radius: 100px;
     }
+
     .preview-change {
-      position:absolute; bottom:11px; right:11px; z-index:3;
-      background:rgba(6,18,2,0.7); border:1px solid rgba(168,230,61,0.15);
-      color:var(--muted); font-size:10px; padding:3px 10px;
-      border-radius:100px; cursor:none; transition:all 0.2s;
+      position: absolute;
+      bottom: 11px;
+      right: 11px;
+      z-index: 3;
+      background: rgba(6, 18, 2, 0.7);
+      border: 1px solid rgba(168, 230, 61, 0.15);
+      color: var(--muted);
+      font-size: 10px;
+      padding: 3px 10px;
+      border-radius: 100px;
+      cursor: none;
+      transition: all 0.2s;
     }
-    .preview-change:hover { color:var(--lime); border-color:rgba(168,230,61,0.3); }
+
+    .preview-change:hover {
+      color: var(--lime);
+      border-color: rgba(168, 230, 61, 0.3);
+    }
 
     #risk-banner {
-      display:none; margin:0.7rem 1.6rem 0;
-      border-radius:10px; padding:9px 14px;
-      font-size:12px; font-weight:600;
-      align-items:center; gap:10px;
+      display: none;
+      margin: 0.7rem 1.6rem 0;
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      align-items: center;
+      gap: 10px;
     }
-    #risk-banner.high   { background:rgba(255,60,20,0.1);  border:1px solid rgba(255,60,20,0.3);  color:#ff7a60; }
-    #risk-banner.medium { background:rgba(240,168,32,0.1); border:1px solid rgba(240,168,32,0.3); color:#f0c860; }
-    #risk-banner.low    { background:rgba(100,200,30,0.1); border:1px solid rgba(100,200,30,0.25);color:var(--lime); }
+
+    #risk-banner.high {
+      background: rgba(255, 60, 20, 0.1);
+      border: 1px solid rgba(255, 60, 20, 0.3);
+      color: #ff7a60;
+    }
+
+    #risk-banner.medium {
+      background: rgba(240, 168, 32, 0.1);
+      border: 1px solid rgba(240, 168, 32, 0.3);
+      color: #f0c860;
+    }
+
+    #risk-banner.low {
+      background: rgba(100, 200, 30, 0.1);
+      border: 1px solid rgba(100, 200, 30, 0.25);
+      color: var(--lime);
+    }
 
     #error-card {
-      display:none; margin:0.7rem 1.6rem 0;
-      background:rgba(50,10,5,0.85); border:1px solid rgba(200,50,30,0.35);
-      border-radius:10px; padding:0.85rem 1rem;
-      font-size:12px; color:#f08070; line-height:1.75;
+      display: none;
+      margin: 0.7rem 1.6rem 0;
+      background: rgba(50, 10, 5, 0.85);
+      border: 1px solid rgba(200, 50, 30, 0.35);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      font-size: 12px;
+      color: #f08070;
+      line-height: 1.75;
     }
+
     #lang-translate-bar {
-      display:none; margin:0.7rem 1.6rem 0;
-      background:rgba(168,230,61,0.08); border:1px solid rgba(168,230,61,0.2);
-      border-radius:10px; padding:9px 14px;
-      font-size:12px; color:var(--lime2);
-      align-items:center; gap:8px;
+      display: none;
+      margin: 0.7rem 1.6rem 0;
+      background: rgba(168, 230, 61, 0.08);
+      border: 1px solid rgba(168, 230, 61, 0.2);
+      border-radius: 10px;
+      padding: 9px 14px;
+      font-size: 12px;
+      color: var(--lime2);
+      align-items: center;
+      gap: 8px;
     }
 
     #result-card {
-      display:none; position:relative;
-      margin:0.9rem 1.6rem 0;
-      border-radius:17px; overflow:hidden;
-      border:1px solid rgba(168,230,61,0.15);
-      opacity:0; transform:translateY(12px) scale(0.98);
-      transition:opacity 0.5s ease, transform 0.5s ease;
+      display: none;
+      position: relative;
+      margin: 0.9rem 1.6rem 0;
+      border-radius: 17px;
+      overflow: hidden;
+      border: 1px solid rgba(168, 230, 61, 0.15);
+      opacity: 0;
+      transform: translateY(12px) scale(0.98);
+      transition: opacity 0.5s ease, transform 0.5s ease;
     }
-    #result-card.show { opacity:1; transform:translateY(0) scale(1); }
+
+    #result-card.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
 
     .result-head {
-      background:linear-gradient(135deg,rgba(30,70,8,0.9),rgba(16,45,4,0.9));
-      padding:1.1rem 1.4rem;
-      display:flex; align-items:center; justify-content:space-between;
-      border-bottom:1px solid rgba(168,230,61,0.1);
-      flex-wrap:wrap; gap:10px;
+      background: linear-gradient(135deg, rgba(30, 70, 8, 0.9), rgba(16, 45, 4, 0.9));
+      padding: 1.1rem 1.4rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(168, 230, 61, 0.1);
+      flex-wrap: wrap;
+      gap: 10px;
     }
-    .result-head-left { display:flex; align-items:center; gap:13px; }
+
+    .result-head-left {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
+
     .status-ring {
-      width:40px; height:40px; border-radius:50%;
-      background:linear-gradient(135deg,var(--lime2),var(--lime3));
-      display:flex; align-items:center; justify-content:center;
-      font-size:20px; flex-shrink:0;
-      animation:pulseRing 2s ease-in-out infinite;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--lime2), var(--lime3));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      animation: pulseRing 2s ease-in-out infinite;
     }
+
     @keyframes pulseRing {
-      0%,100%{box-shadow:0 0 20px rgba(168,230,61,0.25)}
-      50%{box-shadow:0 0 38px rgba(168,230,61,0.5)}
+
+      0%,
+      100% {
+        box-shadow: 0 0 20px rgba(168, 230, 61, 0.25)
+      }
+
+      50% {
+        box-shadow: 0 0 38px rgba(168, 230, 61, 0.5)
+      }
     }
-    .result-label { font-size:10px; font-weight:700; color:var(--lime3); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:2px; }
-    .disease-name { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; color:#d0f080; line-height:1.2; }
+
+    .result-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--lime3);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 2px;
+    }
+
+    .disease-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: #d0f080;
+      line-height: 1.2;
+    }
+
     .voice-btn {
-      background:rgba(168,230,61,0.1); border:1px solid rgba(168,230,61,0.25);
-      color:var(--lime2); padding:7px 14px; border-radius:9px; cursor:none;
-      font-size:12px; font-weight:600; transition:all 0.2s;
-      white-space:nowrap; font-family:'DM Sans',sans-serif;
-      display:flex; align-items:center; gap:6px;
+      background: rgba(168, 230, 61, 0.1);
+      border: 1px solid rgba(168, 230, 61, 0.25);
+      color: var(--lime2);
+      padding: 7px 14px;
+      border-radius: 9px;
+      cursor: none;
+      font-size: 12px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .voice-btn:hover { background:rgba(168,230,61,0.22); }
+
+    .voice-btn:hover {
+      background: rgba(168, 230, 61, 0.22);
+    }
+
     .voice-btn.playing {
-      color:#fff; background:rgba(255,80,50,0.2); border-color:rgba(255,80,50,0.4);
-      animation:voicePulse 1s ease-in-out infinite;
+      color: #fff;
+      background: rgba(255, 80, 50, 0.2);
+      border-color: rgba(255, 80, 50, 0.4);
+      animation: voicePulse 1s ease-in-out infinite;
     }
+
     @keyframes voicePulse {
-      0%,100%{box-shadow:0 0 0 0 rgba(255,80,50,0)}
-      50%{box-shadow:0 0 0 6px rgba(255,80,50,0.15)}
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 80, 50, 0)
+      }
+
+      50% {
+        box-shadow: 0 0 0 6px rgba(255, 80, 50, 0.15)
+      }
     }
 
-    .result-body { background:rgba(6,16,2,0.9); padding:1.1rem 1.4rem; }
+    .result-body {
+      background: rgba(6, 16, 2, 0.9);
+      padding: 1.1rem 1.4rem;
+    }
+
     .section-label {
-      font-size:9px; font-weight:700; color:var(--muted);
-      text-transform:uppercase; letter-spacing:0.12em;
-      margin-bottom:7px; margin-top:14px;
-      display:flex; align-items:center; gap:7px;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 7px;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
     }
-    .section-label::before { content:''; width:14px; height:1px; background:rgba(168,230,61,0.2); }
 
-    .treatment-tabs { display:flex; gap:5px; margin-bottom:9px; margin-top:3px; }
-    .tab-btn {
-      padding:5px 14px; border-radius:7px; cursor:none;
-      font-size:12px; font-weight:600; border:1px solid transparent;
-      transition:all 0.2s; background:transparent;
-      color:var(--muted); font-family:'DM Sans',sans-serif;
+    .section-label::before {
+      content: '';
+      width: 14px;
+      height: 1px;
+      background: rgba(168, 230, 61, 0.2);
     }
-    .tab-btn.active { background:rgba(168,230,61,0.1); border-color:rgba(168,230,61,0.22); color:var(--lime); }
-    .tab-content { display:none; }
-    .tab-content.active { display:block; }
+
+    .treatment-tabs {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 9px;
+      margin-top: 3px;
+    }
+
+    .tab-btn {
+      padding: 5px 14px;
+      border-radius: 7px;
+      cursor: none;
+      font-size: 12px;
+      font-weight: 600;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .tab-btn.active {
+      background: rgba(168, 230, 61, 0.1);
+      border-color: rgba(168, 230, 61, 0.22);
+      color: var(--lime);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
 
     .solution-text {
-      font-size:13px; color:rgba(200,240,140,0.9); line-height:1.85;
-      white-space:pre-wrap;
-    }
-    .crop-tip {
-      background:rgba(168,230,61,0.05); border:1px solid rgba(168,230,61,0.1);
-      border-left:3px solid var(--lime3); border-radius:8px;
-      padding:9px 13px; margin-top:7px;
-      font-size:12px; color:var(--lime2); line-height:1.7;
+      font-size: 13px;
+      color: rgba(200, 240, 140, 0.9);
+      line-height: 1.85;
+      white-space: pre-wrap;
     }
 
-    .meters-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:5px; }
-    .meter-box {
-      background:rgba(168,230,61,0.03); border:1px solid rgba(168,230,61,0.1);
-      border-radius:11px; padding:11px 13px; transition:border-color 0.3s;
+    .crop-tip {
+      background: rgba(168, 230, 61, 0.05);
+      border: 1px solid rgba(168, 230, 61, 0.1);
+      border-left: 3px solid var(--lime3);
+      border-radius: 8px;
+      padding: 9px 13px;
+      margin-top: 7px;
+      font-size: 12px;
+      color: var(--lime2);
+      line-height: 1.7;
     }
-    .meter-box:hover { border-color:rgba(168,230,61,0.22); }
-    .meter-lbl { font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:5px; }
-    .meter-val { font-family:'Syne',sans-serif; font-size:21px; font-weight:800; color:var(--lime); margin-bottom:5px; }
-    .bar-bg { width:100%; height:5px; background:rgba(168,230,61,0.08); border-radius:100px; overflow:hidden; }
-    .bar-fill { height:100%; border-radius:100px; transition:width 1.4s cubic-bezier(0.4,0,0.2,1); }
-    .bar-conf     { background:linear-gradient(90deg,#4aad10,#a8e63d); }
-    .bar-sev-low  { background:linear-gradient(90deg,#4aad10,#7cc220); }
-    .bar-sev-med  { background:linear-gradient(90deg,#f0a020,#f0c840); }
-    .bar-sev-high { background:linear-gradient(90deg,#c03020,#f05040); }
+
+    .meters-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    .meter-box {
+      background: rgba(168, 230, 61, 0.03);
+      border: 1px solid rgba(168, 230, 61, 0.1);
+      border-radius: 11px;
+      padding: 11px 13px;
+      transition: border-color 0.3s;
+    }
+
+    .meter-box:hover {
+      border-color: rgba(168, 230, 61, 0.22);
+    }
+
+    .meter-lbl {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 5px;
+    }
+
+    .meter-val {
+      font-family: 'Syne', sans-serif;
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--lime);
+      margin-bottom: 5px;
+    }
+
+    .bar-bg {
+      width: 100%;
+      height: 5px;
+      background: rgba(168, 230, 61, 0.08);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 1.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .bar-conf {
+      background: linear-gradient(90deg, #4aad10, #a8e63d);
+    }
+
+    .bar-sev-low {
+      background: linear-gradient(90deg, #4aad10, #7cc220);
+    }
+
+    .bar-sev-med {
+      background: linear-gradient(90deg, #f0a020, #f0c840);
+    }
+
+    .bar-sev-high {
+      background: linear-gradient(90deg, #c03020, #f05040);
+    }
 
     #conf-chart-wrap {
-      margin-top:14px;
-      background:rgba(168,230,61,0.03); border:1px solid rgba(168,230,61,0.1);
-      border-radius:11px; padding:11px 13px;
+      margin-top: 14px;
+      background: rgba(168, 230, 61, 0.03);
+      border: 1px solid rgba(168, 230, 61, 0.1);
+      border-radius: 11px;
+      padding: 11px 13px;
     }
-    .chart-title { font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; margin-bottom:10px; }
-    .mini-chart { display:flex; align-items:flex-end; gap:4px; height:45px; }
-    .mc-bar {
-      flex:1; border-radius:4px 4px 0 0;
-      background:linear-gradient(180deg,rgba(168,230,61,0.5),rgba(100,180,20,0.3));
-      transition:height 1s ease; position:relative;
-    }
-    .mc-bar.active-bar {
-      background:linear-gradient(180deg,var(--lime),var(--lime2));
-      box-shadow:0 0 8px rgba(168,230,61,0.4);
-    }
-    .chart-labels { display:flex; gap:4px; margin-top:4px; }
-    .chart-labels span { flex:1; font-size:7px; color:var(--muted); text-align:center; letter-spacing:0.04em; text-transform:uppercase; }
 
-    .meta-pills { display:flex; gap:5px; margin-top:12px; flex-wrap:wrap; }
+    .chart-title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 10px;
+    }
+
+    .mini-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 45px;
+    }
+
+    .mc-bar {
+      flex: 1;
+      border-radius: 4px 4px 0 0;
+      background: linear-gradient(180deg, rgba(168, 230, 61, 0.5), rgba(100, 180, 20, 0.3));
+      transition: height 1s ease;
+      position: relative;
+    }
+
+    .mc-bar.active-bar {
+      background: linear-gradient(180deg, var(--lime), var(--lime2));
+      box-shadow: 0 0 8px rgba(168, 230, 61, 0.4);
+    }
+
+    .chart-labels {
+      display: flex;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .chart-labels span {
+      flex: 1;
+      font-size: 7px;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .meta-pills {
+      display: flex;
+      gap: 5px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
     .mpill {
-      background:rgba(168,230,61,0.06); border:1px solid rgba(168,230,61,0.12);
-      color:var(--muted); font-size:10px; font-weight:600;
-      padding:3px 10px; border-radius:100px;
+      background: rgba(168, 230, 61, 0.06);
+      border: 1px solid rgba(168, 230, 61, 0.12);
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
     }
 
     #calendar-section {
-      display:none; padding:0 1.4rem 1.1rem;
-      background:rgba(6,16,2,0.9); border-top:1px solid rgba(168,230,61,0.06);
+      display: none;
+      padding: 0 1.4rem 1.1rem;
+      background: rgba(6, 16, 2, 0.9);
+      border-top: 1px solid rgba(168, 230, 61, 0.06);
     }
-    .section-label.cal { margin-top:1.1rem; }
+
+    .section-label.cal {
+      margin-top: 1.1rem;
+    }
+
     .calendar-grid {
-      display:flex; gap:5px; overflow-x:auto;
-      padding-bottom:4px; scrollbar-width:none;
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
     }
-    .calendar-grid::-webkit-scrollbar { display:none; }
+
+    .calendar-grid::-webkit-scrollbar {
+      display: none;
+    }
+
     .cal-month {
-      flex-shrink:0; background:rgba(168,230,61,0.04);
-      border:1px solid rgba(168,230,61,0.1);
-      border-radius:8px; padding:6px 10px; text-align:center; min-width:60px;
-      transition:all 0.2s;
+      flex-shrink: 0;
+      background: rgba(168, 230, 61, 0.04);
+      border: 1px solid rgba(168, 230, 61, 0.1);
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+      min-width: 60px;
+      transition: all 0.2s;
     }
-    .cal-month:hover { background:rgba(168,230,61,0.09); border-color:rgba(168,230,61,0.25); transform:translateY(-2px); }
-    .cal-month.now { border-color:rgba(168,230,61,0.38); background:rgba(168,230,61,0.09); }
-    .cal-mon { font-size:9px; font-weight:700; color:var(--muted); text-transform:uppercase; }
-    .cal-icon { font-size:15px; margin:3px 0; }
-    .cal-act { font-size:8px; color:var(--lime3); }
 
-    #history-section { display:none; margin:0 1.6rem; }
+    .cal-month:hover {
+      background: rgba(168, 230, 61, 0.09);
+      border-color: rgba(168, 230, 61, 0.25);
+      transform: translateY(-2px);
+    }
+
+    .cal-month.now {
+      border-color: rgba(168, 230, 61, 0.38);
+      background: rgba(168, 230, 61, 0.09);
+    }
+
+    .cal-mon {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    .cal-icon {
+      font-size: 15px;
+      margin: 3px 0;
+    }
+
+    .cal-act {
+      font-size: 8px;
+      color: var(--lime3);
+    }
+
+    #history-section {
+      display: none;
+      margin: 0 1.6rem;
+    }
+
     .history-hdr {
-      font-family:'Syne',sans-serif; font-size:10px; font-weight:700;
-      color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:7px;
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 7px;
     }
-    .history-list { display:flex; flex-direction:column; gap:5px; }
-    .h-item {
-      background:rgba(168,230,61,0.04); border:1px solid rgba(168,230,61,0.1);
-      border-radius:9px; padding:7px 11px;
-      display:flex; justify-content:space-between; align-items:center;
-      transition:all 0.2s;
-    }
-    .h-item:hover { background:rgba(168,230,61,0.09); transform:translateX(2px); }
-    .h-dis { color:rgba(200,240,140,0.9); font-weight:600; font-size:12px; }
-    .h-meta { color:var(--muted); font-size:10px; }
-    .h-risk { font-size:9px; font-weight:700; padding:2px 7px; border-radius:5px; text-transform:uppercase; letter-spacing:0.05em; }
-    .h-risk.LOW    { background:rgba(100,200,30,0.1); color:var(--lime2); }
-    .h-risk.MEDIUM { background:rgba(240,168,32,0.1); color:#f0c840; }
-    .h-risk.HIGH   { background:rgba(255,60,20,0.1);  color:#ff7a60; }
 
-    .btn-area { padding:1.1rem 1.6rem 1.6rem; display:flex; flex-direction:column; gap:7px; }
+    .history-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .h-item {
+      background: rgba(168, 230, 61, 0.04);
+      border: 1px solid rgba(168, 230, 61, 0.1);
+      border-radius: 9px;
+      padding: 7px 11px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.2s;
+    }
+
+    .h-item:hover {
+      background: rgba(168, 230, 61, 0.09);
+      transform: translateX(2px);
+    }
+
+    .h-dis {
+      color: rgba(200, 240, 140, 0.9);
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    .h-meta {
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .h-risk {
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .h-risk.LOW {
+      background: rgba(100, 200, 30, 0.1);
+      color: var(--lime2);
+    }
+
+    .h-risk.MEDIUM {
+      background: rgba(240, 168, 32, 0.1);
+      color: #f0c840;
+    }
+
+    .h-risk.HIGH {
+      background: rgba(255, 60, 20, 0.1);
+      color: #ff7a60;
+    }
+
+    .btn-area {
+      padding: 1.1rem 1.6rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
     .btn-primary {
-      position:relative; overflow:hidden;
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      width:100%; padding:14px; border:none; border-radius:12px;
-      background:linear-gradient(135deg,#6ab820 0%,#3d8005 100%);
-      color:white; font-family:'Syne',sans-serif; font-size:14px; font-weight:700;
-      cursor:none; transition:all 0.25s; letter-spacing:0.02em;
-      box-shadow:0 4px 22px rgba(100,184,32,0.25);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #6ab820 0%, #3d8005 100%);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: none;
+      transition: all 0.25s;
+      letter-spacing: 0.02em;
+      box-shadow: 0 4px 22px rgba(100, 184, 32, 0.25);
     }
-    .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 10px 32px rgba(100,184,32,0.45); }
-    .btn-primary:disabled { background:rgba(30,50,15,0.6); color:var(--muted); box-shadow:none; cursor:not-allowed; }
+
+    .btn-primary:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(100, 184, 32, 0.45);
+    }
+
+    .btn-primary:disabled {
+      background: rgba(30, 50, 15, 0.6);
+      color: var(--muted);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
     .btn-primary .ripple {
-      position:absolute; border-radius:50%;
-      background:rgba(255,255,255,0.25);
-      transform:scale(0); animation:rippleAnim 0.55s linear;
-      pointer-events:none;
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(0);
+      animation: rippleAnim 0.55s linear;
+      pointer-events: none;
     }
-    @keyframes rippleAnim { to{transform:scale(4);opacity:0} }
+
+    @keyframes rippleAnim {
+      to {
+        transform: scale(4);
+        opacity: 0
+      }
+    }
 
     .btn-pdf {
-      display:flex; align-items:center; justify-content:center; gap:8px;
-      width:100%; padding:12px; border:none; border-radius:12px;
-      background:linear-gradient(135deg,#e06020,#b84010);
-      color:white; font-family:'Syne',sans-serif; font-size:14px; font-weight:700;
-      cursor:none; transition:all 0.25s;
-      box-shadow:0 4px 16px rgba(200,80,30,0.22);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #e06020, #b84010);
+      color: white;
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: none;
+      transition: all 0.25s;
+      box-shadow: 0 4px 16px rgba(200, 80, 30, 0.22);
     }
-    .btn-pdf:hover { transform:translateY(-2px); box-shadow:0 10px 28px rgba(200,80,30,0.4); }
+
+    .btn-pdf:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(200, 80, 30, 0.4);
+    }
 
     .spinner {
-      display:none; width:17px; height:17px;
-      border:2px solid rgba(255,255,255,0.25); border-top-color:white;
-      border-radius:50%; animation:spin 0.7s linear infinite;
+      display: none;
+      width: 17px;
+      height: 17px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
     }
-    @keyframes spin { to{transform:rotate(360deg)} }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg)
+      }
+    }
 
     .translating-overlay {
-      position:absolute; inset:0;
-      background:rgba(6,16,2,0.88);
-      z-index:50; display:flex; align-items:center; justify-content:center;
-      border-radius:17px;
+      position: absolute;
+      inset: 0;
+      background: rgba(6, 16, 2, 0.88);
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 17px;
     }
+
     .translating-spinner {
-      width:28px; height:28px;
-      border:3px solid rgba(168,230,61,0.2); border-top-color:var(--lime);
-      border-radius:50%; animation:spin 0.8s linear infinite;
+      width: 28px;
+      height: 28px;
+      border: 3px solid rgba(168, 230, 61, 0.2);
+      border-top-color: var(--lime);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
     }
 
     #toast {
-      position:fixed; bottom:2rem; right:1.5rem; z-index:10000;
-      background:rgba(8,22,3,0.95); border:1px solid rgba(168,230,61,0.3);
-      border-radius:12px; padding:10px 16px;
-      font-size:12px; font-weight:600; color:var(--lime);
-      box-shadow:0 8px 32px rgba(0,0,0,0.5);
-      transform:translateY(20px); opacity:0;
-      transition:all 0.3s ease; pointer-events:none;
-      backdrop-filter:blur(12px);
+      position: fixed;
+      bottom: 2rem;
+      right: 1.5rem;
+      z-index: 10000;
+      background: rgba(8, 22, 3, 0.95);
+      border: 1px solid rgba(168, 230, 61, 0.3);
+      border-radius: 12px;
+      padding: 10px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--lime);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      pointer-events: none;
+      backdrop-filter: blur(12px);
     }
-    #toast.show { transform:translateY(0); opacity:1; }
+
+    #toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
 
     footer {
-      position:relative; z-index:1; text-align:center;
-      padding:1.25rem; border-top:1px solid rgba(168,230,61,0.06);
-      font-size:11px; color:#2a4a12; margin-top:2rem;
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      padding: 1.25rem;
+      border-top: 1px solid rgba(168, 230, 61, 0.06);
+      font-size: 11px;
+      color: #2a4a12;
+      margin-top: 2rem;
     }
 
     @media (max-width:640px) {
-      nav { padding:0.8rem 1rem; }
-      .nav-pills { display:none; }
-      .page-wrap { padding:1.25rem 0.75rem 2.5rem; }
-      .controls-row { grid-template-columns:1fr auto auto; }
-      .controls-row .field:last-of-type { grid-column:1 / -1; }
-      .meters-row { grid-template-columns:1fr; }
-      .result-head { flex-direction:column; align-items:flex-start; }
-      .disease-name { font-size:14px; }
-      .main-card { border-radius:16px; }
-      body { cursor: auto !important; }
-      .cursor-dot, .cursor-ring, .cursor-glow { display: none !important; }
-      a, button, input, select, label,
-      .dropzone, .preview-change, .h-item,
-      .tab-btn, .cal-month, .gps-btn, .voice-btn,
-      .mic-btn, .upload-btn { cursor: pointer !important; }
+      nav {
+        padding: 0.8rem 1rem;
+      }
+
+      .nav-pills {
+        display: none;
+      }
+
+      .page-wrap {
+        padding: 1.25rem 0.75rem 2.5rem;
+      }
+
+      .controls-row {
+        grid-template-columns: 1fr auto auto;
+      }
+
+      .controls-row .field:last-of-type {
+        grid-column: 1 / -1;
+      }
+
+      .meters-row {
+        grid-template-columns: 1fr;
+      }
+
+      .result-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .disease-name {
+        font-size: 14px;
+      }
+
+      .main-card {
+        border-radius: 16px;
+      }
+
+      body {
+        cursor: auto !important;
+      }
+
+      .cursor-dot,
+      .cursor-ring,
+      .cursor-glow {
+        display: none !important;
+      }
+
+      a,
+      button,
+      input,
+      select,
+      label,
+      .dropzone,
+      .preview-change,
+      .h-item,
+      .tab-btn,
+      .cal-month,
+      .gps-btn,
+      .voice-btn,
+      .mic-btn,
+      .upload-btn {
+        cursor: pointer !important;
+      }
     }
 
     .mic-btn {
       padding: 10px 13px;
-      background: var(--lime-glow); border: 1px solid var(--lime-border);
-      border-radius: 10px; color: var(--lime); font-size: 15px;
-      cursor: none; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
-      font-weight: 600; font-family: 'DM Sans', sans-serif; white-space: nowrap;
-    }
-    .mic-btn:hover { background: rgba(168,230,61,0.22); transform: scale(1.04); }
-    .mic-btn.listening {
-      background: rgba(255,80,50,0.15); border-color: rgba(255,80,50,0.4);
-      color: #ff7a60; animation: micPulse 0.8s ease-in-out infinite;
-    }
-    @keyframes micPulse {
-      0%,100% { box-shadow: 0 0 0 0 rgba(255,80,50,0); }
-      50% { box-shadow: 0 0 0 7px rgba(255,80,50,0.15); }
+      background: var(--lime-glow);
+      border: 1px solid var(--lime-border);
+      border-radius: 10px;
+      color: var(--lime);
+      font-size: 15px;
+      cursor: none;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      white-space: nowrap;
     }
 
-    @keyframes slideIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+    .mic-btn:hover {
+      background: rgba(168, 230, 61, 0.22);
+      transform: scale(1.04);
+    }
+
+    .mic-btn.listening {
+      background: rgba(255, 80, 50, 0.15);
+      border-color: rgba(255, 80, 50, 0.4);
+      color: #ff7a60;
+      animation: micPulse 0.8s ease-in-out infinite;
+    }
+
+    @keyframes micPulse {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 80, 50, 0);
+      }
+
+      50% {
+        box-shadow: 0 0 0 7px rgba(255, 80, 50, 0.15);
+      }
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
   </style>
 </head>
+
 <body>
 
-<div class="cursor-dot"  id="cursorDot"></div>
-<div class="cursor-ring" id="cursorRing"></div>
-<div class="cursor-glow" id="cursorGlow"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+  <div class="cursor-glow" id="cursorGlow"></div>
 
-<div class="canvas-bg"></div>
-<div class="grid-overlay"></div>
-<div class="orb orb1"></div>
-<div class="orb orb2"></div>
-<div class="orb orb3"></div>
+  <div class="canvas-bg"></div>
+  <div class="grid-overlay"></div>
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
 
-<div id="toast">✅ Done</div>
+  <div id="toast">✅ Done</div>
 
-<nav>
-  <div class="logo">
-    <div class="logo-mark">🌱</div>
-    <div class="logo-text">Agri<em>Shield</em> AI</div>
-  </div>
-  <div class="nav-pills">
-    <div class="nav-pill"><div class="pulse-dot"></div> LIVE AI</div>
-    <div class="nav-pill">🌦️ WEATHER</div>
-    <div class="nav-pill">📄 PDF</div>
-  </div>
-  <button id="installBtn" onclick="installApp()" style="display:none;
+  <nav>
+    <div class="logo">
+      <div class="logo-mark">🌱</div>
+      <div class="logo-text">Agri<em>Shield</em> AI</div>
+    </div>
+    <div class="nav-pills">
+      <div class="nav-pill">
+        <div class="pulse-dot"></div> LIVE AI
+      </div>
+      <div class="nav-pill">🌦️ WEATHER</div>
+      <div class="nav-pill">📄 PDF</div>
+    </div>
+    <button id="installBtn" onclick="installApp()" style="display:none;
     align-items:center; gap:6px;
     background:rgba(168,230,61,0.12); border:1px solid rgba(168,230,61,0.3);
     color:#a8e63d; font-family:'DM Sans',sans-serif;
     font-size:11px; font-weight:700; padding:5px 13px;
     border-radius:100px; cursor:none; transition:all 0.2s;">
-    📲 Install App
-  </button>
-</nav>
+      📲 Install App
+    </button>
+  </nav>
 
-<div class="page-wrap">
+  <div class="page-wrap">
 
-  <div class="hero">
-    <div class="hero-eyebrow"><div class="pulse-dot"></div> AI-POWERED CROP DISEASE DETECTION</div>
-    <h1>Detect. Diagnose.<br><span class="gradient-text">Protect Your Harvest.</span></h1>
-    <p class="hero-sub">Upload a plant photo — get instant AI diagnosis with live weather intelligence</p>
-  </div>
-
-  <div class="main-card" id="mainCard">
-
-    <div class="section-top">
-      <span class="section-title">Smart Crop Analysis</span>
-      <span class="status-tag"><span style="color:var(--lime)">●</span>&nbsp; Ready</span>
+    <div class="hero">
+      <div class="hero-eyebrow">
+        <div class="pulse-dot"></div> AI-POWERED CROP DISEASE DETECTION
+      </div>
+      <h1>Detect. Diagnose.<br><span class="gradient-text">Protect Your Harvest.</span></h1>
+      <p class="hero-sub">Upload a plant photo — get instant AI diagnosis with live weather intelligence</p>
     </div>
 
-    <div class="controls-row">
-      <div class="field">
-        <span class="field-icon">📍</span>
-        <input type="text" id="cityInput" class="ctrl" placeholder="City name" value="Chennai">
-      </div>
-      <button class="mic-btn" id="micBtn" onclick="startVoiceCity()" title="Speak city name">🎤</button>
-      <button class="gps-btn" onclick="getGPS()" id="gpsBtn" title="Detect location">📡</button>
-      <div class="field">
-        <span class="field-icon">🌐</span>
-        <select id="langInput" class="ctrl" onchange="onLangChange()">
-          <option value="English">English</option>
-          <option value="Tamil">Tamil</option>
-          <option value="Hindi">Hindi</option>
-          <option value="Telugu">Telugu</option>
-          <option value="Kannada">Kannada</option>
-          <option value="Malayalam">Malayalam</option>
-        </select>
-      </div>
-    </div>
+    <div class="main-card" id="mainCard">
 
-    <div id="weather-strip">
-      <div class="weather-grid">
-        <div class="w-item"><span class="w-emoji" id="w-icon">🌤️</span><span class="w-val" id="w-cond">--</span><span class="w-key">Condition</span></div>
-        <div class="w-item"><span class="w-emoji">🌡️</span><span class="w-val" id="w-temp">--°C</span><span class="w-key">Temp</span></div>
-        <div class="w-item"><span class="w-emoji">💧</span><span class="w-val" id="w-hum">--%</span><span class="w-key">Humidity</span></div>
-        <div class="w-item"><span class="w-emoji">🔵</span><span class="w-val" id="w-pres">-- hPa</span><span class="w-key">Pressure</span></div>
+      <div class="section-top">
+        <span class="section-title">Smart Crop Analysis</span>
+        <span class="status-tag"><span style="color:var(--lime)">●</span>&nbsp; Ready</span>
       </div>
-      <div class="city-name-tag" id="w-city-label">--</div>
-    </div>
 
-    <!-- ══ UPLOAD SECTION — TWO BUTTONS ══ -->
-    <div class="upload-wrap">
-      <!-- Hidden file inputs — no capture = gallery, capture=environment = camera -->
-      <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
-      <input type="file" id="galleryInput" accept="image/*" style="display:none">
-
-      <div class="dropzone" id="dropzone">
-        <div class="upload-icon">📸</div>
-        <p class="upload-title">Choose how to upload your plant photo</p>
-        <p class="upload-sub">Camera for live scan · Gallery for saved photo · or drag & drop below</p>
-        <div class="upload-btn-row">
-          <button class="upload-btn upload-btn-camera" onclick="document.getElementById('cameraInput').click()">
-            📸 Open Camera
-          </button>
-          <button class="upload-btn upload-btn-gallery" onclick="document.getElementById('galleryInput').click()">
-            🖼️ Open Gallery
-          </button>
+      <div class="controls-row">
+        <div class="field">
+          <span class="field-icon">📍</span>
+          <input type="text" id="cityInput" class="ctrl" placeholder="City name" value="Chennai">
         </div>
-        <div class="upload-formats">
-          <span class="format-chip">JPG</span><span class="format-chip">PNG</span>
-          <span class="format-chip">WEBP</span><span class="format-chip">HEIC</span>
+        <button class="mic-btn" id="micBtn" onclick="startVoiceCity()" title="Speak city name">🎤</button>
+        <button class="gps-btn" onclick="getGPS()" id="gpsBtn" title="Detect location">📡</button>
+        <div class="field">
+          <span class="field-icon">🌐</span>
+          <select id="langInput" class="ctrl" onchange="onLangChange()">
+            <option value="English">English</option>
+            <option value="Tamil">Tamil</option>
+            <option value="Hindi">Hindi</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Kannada">Kannada</option>
+            <option value="Malayalam">Malayalam</option>
+          </select>
         </div>
       </div>
-    </div>
 
-    <div id="preview-wrap">
-      <div class="scan-line"></div>
-      <img id="preview" src="" alt="Plant preview">
-      <div class="preview-overlay"></div>
-      <span class="preview-chip">✓ Image ready</span>
-      <span class="preview-change" onclick="resetImage()">Change ↩</span>
-    </div>
-
-    <div id="lang-translate-bar">🌐 <span id="langBarText">Retranslating results...</span></div>
-    <div id="risk-banner"></div>
-    <div id="error-card"></div>
-
-    <div id="result-card">
-      <div class="result-head">
-        <div class="result-head-left">
-  <div class="status-ring" id="statusIcon">🔬</div>
-  <div>
-    <p class="result-label" id="diseaseTag">Detected</p>
-    <p class="disease-name" id="diseaseName">—</p>
-    <p class="result-time">🕒 <span id="timeVal">--</span></p>
-  </div>
-</div>
-        <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔊 Listen</button>
-      </div>
-      <div class="result-body">
-        <p class="section-label">Treatment</p>
-        <div class="treatment-tabs">
-          <button class="tab-btn active" onclick="switchTab('organic')">🌿 Organic</button>
-          <button class="tab-btn" onclick="switchTab('chemical')">🧪 Chemical</button>
+      <div id="weather-strip">
+        <div class="weather-grid">
+          <div class="w-item"><span class="w-emoji" id="w-icon">🌤️</span><span class="w-val" id="w-cond">--</span><span
+              class="w-key">Condition</span></div>
+          <div class="w-item"><span class="w-emoji">🌡️</span><span class="w-val" id="w-temp">--°C</span><span
+              class="w-key">Temp</span></div>
+          <div class="w-item"><span class="w-emoji">💧</span><span class="w-val" id="w-hum">--%</span><span
+              class="w-key">Humidity</span></div>
+          <div class="w-item"><span class="w-emoji">🔵</span><span class="w-val" id="w-pres">-- hPa</span><span
+              class="w-key">Pressure</span></div>
         </div>
-        <div class="tab-content active" id="tab-organic"><p class="solution-text" id="organicText">—</p></div>
-        <div class="tab-content"        id="tab-chemical"><p class="solution-text" id="chemicalText">—</p></div>
-        <div class="crop-tip" id="cropTipBox"></div>
+        <div class="city-name-tag" id="w-city-label">--</div>
+      </div>
 
-        <p class="section-label">Weather Intelligence</p>
-        <p class="solution-text" id="insightText">—</p>
+      <!-- ══ UPLOAD SECTION — TWO BUTTONS ══ -->
+      <div class="upload-wrap">
+        <!-- Hidden file inputs — no capture = gallery, capture=environment = camera -->
+        <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none">
+        <input type="file" id="galleryInput" accept="image/*" style="display:none">
 
-        <p class="section-label">Diagnostics</p>
-        <div class="meters-row">
-          <div class="meter-box">
-            <div class="meter-lbl">🎯 AI Confidence</div>
-            <div class="meter-val" id="confVal">0%</div>
-            <div class="bar-bg"><div class="bar-fill bar-conf" id="confBar" style="width:0%"></div></div>
+        <div class="dropzone" id="dropzone">
+          <div class="upload-icon">📸</div>
+          <p class="upload-title">Choose how to upload your plant photo</p>
+          <p class="upload-sub">Camera for live scan · Gallery for saved photo · or drag & drop below</p>
+          <div class="upload-btn-row">
+            <button class="upload-btn upload-btn-camera" onclick="document.getElementById('cameraInput').click()">
+              📸 Open Camera
+            </button>
+            <button class="upload-btn upload-btn-gallery" onclick="document.getElementById('galleryInput').click()">
+              🖼️ Open Gallery
+            </button>
           </div>
-          <div class="meter-box">
-            <div class="meter-lbl">🔥 Severity</div>
-            <div class="meter-val" id="sevVal">0/10</div>
-            <div class="bar-bg"><div class="bar-fill bar-sev-low" id="sevBar" style="width:0%"></div></div>
+          <div class="upload-formats">
+            <span class="format-chip">JPG</span><span class="format-chip">PNG</span>
+            <span class="format-chip">WEBP</span><span class="format-chip">HEIC</span>
           </div>
         </div>
+      </div>
 
-        <div id="conf-chart-wrap">
-          <div class="chart-title">📊 Scan Confidence History</div>
-          <div class="mini-chart" id="miniChart"></div>
-          <div class="chart-labels" id="chartLabels"></div>
+      <div id="preview-wrap">
+        <div class="scan-line"></div>
+        <img id="preview" src="" alt="Plant preview">
+        <div class="preview-overlay"></div>
+        <span class="preview-chip">✓ Image ready</span>
+        <span class="preview-change" onclick="resetImage()">Change ↩</span>
+      </div>
+
+      <div id="lang-translate-bar">🌐 <span id="langBarText">Retranslating results...</span></div>
+      <div id="risk-banner"></div>
+      <div id="error-card"></div>
+
+      <div id="result-card">
+        <div class="result-head">
+          <div class="result-head-left">
+            <div class="status-ring" id="statusIcon">🔬</div>
+            <div>
+              <p class="result-label" id="diseaseTag">Detected</p>
+              <p class="disease-name" id="diseaseName">—</p>
+              <p class="result-time">🕒 <span id="timeVal">--</span></p>
+            </div>
+          </div>
+          <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔊 Listen</button>
+        </div>
+        <div class="result-body">
+          <p class="section-label">Treatment</p>
+          <div class="treatment-tabs">
+            <button class="tab-btn active" onclick="switchTab('organic')">🌿 Organic</button>
+            <button class="tab-btn" onclick="switchTab('chemical')">🧪 Chemical</button>
+          </div>
+          <div class="tab-content active" id="tab-organic">
+            <p class="solution-text" id="organicText">—</p>
+          </div>
+          <div class="tab-content" id="tab-chemical">
+            <p class="solution-text" id="chemicalText">—</p>
+          </div>
+          <div class="crop-tip" id="cropTipBox"></div>
+
+          <p class="section-label">Weather Intelligence</p>
+          <p class="solution-text" id="insightText">—</p>
+
+          <p class="section-label">Diagnostics</p>
+          <div class="meters-row">
+            <div class="meter-box">
+              <div class="meter-lbl">🎯 AI Confidence</div>
+              <div class="meter-val" id="confVal">0%</div>
+              <div class="bar-bg">
+                <div class="bar-fill bar-conf" id="confBar" style="width:0%"></div>
+              </div>
+            </div>
+            <div class="meter-box">
+              <div class="meter-lbl">🔥 Severity</div>
+              <div class="meter-val" id="sevVal">0/10</div>
+              <div class="bar-bg">
+                <div class="bar-fill bar-sev-low" id="sevBar" style="width:0%"></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="conf-chart-wrap">
+            <div class="chart-title">📊 Scan Confidence History</div>
+            <div class="mini-chart" id="miniChart"></div>
+            <div class="chart-labels" id="chartLabels"></div>
+          </div>
+
+          <div class="meta-pills">
+            <span class="mpill" id="mWeather"></span>
+            <span class="mpill" id="mRisk"></span>
+            <span class="mpill" id="mTime"></span>
+            <span class="mpill">🛡️ AgriShield Verified</span>
+          </div>
         </div>
 
-        <div class="meta-pills">
-          <span class="mpill" id="mWeather"></span>
-          <span class="mpill" id="mRisk"></span>
-          <span class="mpill" id="mTime"></span>
-          <span class="mpill">🛡️ AgriShield Verified</span>
+        <div id="calendar-section">
+          <p class="section-label cal">📅 Crop Care Calendar</p>
+          <div class="calendar-grid" id="calendarGrid"></div>
         </div>
       </div>
 
-      <div id="calendar-section">
-        <p class="section-label cal">📅 Crop Care Calendar</p>
-        <div class="calendar-grid" id="calendarGrid"></div>
+      <div id="history-section">
+        <div style="padding:0.9rem 0 0">
+          <p class="history-hdr">📋 Recent Scans</p>
+          <div class="history-list" id="historyList"></div>
+        </div>
       </div>
-    </div>
 
-    <div id="history-section">
-      <div style="padding:0.9rem 0 0">
-        <p class="history-hdr">📋 Recent Scans</p>
-        <div class="history-list" id="historyList"></div>
+      <div class="btn-area">
+        <button class="btn-primary" id="analyzeBtn" onclick="analyze()" disabled>
+          <span id="btnIcon">🔍</span>
+          <span id="btnText">Select an image first</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
       </div>
-    </div>
 
-    <div class="btn-area">
-      <button class="btn-primary" id="analyzeBtn" onclick="analyze()" disabled>
-        <span id="btnIcon">🔍</span>
-        <span id="btnText">Select an image first</span>
-        <div class="spinner" id="spinner"></div>
-      </button>
     </div>
-
   </div>
-</div>
 
-<footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + PDF Reports</footer>
+  <footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + PDF Reports</footer>
 
-<script>
-const WEATHER_ICONS = {
-  Clear:'☀️', Clouds:'☁️', Rain:'🌧️', Drizzle:'🌦️',
-  Thunderstorm:'⛈️', Snow:'❄️', Mist:'🌫️', Haze:'🌫️', Smoke:'🌫️', Fog:'🌫️'
-};
-const LANG_CODES = {
-  English:'en-IN', Tamil:'ta-IN', Hindi:'hi-IN',
-  Telugu:'te-IN', Kannada:'kn-IN', Malayalam:'ml-IN'
-};
-const MONTHS    = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const CAL_ICONS = ['🌱','🌿','☀️','💧','🌾','✂️','🌧️','🧪','🌱','🌿','🌾','❄️'];
-const CAL_ACTS  = ['Sow seeds','Thin seedlings','Fertilize','Irrigate','Spray','Prune','Harvest','Test soil','Sow seeds','Mulch','Harvest','Rest'];
+  <script>
+    const WEATHER_ICONS = {
+      Clear: '☀️', Clouds: '☁️', Rain: '🌧️', Drizzle: '🌦️',
+      Thunderstorm: '⛈️', Snow: '❄️', Mist: '🌫️', Haze: '🌫️', Smoke: '🌫️', Fog: '🌫️'
+    };
+    const LANG_CODES = {
+      English: 'en-IN', Tamil: 'ta-IN', Hindi: 'hi-IN',
+      Telugu: 'te-IN', Kannada: 'kn-IN', Malayalam: 'ml-IN'
+    };
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const CAL_ICONS = ['🌱', '🌿', '☀️', '💧', '🌾', '✂️', '🌧️', '🧪', '🌱', '🌿', '🌾', '❄️'];
+    const CAL_ACTS = ['Sow seeds', 'Thin seedlings', 'Fertilize', 'Irrigate', 'Spray', 'Prune', 'Harvest', 'Test soil', 'Sow seeds', 'Mulch', 'Harvest', 'Rest'];
 
-let lastResult    = null;
-let lastImageFile = null;
-let activeTab     = 'organic';
-let isSpeaking    = false;
-let scanHistory   = JSON.parse(localStorage.getItem('agrishield_v2') || '[]');
-let confHistory   = JSON.parse(localStorage.getItem('agrishield_conf') || '[]');
+    let lastResult = null;
+    let lastImageFile = null;
+    let activeTab = 'organic';
+    let isSpeaking = false;
+    let scanHistory = JSON.parse(localStorage.getItem('agrishield_v2') || '[]');
+    let confHistory = JSON.parse(localStorage.getItem('agrishield_conf') || '[]');
 
-/* ── VOICE INPUT FOR CITY ── */
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-let recognition = null;
-if (SpeechRecognition) {
-  recognition = new SpeechRecognition();
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
-}
+    /* ── VOICE INPUT FOR CITY ── */
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    let recognition = null;
+    if (SpeechRecognition) {
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+    }
 
-function startVoiceCity() {
-  if (!recognition) { showToast('⚠️ Voice not supported in this browser'); return; }
-  const btn  = document.getElementById('micBtn');
-  const lang = document.getElementById('langInput').value;
-  recognition.lang = LANG_CODES[lang] || 'en-IN';
-  btn.classList.add('listening');
-  btn.textContent = '🔴';
-  showToast('🎤 Listening... say your city name');
-  recognition.start();
-  recognition.onresult = (e) => {
-    const city = e.results[0][0].transcript.trim();
-    document.getElementById('cityInput').value = city;
-    showToast(`📍 Got it: "${city}"`);
-  };
-  recognition.onend  = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; };
-  recognition.onerror = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; showToast('🎤 Voice error — try again or type city'); };
-}
+    function startVoiceCity() {
+      if (!recognition) { showToast('⚠️ Voice not supported in this browser'); return; }
+      const btn = document.getElementById('micBtn');
+      const lang = document.getElementById('langInput').value;
+      recognition.lang = LANG_CODES[lang] || 'en-IN';
+      btn.classList.add('listening');
+      btn.textContent = '🔴';
+      showToast('🎤 Listening... say your city name');
+      recognition.start();
+      recognition.onresult = (e) => {
+        const city = e.results[0][0].transcript.trim();
+        document.getElementById('cityInput').value = city;
+        showToast(`📍 Got it: "${city}"`);
+      };
+      recognition.onend = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; };
+      recognition.onerror = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; showToast('🎤 Voice error — try again or type city'); };
+    }
 
-/* ── CUSTOM CURSOR ── */
-(function() {
-  const dot  = document.getElementById('cursorDot');
-  const ring = document.getElementById('cursorRing');
-  const glow = document.getElementById('cursorGlow');
-  if (!dot) return;
-  let rx = 0, ry = 0, mx = 0, my = 0;
-  function lerp(a,b,t){ return a + (b-a)*t; }
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
-    glow.style.left = mx + 'px'; glow.style.top = my + 'px';
-  });
-  (function animRing() {
-    rx = lerp(rx, mx, 0.14); ry = lerp(ry, my, 0.14);
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(animRing);
-  })();
-  document.querySelectorAll('button,a,.dropzone,.h-item,.tab-btn,.cal-month,.preview-change').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
-  });
-})();
+    /* ── CUSTOM CURSOR ── */
+    (function () {
+      const dot = document.getElementById('cursorDot');
+      const ring = document.getElementById('cursorRing');
+      const glow = document.getElementById('cursorGlow');
+      if (!dot) return;
+      let rx = 0, ry = 0, mx = 0, my = 0;
+      function lerp(a, b, t) { return a + (b - a) * t; }
+      document.addEventListener('mousemove', e => {
+        mx = e.clientX; my = e.clientY;
+        dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+        glow.style.left = mx + 'px'; glow.style.top = my + 'px';
+      });
+      (function animRing() {
+        rx = lerp(rx, mx, 0.14); ry = lerp(ry, my, 0.14);
+        ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+        requestAnimationFrame(animRing);
+      })();
+      document.querySelectorAll('button,a,.dropzone,.h-item,.tab-btn,.cal-month,.preview-change').forEach(el => {
+        el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+      });
+    })();
 
-/* ── 3D CARD TILT ── */
-(function() {
-  const card = document.getElementById('mainCard');
-  if (!card) return;
-  card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left - r.width  / 2) / (r.width  / 2);
-    const y = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-    card.style.transform = `perspective(1200px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg)`;
-    card.classList.add('tilt');
-  });
-  card.addEventListener('mouseleave', () => {
-    card.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
-    card.classList.remove('tilt');
-  });
-})();
+    /* ── 3D CARD TILT ── */
+    (function () {
+      const card = document.getElementById('mainCard');
+      if (!card) return;
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left - r.width / 2) / (r.width / 2);
+        const y = (e.clientY - r.top - r.height / 2) / (r.height / 2);
+        card.style.transform = `perspective(1200px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg)`;
+        card.classList.add('tilt');
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)';
+        card.classList.remove('tilt');
+      });
+    })();
 
-/* ── RIPPLE ── */
-document.getElementById('analyzeBtn').addEventListener('click', function(e) {
-  const r   = this.getBoundingClientRect();
-  const rpl = document.createElement('span');
-  rpl.className = 'ripple';
-  rpl.style.cssText = `width:${r.width}px;height:${r.width}px;left:${e.clientX-r.left-r.width/2}px;top:${e.clientY-r.top-r.width/2}px`;
-  this.appendChild(rpl);
-  setTimeout(() => rpl.remove(), 600);
-});
-
-/* ── TOAST ── */
-function showToast(msg, duration = 2800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), duration);
-}
-
-/* ── VOICE OUTPUT ── */
-function toggleVoice() { isSpeaking ? stopVoice() : speak(); }
-function stopVoice() {
-  window.speechSynthesis.cancel(); isSpeaking = false;
-  const btn = document.getElementById('voiceBtn');
-  btn.innerHTML = '🔊 Listen'; btn.classList.remove('playing');
-}
-function speak() {
-  if (!lastResult) return;
-  const lang = document.getElementById('langInput').value;
-  const text = activeTab === 'chemical'
-    ? `${lastResult.disease}. ${lastResult.chemical}`
-    : `${lastResult.disease}. ${lastResult.organic}`;
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = LANG_CODES[lang] || 'en-IN'; utter.rate = 0.88;
-  window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
-  isSpeaking = true;
-  const btn = document.getElementById('voiceBtn');
-  btn.innerHTML = '⏹ Stop'; btn.classList.add('playing');
-  utter.onend = utter.onerror = stopVoice;
-}
-
-/* ── TAB SWITCH ── */
-function switchTab(tab) {
-  activeTab = tab; stopVoice();
-  document.querySelectorAll('.tab-btn').forEach((b,i) =>
-    b.classList.toggle('active', i === (tab === 'organic' ? 0 : 1))
-  );
-  document.getElementById('tab-organic').classList.toggle('active', tab === 'organic');
-  document.getElementById('tab-chemical').classList.toggle('active', tab === 'chemical');
-  if (lastResult) {
-    if (tab === 'organic') typewrite(document.getElementById('organicText'), lastResult.organic || 'No data.');
-    else typewrite(document.getElementById('chemicalText'), lastResult.chemical || 'No data.');
-  }
-}
-
-/* ── LANGUAGE RETRANSLATE ── */
-function onLangChange() {
-  stopVoice();
-  if (!lastResult || !lastImageFile) return;
-  const lang = document.getElementById('langInput').value;
-  const bar  = document.getElementById('lang-translate-bar');
-  document.getElementById('langBarText').textContent = `Translating to ${lang}...`;
-  bar.style.display = 'flex';
-  const overlay = document.createElement('div');
-  overlay.className = 'translating-overlay'; overlay.id = 'transOverlay';
-  overlay.innerHTML = '<div class="translating-spinner"></div>';
-  document.getElementById('result-card').appendChild(overlay);
-  const fd = new FormData();
-  fd.append('image', lastImageFile);
-  fd.append('city',  document.getElementById('cityInput').value.trim() || 'Chennai');
-  fd.append('language', lang);
-  fetch('/predict', { method:'POST', body:fd })
-    .then(r => r.json().then(d => ({ ok:r.ok, d })))
-    .then(({ok,d}) => {
-      if (!ok) throw new Error(d.error || 'Server error');
-      renderResult(d); bar.style.display = 'none';
-      showToast(`🌐 Translated to ${lang}`);
-    })
-    .catch(err => {
-      bar.style.display = 'none';
-      const ec = document.getElementById('error-card');
-      ec.innerHTML = `⚠️ Retranslation failed: ${err.message}`; ec.style.display = 'block';
-    })
-    .finally(() => { const ov = document.getElementById('transOverlay'); if(ov) ov.remove(); });
-}
-
-/* ══════════════════════════════════════════
-   IMAGE INPUT — CAMERA + GALLERY (FIXED)
-══════════════════════════════════════════ */
-const cameraInput  = document.getElementById('cameraInput');
-const galleryInput = document.getElementById('galleryInput');
-const dropzone     = document.getElementById('dropzone');
-
-/* Shared handler — called by both inputs */
-function handleFile(file) {
-  if (!file) return;
-  lastImageFile = file;
-  const reader = new FileReader();
-  reader.onload = e => {
-    document.getElementById('preview').src = e.target.result;
-    document.getElementById('preview-wrap').style.display = 'block';
-    dropzone.style.display = 'none';
-    showToast('📸 Image loaded — ready to analyze!');
-  };
-  reader.readAsDataURL(file);
-  document.getElementById('analyzeBtn').disabled = false;
-  document.getElementById('btnText').textContent = 'Analyze Plant Disease';
-  document.getElementById('result-card').style.display = 'none';
-  document.getElementById('result-card').classList.remove('show');
-  document.getElementById('error-card').style.display = 'none';
-  document.getElementById('risk-banner').style.display = 'none';
-  document.getElementById('lang-translate-bar').style.display = 'none';
-  stopVoice();
-  const pdf = document.getElementById('pdfBtn');
-  if (pdf) pdf.remove();
-}
-
-cameraInput.addEventListener('change',  function() { handleFile(this.files[0]); });
-galleryInput.addEventListener('change', function() { handleFile(this.files[0]); });
-
-/* Drag & drop still works on desktop */
-dropzone.addEventListener('dragover',  e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
-dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
-dropzone.addEventListener('drop', e => {
-  e.preventDefault(); dropzone.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
-});
-
-function resetImage() {
-  lastImageFile = null;
-  cameraInput.value  = '';
-  galleryInput.value = '';
-  document.getElementById('preview-wrap').style.display = 'none';
-  dropzone.style.display = 'block';
-  document.getElementById('analyzeBtn').disabled = true;
-  document.getElementById('btnText').textContent = 'Select an image first';
-  stopVoice();
-}
-
-/* ── ANALYZE ── */
-const aiMsgs = [
-  'Scanning leaf texture...', 'Detecting disease patterns...',
-  'Matching AI database...', 'Generating treatment plan...',
-  'Consulting weather data...', 'Almost there...'
-];
-let aiIdx = 0, aiTimer = null;
-
-function analyze() {
-  if (!lastImageFile) return;
-  stopVoice();
-  document.getElementById('btnIcon').style.display = 'none';
-  document.getElementById('spinner').style.display = 'block';
-  document.getElementById('analyzeBtn').disabled = true;
-  document.getElementById('error-card').style.display = 'none';
-  document.getElementById('result-card').style.display = 'none';
-  document.getElementById('result-card').classList.remove('show');
-  document.getElementById('risk-banner').style.display = 'none';
-  document.getElementById('lang-translate-bar').style.display = 'none';
-  aiIdx = 0;
-  document.getElementById('btnText').textContent = aiMsgs[0];
-  aiTimer = setInterval(() => {
-    aiIdx = (aiIdx + 1) % aiMsgs.length;
-    document.getElementById('btnText').textContent = aiMsgs[aiIdx];
-  }, 1300);
-  const fd = new FormData();
-  fd.append('image',    lastImageFile);
-  fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
-  fd.append('language', document.getElementById('langInput').value);
-  fetch('/predict', { method:'POST', body:fd })
-    .then(r => r.json().then(d => ({ ok:r.ok, d })))
-    .then(({ok,d}) => { if(!ok) throw new Error(d.error || 'Server error'); renderResult(d); })
-    .catch(err => {
-      const ec = document.getElementById('error-card');
-      ec.innerHTML = `⚠️ <strong>Error:</strong> ${err.message}<br><small style="opacity:0.7">Check API keys & internet connection</small>`;
-      ec.style.display = 'block';
-      document.getElementById('btnText').textContent = 'Try Again';
-      showToast('❌ Analysis failed — check connection');
-    })
-    .finally(() => {
-      clearInterval(aiTimer);
-      document.getElementById('spinner').style.display = 'none';
-      document.getElementById('btnIcon').style.display = 'inline';
-      document.getElementById('btnIcon').textContent = '🔍';
-      document.getElementById('analyzeBtn').disabled = false;
+    /* ── RIPPLE ── */
+    document.getElementById('analyzeBtn').addEventListener('click', function (e) {
+      const r = this.getBoundingClientRect();
+      const rpl = document.createElement('span');
+      rpl.className = 'ripple';
+      rpl.style.cssText = `width:${r.width}px;height:${r.width}px;left:${e.clientX - r.left - r.width / 2}px;top:${e.clientY - r.top - r.width / 2}px`;
+      this.appendChild(rpl);
+      setTimeout(() => rpl.remove(), 600);
     });
-}
 
-/* ── TYPEWRITER ── */
-function typewrite(el, text, speed = 18) {
-  el.textContent = ''; let i = 0;
-  const t = setInterval(() => {
-    el.textContent += text[i++];
-    if (i >= text.length) clearInterval(t);
-  }, speed);
-}
+    /* ── TOAST ── */
+    function showToast(msg, duration = 2800) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), duration);
+    }
 
-/* ── RENDER RESULT ── */
-function renderResult(data) {
+    /* ── VOICE OUTPUT ── */
+    function toggleVoice() { isSpeaking ? stopVoice() : speak(); }
+    function stopVoice() {
+      window.speechSynthesis.cancel(); isSpeaking = false;
+      const btn = document.getElementById('voiceBtn');
+      btn.innerHTML = '🔊 Listen'; btn.classList.remove('playing');
+    }
+    function speak() {
+      if (!lastResult) return;
+      const lang = document.getElementById('langInput').value;
+      const text = activeTab === 'chemical'
+        ? `${lastResult.disease}. ${lastResult.chemical}`
+        : `${lastResult.disease}. ${lastResult.organic}`;
+      const utter = new SpeechSynthesisUtterance(text);
+      utter.lang = LANG_CODES[lang] || 'en-IN'; utter.rate = 0.88;
+      window.speechSynthesis.cancel(); window.speechSynthesis.speak(utter);
+      isSpeaking = true;
+      const btn = document.getElementById('voiceBtn');
+      btn.innerHTML = '⏹ Stop'; btn.classList.add('playing');
+      utter.onend = utter.onerror = stopVoice;
+    }
+
+    /* ── TAB SWITCH ── */
+    function switchTab(tab) {
+      activeTab = tab; stopVoice();
+      document.querySelectorAll('.tab-btn').forEach((b, i) =>
+        b.classList.toggle('active', i === (tab === 'organic' ? 0 : 1))
+      );
+      document.getElementById('tab-organic').classList.toggle('active', tab === 'organic');
+      document.getElementById('tab-chemical').classList.toggle('active', tab === 'chemical');
+      if (lastResult) {
+        if (tab === 'organic') typewrite(document.getElementById('organicText'), lastResult.organic || 'No data.');
+        else typewrite(document.getElementById('chemicalText'), lastResult.chemical || 'No data.');
+      }
+    }
+
+    /* ── LANGUAGE RETRANSLATE ── */
+    function onLangChange() {
+      stopVoice();
+      if (!lastResult || !lastImageFile) return;
+      const lang = document.getElementById('langInput').value;
+      const bar = document.getElementById('lang-translate-bar');
+      document.getElementById('langBarText').textContent = `Translating to ${lang}...`;
+      bar.style.display = 'flex';
+      const overlay = document.createElement('div');
+      overlay.className = 'translating-overlay'; overlay.id = 'transOverlay';
+      overlay.innerHTML = '<div class="translating-spinner"></div>';
+      document.getElementById('result-card').appendChild(overlay);
+      const fd = new FormData();
+      fd.append('image', lastImageFile);
+      fd.append('city', document.getElementById('cityInput').value.trim() || 'Chennai');
+      fd.append('language', lang);
+      fetch('/predict', { method: 'POST', body: fd })
+        .then(r => r.json().then(d => ({ ok: r.ok, d })))
+        .then(({ ok, d }) => {
+          if (!ok) throw new Error(d.error || 'Server error');
+          renderResult(d); bar.style.display = 'none';
+          showToast(`🌐 Translated to ${lang}`);
+        })
+        .catch(err => {
+          bar.style.display = 'none';
+          const ec = document.getElementById('error-card');
+          ec.innerHTML = `⚠️ Retranslation failed: ${err.message}`; ec.style.display = 'block';
+        })
+        .finally(() => { const ov = document.getElementById('transOverlay'); if (ov) ov.remove(); });
+    }
+
+    /* ══════════════════════════════════════════
+       IMAGE INPUT — CAMERA + GALLERY (FIXED)
+    ══════════════════════════════════════════ */
+    const cameraInput = document.getElementById('cameraInput');
+    const galleryInput = document.getElementById('galleryInput');
+    const dropzone = document.getElementById('dropzone');
+
+    /* Shared handler — called by both inputs */
+    function handleFile(file) {
+      if (!file) return;
+      lastImageFile = file;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById('preview').src = e.target.result;
+        document.getElementById('preview-wrap').style.display = 'block';
+        dropzone.style.display = 'none';
+        showToast('📸 Image loaded — ready to analyze!');
+      };
+      reader.readAsDataURL(file);
+      document.getElementById('analyzeBtn').disabled = false;
+      document.getElementById('btnText').textContent = 'Analyze Plant Disease';
+      document.getElementById('result-card').style.display = 'none';
+      document.getElementById('result-card').classList.remove('show');
+      document.getElementById('error-card').style.display = 'none';
+      document.getElementById('risk-banner').style.display = 'none';
+      document.getElementById('lang-translate-bar').style.display = 'none';
+      stopVoice();
+      const pdf = document.getElementById('pdfBtn');
+      if (pdf) pdf.remove();
+    }
+
+    cameraInput.addEventListener('change', function () { handleFile(this.files[0]); });
+    galleryInput.addEventListener('change', function () { handleFile(this.files[0]); });
+
+    /* Drag & drop still works on desktop */
+    dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag-over'); });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault(); dropzone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) handleFile(file);
+    });
+
+    function resetImage() {
+      lastImageFile = null;
+      cameraInput.value = '';
+      galleryInput.value = '';
+      document.getElementById('preview-wrap').style.display = 'none';
+      dropzone.style.display = 'block';
+      document.getElementById('analyzeBtn').disabled = true;
+      document.getElementById('btnText').textContent = 'Select an image first';
+      stopVoice();
+    }
+
+    /* ── ANALYZE ── */
+    const aiMsgs = [
+      'Scanning leaf texture...', 'Detecting disease patterns...',
+      'Matching AI database...', 'Generating treatment plan...',
+      'Consulting weather data...', 'Almost there...'
+    ];
+    let aiIdx = 0, aiTimer = null;
+
+    function analyze() {
+      if (!lastImageFile) return;
+      stopVoice();
+      document.getElementById('btnIcon').style.display = 'none';
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('analyzeBtn').disabled = true;
+      document.getElementById('error-card').style.display = 'none';
+      document.getElementById('result-card').style.display = 'none';
+      document.getElementById('result-card').classList.remove('show');
+      document.getElementById('risk-banner').style.display = 'none';
+      document.getElementById('lang-translate-bar').style.display = 'none';
+      aiIdx = 0;
+      document.getElementById('btnText').textContent = aiMsgs[0];
+      aiTimer = setInterval(() => {
+        aiIdx = (aiIdx + 1) % aiMsgs.length;
+        document.getElementById('btnText').textContent = aiMsgs[aiIdx];
+      }, 1300);
+      const fd = new FormData();
+      fd.append('image', lastImageFile);
+      fd.append('city', document.getElementById('cityInput').value.trim() || 'Chennai');
+      fd.append('language', document.getElementById('langInput').value);
+      fetch('/predict', { method: 'POST', body: fd })
+        .then(r => r.json().then(d => ({ ok: r.ok, d })))
+        .then(({ ok, d }) => { if (!ok) throw new Error(d.error || 'Server error'); renderResult(d); })
+        .catch(err => {
+          const ec = document.getElementById('error-card');
+          ec.innerHTML = `⚠️ <strong>Error:</strong> ${err.message}<br><small style="opacity:0.7">Check API keys & internet connection</small>`;
+          ec.style.display = 'block';
+          document.getElementById('btnText').textContent = 'Try Again';
+          showToast('❌ Analysis failed — check connection');
+        })
+        .finally(() => {
+          clearInterval(aiTimer);
+          document.getElementById('spinner').style.display = 'none';
+          document.getElementById('btnIcon').style.display = 'inline';
+          document.getElementById('btnIcon').textContent = '🔍';
+          document.getElementById('analyzeBtn').disabled = false;
+        });
+    }
+
+    /* ── TYPEWRITER ── */
+    function typewrite(el, text, speed = 18) {
+      el.textContent = ''; let i = 0;
+      const t = setInterval(() => {
+        el.textContent += text[i++];
+        if (i >= text.length) clearInterval(t);
+      }, speed);
+    }
+async function translateText(text) {
+  if (!text || text === "N/A") return text;
+
+  const lang = document.getElementById('langInput').value;
+
+  const res = await fetch(
+    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
+    lang +
+    "&dt=t&q=" +
+    encodeURIComponent(text)
+  );
+
+  const data = await res.json();
+  return data[0].map(x => x[0]).join("");
+}
+    /* ── RENDER RESULT ── */
+    async function renderResult(data) {
   lastResult = data;
-  stopVoice(); activeTab = 'organic'; switchTab('organic');
-  const isHealthy = data.disease.toLowerCase().includes('health');
-  document.getElementById('statusIcon').textContent  = isHealthy ? '✅' : '⚠️';
-  document.getElementById('diseaseTag').textContent  = isHealthy ? 'HEALTHY PLANT' : 'DISEASE DETECTED';
-  document.getElementById('diseaseName').textContent = data.disease;
-  document.getElementById('organicText').textContent  = '';
-  document.getElementById('chemicalText').textContent = data.chemical || 'No data.';
-  document.getElementById('cropTipBox').textContent   = data.crop_tip ? `💡 ${data.crop_tip}` : '';
-  document.getElementById('w-icon').textContent  = WEATHER_ICONS[data.condition] || '🌤️';
- document.getElementById('w-cond').textContent = data.condition;
-document.getElementById('w-temp').textContent = `${data.temp}°C`;
-document.getElementById('w-hum').textContent = `${data.humidity}%`;
-document.getElementById('w-pres').textContent = `${data.pressure} hPa`;
 
-// ✅ Local timestamp (frontend fix)
-const now = new Date();
-const formattedTime = now.toLocaleString('en-IN', {
+  const lang = document.getElementById('langInput').value;
+
+  if (lang !== "English") {
+    data.disease = await translateText(data.disease);
+    data.crop_tip = await translateText(data.crop_tip);
+    data.organic = await translateText(data.organic);
+    data.chemical = await translateText(data.chemical);
+    data.insight = await translateText(data.insight);
+  }
+      stopVoice(); activeTab = 'organic'; switchTab('organic');
+      const isHealthy = data.disease.toLowerCase().includes('health');
+      document.getElementById('statusIcon').textContent = isHealthy ? '✅' : '⚠️';
+      document.getElementById('diseaseTag').textContent = isHealthy ? 'HEALTHY PLANT' : 'DISEASE DETECTED';
+      document.getElementById('diseaseName').textContent = data.disease;
+      document.getElementById('organicText').textContent =
+        data.organic && data.organic.trim() !== "" && data.organic !== "N/A"
+          ? data.organic
+          : "No recommendation available";
+
+      document.getElementById('chemicalText').textContent =
+        data.chemical && data.chemical.trim() !== "" && data.chemical !== "N/A"
+          ? data.chemical
+          : "No recommendation available";
+      document.getElementById('cropTipBox').textContent = data.crop_tip ? `💡 ${data.crop_tip}` : '';
+      document.getElementById('w-icon').textContent = WEATHER_ICONS[data.condition] || '🌤️';
+      document.getElementById('w-cond').textContent = data.condition;
+      document.getElementById('w-temp').textContent = `${data.temp}°C`;
+      document.getElementById('w-hum').textContent = `${data.humidity}%`;
+      document.getElementById('w-pres').textContent = `${data.pressure} hPa`;
+
+      // ✅ Local timestamp (frontend fix)
+      const now = new Date();
+      const formattedTime = now.toLocaleString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+
+      const timeEl = document.getElementById('timeVal');
+      if (timeEl) timeEl.textContent = formattedTime;
+      document.getElementById('w-city-label').textContent = `📍 ${data.city}`;
+      document.getElementById('weather-strip').style.display = 'block';
+      document.getElementById('insightText').textContent = data.insight;
+      const conf = data.confidence || 75;
+      const sev = data.severity || 5;
+      animateCounter('confVal', 0, conf, 900, '%');
+      animateCounter('sevVal', 0, sev, 700, '/10');
+      setTimeout(() => {
+        document.getElementById('confBar').style.width = `${conf}%`;
+        const sb = document.getElementById('sevBar');
+        sb.className = 'bar-fill ' + (sev <= 3 ? 'bar-sev-low' : sev <= 6 ? 'bar-sev-med' : 'bar-sev-high');
+        sb.style.width = `${sev * 10}%`;
+      }, 150);
+      document.getElementById('mWeather').textContent = `🌦️ ${data.weather}`;
+      document.getElementById('mRisk').textContent = `⚠️ ${data.risk} RISK`;
+      document.getElementById('mTime').textContent = `🕐 ${data.timestamp}`;
+      const banner = document.getElementById('risk-banner');
+      const msgs = {
+        HIGH: '🚨 HIGH RISK — Immediate action required. Apply treatment within 24 hours.',
+        MEDIUM: '⚠️ MEDIUM RISK — Monitor closely and apply treatment within 3–5 days.',
+        LOW: '✅ LOW RISK — Plant looks manageable. Follow preventive care routine.'
+      };
+      banner.className = data.risk.toLowerCase();
+      banner.textContent = msgs[data.risk] || msgs.MEDIUM;
+      banner.style.display = 'flex';
+      confHistory.push(conf);
+      if (confHistory.length > 7) confHistory.shift();
+      localStorage.setItem('agrishield_conf', JSON.stringify(confHistory));
+      renderMiniChart(conf);
+      renderCalendar();
+      scanHistory.unshift({ disease: data.disease, risk: data.risk, city: data.city, time: new Date().toISOString() });
+      if (scanHistory.length > 6) scanHistory.pop();
+      localStorage.setItem('agrishield_v2', JSON.stringify(scanHistory));
+      renderHistory();
+      const old = document.getElementById('pdfBtn');
+      if (old) old.remove();
+      const pdfBtn = document.createElement('button');
+      pdfBtn.id = 'pdfBtn'; pdfBtn.className = 'btn-pdf';
+      pdfBtn.innerHTML = '📄 Download PDF Report';
+      pdfBtn.onclick = () => downloadPDF(data);
+      document.querySelector('.btn-area').appendChild(pdfBtn);
+      const rc = document.getElementById('result-card');
+      rc.style.display = 'block';
+      document.getElementById('calendar-section').style.display = 'block';
+      requestAnimationFrame(() => requestAnimationFrame(() => rc.classList.add('show')));
+      rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      document.getElementById('btnText').textContent = 'Analyze Another Plant';
+      showToast(`🎯 Analysis complete — ${data.risk} risk detected`);
+    }
+
+    /* ── MINI CHART ── */
+    function renderMiniChart(current) {
+      const chart = document.getElementById('miniChart');
+      const labels = document.getElementById('chartLabels');
+      chart.innerHTML = ''; labels.innerHTML = '';
+      const data = confHistory.length ? confHistory : [current];
+      const max = Math.max(...data, 1);
+      data.forEach((v, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'mc-bar' + (i === data.length - 1 ? ' active-bar' : '');
+        bar.style.height = '0px';
+        chart.appendChild(bar);
+        setTimeout(() => { bar.style.height = `${(v / max) * 45}px`; }, 100 + i * 60);
+        const lbl = document.createElement('span');
+        lbl.textContent = `#${i + 1}`;
+        labels.appendChild(lbl);
+      });
+    }
+
+    /* ── ANIMATE COUNTER ── */
+    function animateCounter(id, start, end, duration, suffix = '') {
+      const el = document.getElementById(id);
+      if (!el) return;
+      let current = start;
+      const step = Math.max(1, Math.ceil((end - start) / (duration / 16)));
+      const timer = setInterval(() => {
+        current = Math.min(current + step, end);
+        el.textContent = current + suffix;
+        if (current >= end) clearInterval(timer);
+      }, 16);
+    }
+
+    /* ── CALENDAR ── */
+    function renderCalendar() {
+      const now = new Date().getMonth();
+      const grid = document.getElementById('calendarGrid');
+      grid.innerHTML = '';
+      for (let i = 0; i < 12; i++) {
+        const m = document.createElement('div');
+        m.className = 'cal-month' + (i === now ? ' now' : '');
+        m.innerHTML = `<div class="cal-mon">${MONTHS[i]}</div><div class="cal-icon">${CAL_ICONS[i]}</div><div class="cal-act">${CAL_ACTS[i]}</div>`;
+        grid.appendChild(m);
+      }
+    }
+
+    /* ── HISTORY ── */
+    function renderHistory() {
+      if (!scanHistory.length) return;
+      document.getElementById('history-section').style.display = 'block';
+      document.getElementById('historyList').innerHTML = scanHistory.map(s => `
+    <div class="h-item">
+      <div><div class="h-dis">${s.disease}</div><div class="h-meta">📍 ${s.city} · 🕐 ${new Date(s.time || s.timestamp || Date.now()).toLocaleString('en-IN', {
   day: '2-digit',
   month: 'short',
   year: 'numeric',
   hour: '2-digit',
-  minute: '2-digit',
-  hour12: true
-});
-
-const timeEl = document.getElementById('timeVal');
-if (timeEl) timeEl.textContent = formattedTime;
-  document.getElementById('w-city-label').textContent = `📍 ${data.city}`;
-  document.getElementById('weather-strip').style.display = 'block';
-  document.getElementById('insightText').textContent = data.insight;
-  const conf = data.confidence || 75;
-  const sev  = data.severity   || 5;
-  animateCounter('confVal', 0, conf, 900, '%');
-  animateCounter('sevVal',  0, sev,  700, '/10');
-  setTimeout(() => {
-    document.getElementById('confBar').style.width = `${conf}%`;
-    const sb = document.getElementById('sevBar');
-    sb.className = 'bar-fill ' + (sev<=3?'bar-sev-low':sev<=6?'bar-sev-med':'bar-sev-high');
-    sb.style.width = `${sev * 10}%`;
-  }, 150);
-  document.getElementById('mWeather').textContent = `🌦️ ${data.weather}`;
-  document.getElementById('mRisk').textContent    = `⚠️ ${data.risk} RISK`;
-  document.getElementById('mTime').textContent    = `🕐 ${data.timestamp}`;
-  const banner = document.getElementById('risk-banner');
-  const msgs = {
-    HIGH:   '🚨 HIGH RISK — Immediate action required. Apply treatment within 24 hours.',
-    MEDIUM: '⚠️ MEDIUM RISK — Monitor closely and apply treatment within 3–5 days.',
-    LOW:    '✅ LOW RISK — Plant looks manageable. Follow preventive care routine.'
-  };
-  banner.className   = data.risk.toLowerCase();
-  banner.textContent = msgs[data.risk] || msgs.MEDIUM;
-  banner.style.display = 'flex';
-  confHistory.push(conf);
-  if (confHistory.length > 7) confHistory.shift();
-  localStorage.setItem('agrishield_conf', JSON.stringify(confHistory));
-  renderMiniChart(conf);
-  renderCalendar();
-  scanHistory.unshift({ disease:data.disease, risk:data.risk, city:data.city, time:data.timestamp });
-  if (scanHistory.length > 6) scanHistory.pop();
-  localStorage.setItem('agrishield_v2', JSON.stringify(scanHistory));
-  renderHistory();
-  const old = document.getElementById('pdfBtn');
-  if (old) old.remove();
-  const pdfBtn = document.createElement('button');
-  pdfBtn.id = 'pdfBtn'; pdfBtn.className = 'btn-pdf';
-  pdfBtn.innerHTML = '📄 Download PDF Report';
-  pdfBtn.onclick = () => downloadPDF(data);
-  document.querySelector('.btn-area').appendChild(pdfBtn);
-  const rc = document.getElementById('result-card');
-  rc.style.display = 'block';
-  document.getElementById('calendar-section').style.display = 'block';
-  requestAnimationFrame(() => requestAnimationFrame(() => rc.classList.add('show')));
-  rc.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  document.getElementById('btnText').textContent = 'Analyze Another Plant';
-  showToast(`🎯 Analysis complete — ${data.risk} risk detected`);
-}
-
-/* ── MINI CHART ── */
-function renderMiniChart(current) {
-  const chart  = document.getElementById('miniChart');
-  const labels = document.getElementById('chartLabels');
-  chart.innerHTML = ''; labels.innerHTML = '';
-  const data = confHistory.length ? confHistory : [current];
-  const max  = Math.max(...data, 1);
-  data.forEach((v, i) => {
-    const bar = document.createElement('div');
-    bar.className = 'mc-bar' + (i === data.length - 1 ? ' active-bar' : '');
-    bar.style.height = '0px';
-    chart.appendChild(bar);
-    setTimeout(() => { bar.style.height = `${(v / max) * 45}px`; }, 100 + i * 60);
-    const lbl = document.createElement('span');
-    lbl.textContent = `#${i+1}`;
-    labels.appendChild(lbl);
-  });
-}
-
-/* ── ANIMATE COUNTER ── */
-function animateCounter(id, start, end, duration, suffix = '') {
-  const el = document.getElementById(id);
-  if (!el) return;
-  let current = start;
-  const step  = Math.max(1, Math.ceil((end - start) / (duration / 16)));
-  const timer = setInterval(() => {
-    current = Math.min(current + step, end);
-    el.textContent = current + suffix;
-    if (current >= end) clearInterval(timer);
-  }, 16);
-}
-
-/* ── CALENDAR ── */
-function renderCalendar() {
-  const now  = new Date().getMonth();
-  const grid = document.getElementById('calendarGrid');
-  grid.innerHTML = '';
-  for (let i = 0; i < 12; i++) {
-    const m = document.createElement('div');
-    m.className = 'cal-month' + (i === now ? ' now' : '');
-    m.innerHTML = `<div class="cal-mon">${MONTHS[i]}</div><div class="cal-icon">${CAL_ICONS[i]}</div><div class="cal-act">${CAL_ACTS[i]}</div>`;
-    grid.appendChild(m);
-  }
-}
-
-/* ── HISTORY ── */
-function renderHistory() {
-  if (!scanHistory.length) return;
-  document.getElementById('history-section').style.display = 'block';
-  document.getElementById('historyList').innerHTML = scanHistory.map(s => `
-    <div class="h-item">
-      <div><div class="h-dis">${s.disease}</div><div class="h-meta">📍 ${s.city} · 🕐 ${s.time}</div></div>
+  minute: '2-digit'
+})}</div></div>
       <span class="h-risk ${s.risk}">${s.risk}</span>
     </div>`).join('');
-}
-renderHistory();
+    }
+    renderHistory();
 
-/* ── GPS ── */
-function getGPS() {
-  const btn = document.getElementById('gpsBtn');
-  btn.textContent = '⏳';
-  navigator.geolocation.getCurrentPosition(
-    pos => {
-      fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`, {
-        headers: { 'User-Agent': 'AgriShieldAI/1.0' }
+    /* ── GPS ── */
+    function getGPS() {
+      const btn = document.getElementById('gpsBtn');
+      btn.textContent = '⏳';
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          fetch(`https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`, {
+            headers: { 'User-Agent': 'AgriShieldAI/1.0' }
+          })
+            .then(r => r.json())
+            .then(d => {
+              const city = d.address.city || d.address.town || d.address.village || 'Chennai';
+              document.getElementById('cityInput').value = city;
+              btn.textContent = '✅';
+              showToast(`📍 Location detected: ${city}`);
+              setTimeout(() => btn.textContent = '📡', 2500);
+            })
+            .catch(() => { btn.textContent = '📡'; });
+        },
+        () => { btn.textContent = '📡'; alert('GPS denied. Enter city manually.'); }
+      );
+    }
+
+    /* ── PDF ── */
+    function downloadPDF(data) {
+      showToast('📄 Generating PDF...');
+      const payload = { ...data }; delete payload.image_b64;
+      fetch('/download-report', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       })
-      .then(r => r.json())
-      .then(d => {
-        const city = d.address.city || d.address.town || d.address.village || 'Chennai';
-        document.getElementById('cityInput').value = city;
-        btn.textContent = '✅';
-        showToast(`📍 Location detected: ${city}`);
-        setTimeout(() => btn.textContent = '📡', 2500);
-      })
-      .catch(() => { btn.textContent = '📡'; });
-    },
-    () => { btn.textContent = '📡'; alert('GPS denied. Enter city manually.'); }
-  );
-}
+        .then(r => { if (!r.ok) throw new Error('PDF generation failed'); return r.blob(); })
+        .then(blob => {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = `AgriShield_${data.city}_${Date.now()}.pdf`;
+          document.body.appendChild(a); a.click();
+          URL.revokeObjectURL(url); document.body.removeChild(a);
+          showToast('✅ PDF downloaded!');
+        })
+        .catch(err => { alert('PDF error: ' + err.message); });
+    }
+  </script>
+  <!-- ── SERVICE WORKER + PWA INSTALL ── -->
+  <script>
+    /* Register Service Worker */
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/static/sw.js')
+          .then(reg => console.log('✅ SW registered:', reg.scope))
+          .catch(err => console.log('❌ SW failed:', err));
+      });
+    }
 
-/* ── PDF ── */
-function downloadPDF(data) {
-  showToast('📄 Generating PDF...');
-  const payload = { ...data }; delete payload.image_b64;
-  fetch('/download-report', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify(payload)
-  })
-  .then(r => { if(!r.ok) throw new Error('PDF generation failed'); return r.blob(); })
-  .then(blob => {
-    const url = URL.createObjectURL(blob);
-    const a   = document.createElement('a');
-    a.href = url; a.download = `AgriShield_${data.city}_${Date.now()}.pdf`;
-    document.body.appendChild(a); a.click();
-    URL.revokeObjectURL(url); document.body.removeChild(a);
-    showToast('✅ PDF downloaded!');
-  })
-  .catch(err => { alert('PDF error: ' + err.message); });
-}
-</script>
-<!-- ── SERVICE WORKER + PWA INSTALL ── -->
-<script>
-/* Register Service Worker */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/static/sw.js')
-      .then(reg => console.log('✅ SW registered:', reg.scope))
-      .catch(err => console.log('❌ SW failed:', err));
-  });
-}
+    /* PWA Install Button Logic */
+    let deferredPrompt = null;
 
-/* PWA Install Button Logic */
-let deferredPrompt = null;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      document.getElementById('installBtn').style.display = 'flex';
+      showToast('📱 App can be installed! Tap the Install button.');
+    });
 
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBtn').style.display = 'flex';
-  showToast('📱 App can be installed! Tap the Install button.');
-});
+    function installApp() {
+      if (!deferredPrompt) {
+        showToast('📱 Open in Chrome/Safari and use "Add to Home Screen"');
+        return;
+      }
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(choice => {
+        if (choice.outcome === 'accepted') showToast('🎉 AgriShield installed successfully!');
+        deferredPrompt = null;
+        document.getElementById('installBtn').style.display = 'none';
+      });
+    }
 
-function installApp() {
-  if (!deferredPrompt) {
-    showToast('📱 Open in Chrome/Safari and use "Add to Home Screen"');
-    return;
-  }
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(choice => {
-    if (choice.outcome === 'accepted') showToast('🎉 AgriShield installed successfully!');
-    deferredPrompt = null;
-    document.getElementById('installBtn').style.display = 'none';
-  });
-}
-
-window.addEventListener('appinstalled', () => {
-  showToast('🌱 AgriShield AI installed!');
-  document.getElementById('installBtn').style.display = 'none';
-});
-</script>
+    window.addEventListener('appinstalled', () => {
+      showToast('🌱 AgriShield AI installed!');
+      document.getElementById('installBtn').style.display = 'none';
+    });
+  </script>
 </body>
+
 </html>
