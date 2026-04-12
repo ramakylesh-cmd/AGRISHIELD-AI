@@ -1728,6 +1728,14 @@
       English: 'en-IN', Tamil: 'ta-IN', Hindi: 'hi-IN',
       Telugu: 'te-IN', Kannada: 'kn-IN', Malayalam: 'ml-IN'
     };
+    const TRANSLATE_CODES = {
+  English: 'en',
+  Tamil: 'ta',
+  Hindi: 'hi',
+  Telugu: 'te',
+  Kannada: 'kn',
+  Malayalam: 'ml'
+};
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const CAL_ICONS = ['🌱', '🌿', '☀️', '💧', '🌾', '✂️', '🌧️', '🧪', '🌱', '🌿', '🌾', '❄️'];
     const CAL_ACTS = ['Sow seeds', 'Thin seedlings', 'Fertilize', 'Irrigate', 'Spray', 'Prune', 'Harvest', 'Test soil', 'Sow seeds', 'Mulch', 'Harvest', 'Rest'];
@@ -1752,7 +1760,8 @@
     function startVoiceCity() {
       if (!recognition) { showToast('⚠️ Voice not supported in this browser'); return; }
       const btn = document.getElementById('micBtn');
-      const lang = document.getElementById('langInput').value;
+      const langName = document.getElementById('langInput').value;
+const lang = TRANSLATE_CODES[langName] || 'en';
       recognition.lang = LANG_CODES[lang] || 'en-IN';
       btn.classList.add('listening');
       btn.textContent = '🔴';
@@ -2005,7 +2014,18 @@
 async function translateText(text) {
   if (!text || text === "N/A") return text;
 
-  const lang = document.getElementById('langInput').value;
+  const langName = document.getElementById('langInput').value;
+
+  const TRANSLATE_CODES = {
+    English: 'en',
+    Tamil: 'ta',
+    Hindi: 'hi',
+    Telugu: 'te',
+    Kannada: 'kn',
+    Malayalam: 'ml'
+  };
+
+  const lang = TRANSLATE_CODES[langName] || 'en';
 
   const res = await fetch(
     "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
@@ -2023,7 +2043,7 @@ async function translateText(text) {
 
   const lang = document.getElementById('langInput').value;
 
-  if (lang !== "English") {
+  if (langName !== "English") {
     data.disease = await translateText(data.disease);
     data.crop_tip = await translateText(data.crop_tip);
     data.organic = await translateText(data.organic);
