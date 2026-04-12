@@ -634,6 +634,14 @@
     <div class="nav-pill">🌦️ WEATHER</div>
     <div class="nav-pill">📄 PDF</div>
   </div>
+  <button id="installBtn" onclick="installApp()" style="display:none;
+    align-items:center; gap:6px;
+    background:rgba(168,230,61,0.12); border:1px solid rgba(168,230,61,0.3);
+    color:#a8e63d; font-family:'DM Sans',sans-serif;
+    font-size:11px; font-weight:700; padding:5px 13px;
+    border-radius:100px; cursor:none; transition:all 0.2s;">
+    📲 Install App
+  </button>
 </nav>
 
 <div class="page-wrap">
@@ -1246,6 +1254,45 @@ function downloadPDF(data) {
   })
   .catch(err => { alert('PDF error: ' + err.message); });
 }
+</script>
+<!-- ── SERVICE WORKER + PWA INSTALL ── -->
+<script>
+/* Register Service Worker */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/static/sw.js')
+      .then(reg => console.log('✅ SW registered:', reg.scope))
+      .catch(err => console.log('❌ SW failed:', err));
+  });
+}
+
+/* PWA Install Button Logic */
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBtn').style.display = 'flex';
+  showToast('📱 App can be installed! Tap the Install button.');
+});
+
+function installApp() {
+  if (!deferredPrompt) {
+    showToast('📱 Open in Chrome/Safari and use "Add to Home Screen"');
+    return;
+  }
+  deferredPrompt.prompt();
+  deferredPrompt.userChoice.then(choice => {
+    if (choice.outcome === 'accepted') showToast('🎉 AgriShield installed successfully!');
+    deferredPrompt = null;
+    document.getElementById('installBtn').style.display = 'none';
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  showToast('🌱 AgriShield AI installed!');
+  document.getElementById('installBtn').style.display = 'none';
+});
 </script>
 </body>
 </html>
