@@ -22,7 +22,8 @@ if not GEMINI_API_KEY:
     raise Exception("❌ CRITICAL: GEMINI_API_KEY environment variable missing!")
 
 genai.configure(api_key=GEMINI_API_KEY)
-model = genai.GenerativeModel("gemini-3-flash-preview")  # Kept as requested - upgrade SDK if issues
+# Switch to 2.0 Flash to get a fresh 20-request quota
+model = genai.GenerativeModel("gemini-2.0-flash")  # Kept as requested - upgrade SDK if issues
 
 def get_weather(city="Chennai"):
     """Get current weather data - BULLETPROOF"""
