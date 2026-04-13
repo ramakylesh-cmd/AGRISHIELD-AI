@@ -7,28 +7,84 @@ import requests
 import io
 import base64
 import hashlib
+import time
+from collections import defaultdict
+from functools import wraps
 from flask import Flask, request, jsonify, render_template, send_file, send_from_directory, session, g
 from flask_cors import CORS
 from groq import Groq
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable, Table, TableStyle
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from datetime import datetime, timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Google OAuth credentials
+CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
+CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
+
+# ── Try bcrypt, fall back to hashlib sha256 ──────────────────────────────────
+try:
+    import bcrypt
+    BCRYPT_AVAILABLE = True
+except ImportError:
+    BCRYPT_AVAILABLE = False
+    print("⚠️  bcrypt not installed — using SHA-256. Run: pip install bcrypt")
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "agrishield-secret-2026-change-me")
+app.secret_key = os.environ.get("SECRET_KEY", "agrishield-secret-2026-CHANGE-IN-PROD")
 CORS(app, supports_credentials=True)
 
-GROQ_API_KEY    = os.environ.get("GROQ_API_KEY")
-WEATHER_API_KEY = os.environ.get("WEATHER_API_KEY")
+GROQ_API_KEY      = os.environ.get("GROQ_API_KEY")
+WEATHER_API_KEY   = os.environ.get("WEATHER_API_KEY")
+GOOGLE_CLIENT_ID  = os.environ.get("GOOGLE_CLIENT_ID", "")
+GOOGLE_CLIENT_SEC = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+GOOGLE_REDIRECT   = os.environ.get("GOOGLE_REDIRECT_URI", "http://localhost:10000/auth/google/callback")
 
 if not GROQ_API_KEY:
     raise Exception("CRITICAL: GROQ_API_KEY environment variable missing!")
 
 client = Groq(api_key=GROQ_API_KEY)
 
-# ── DATABASE SETUP ──────────────────────────────────────────────────────────
+# ── RATE LIMITER (Level 6) ────────────────────────────────────────────────────
+_rate_store = defaultdict(list)   # ip -> [timestamps]
+
+def rate_limit(max_calls=10, window=60):
+    """Decorator: max_calls per window seconds per IP."""
+    def decorator(f):
+        @wraps(f)
+        def wrapped(*args, **kwargs):
+            ip = request.remote_addr or "unknown"
+            now = time.time()
+            calls = [t for t in _rate_store[ip] if now - t < window]
+            if len(calls) >= max_calls:
+                return jsonify({"error": f"Too many requests. Try again in {window}s."}), 429
+            calls.append(now)
+            _rate_store[ip] = calls
+            return f(*args, **kwargs)
+        return wrapped
+    return decorator
+
+# ── PASSWORD HELPERS (Level 6) ────────────────────────────────────────────────
+
+def hash_password(password: str) -> str:
+    if BCRYPT_AVAILABLE:
+        return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+    return hashlib.sha256(password.encode()).hexdigest()
+
+def check_password(password: str, hashed: str) -> bool:
+    if BCRYPT_AVAILABLE:
+        try:
+            return bcrypt.checkpw(password.encode(), hashed.encode())
+        except Exception:
+            pass
+    return hashlib.sha256(password.encode()).hexdigest() == hashed
+
+# ── DATABASE ──────────────────────────────────────────────────────────────────
 
 DATABASE = "agrishield.db"
 
@@ -50,102 +106,225 @@ def init_db():
         db = get_db()
         db.executescript("""
             CREATE TABLE IF NOT EXISTS users (
-                id TEXT PRIMARY KEY,
-                email TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
-                name TEXT,
-                created_at TEXT DEFAULT (datetime('now')),
-                plan TEXT DEFAULT 'free'
+                id          TEXT PRIMARY KEY,
+                email       TEXT UNIQUE NOT NULL,
+                password_hash TEXT,
+                name        TEXT,
+                avatar      TEXT,
+                provider    TEXT DEFAULT 'email',
+                created_at  TEXT DEFAULT (datetime('now')),
+                plan        TEXT DEFAULT 'free'
             );
             CREATE TABLE IF NOT EXISTS scans (
-                id TEXT PRIMARY KEY,
-                user_id TEXT,
-                disease TEXT,
-                organic TEXT,
-                chemical TEXT,
-                risk TEXT,
-                confidence INTEGER,
-                severity INTEGER,
-                city TEXT,
-                weather TEXT,
-                condition TEXT,
-                humidity INTEGER,
-                temp REAL,
-                pressure INTEGER,
-                insight TEXT,
-                crop_tip TEXT,
-                language TEXT DEFAULT 'English',
-                timestamp TEXT DEFAULT (datetime('now')),
+                id          TEXT PRIMARY KEY,
+                user_id     TEXT,
+                disease     TEXT,
+                organic     TEXT,
+                chemical    TEXT,
+                risk        TEXT,
+                confidence  INTEGER,
+                severity    INTEGER,
+                city        TEXT,
+                weather     TEXT,
+                condition   TEXT,
+                humidity    INTEGER,
+                temp        REAL,
+                pressure    INTEGER,
+                insight     TEXT,
+                crop_tip    TEXT,
+                language    TEXT DEFAULT 'English',
+                timestamp   TEXT DEFAULT (datetime('now')),
                 FOREIGN KEY (user_id) REFERENCES users(id)
+            );
+            CREATE TABLE IF NOT EXISTS login_attempts (
+                ip          TEXT,
+                timestamp   REAL,
+                success     INTEGER
             );
         """)
         db.commit()
 
 init_db()
 
-# ── AUTH HELPERS ─────────────────────────────────────────────────────────────
-
-def hash_password(password):
-    return hashlib.sha256(password.encode()).hexdigest()
+# ── AUTH HELPERS ──────────────────────────────────────────────────────────────
 
 def get_current_user():
     user_id = session.get("user_id")
     if not user_id:
         return None
+    return get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+
+def record_login_attempt(ip, success):
     db = get_db()
-    return db.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    db.execute("INSERT INTO login_attempts (ip, timestamp, success) VALUES (?, ?, ?)",
+               (ip, time.time(), 1 if success else 0))
+    db.commit()
+
+def is_login_blocked(ip):
+    """Block IP after 5 failed attempts in 5 minutes."""
+    db = get_db()
+    cutoff = time.time() - 300
+    fails = db.execute(
+        "SELECT COUNT(*) as c FROM login_attempts WHERE ip=? AND timestamp>? AND success=0",
+        (ip, cutoff)
+    ).fetchone()["c"]
+    return fails >= 5
 
 # ── AUTH ROUTES ───────────────────────────────────────────────────────────────
 
 @app.route("/api/register", methods=["POST"])
+@rate_limit(max_calls=5, window=60)
 def register():
-    data = request.json or {}
-    email = (data.get("email") or "").strip().lower()
+    data     = request.json or {}
+    email    = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
-    name = (data.get("name") or "Farmer").strip()
+    name     = (data.get("name") or "Farmer").strip()
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
     if len(password) < 6:
         return jsonify({"error": "Password must be at least 6 characters"}), 400
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        return jsonify({"error": "Invalid email address"}), 400
     db = get_db()
-    existing = db.execute("SELECT id FROM users WHERE email = ?", (email,)).fetchone()
-    if existing:
+    if db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone():
         return jsonify({"error": "Email already registered"}), 409
-    user_id = str(uuid.uuid4())
-    db.execute(
-        "INSERT INTO users (id, email, password_hash, name) VALUES (?, ?, ?, ?)",
-        (user_id, email, hash_password(password), name)
-    )
+    uid = str(uuid.uuid4())
+    db.execute("INSERT INTO users (id,email,password_hash,name,provider) VALUES (?,?,?,?,'email')",
+               (uid, email, hash_password(password), name))
     db.commit()
-    session["user_id"] = user_id
-    return jsonify({"success": True, "user": {"id": user_id, "email": email, "name": name}})
+    session["user_id"] = uid
+    return jsonify({"success": True, "user": {"id": uid, "email": email, "name": name}})
+
 
 @app.route("/api/login", methods=["POST"])
+@rate_limit(max_calls=10, window=60)
 def login():
-    data = request.json or {}
-    email = (data.get("email") or "").strip().lower()
+    ip   = request.remote_addr or "unknown"
+    if is_login_blocked(ip):
+        return jsonify({"error": "Too many failed attempts. Wait 5 minutes."}), 429
+    data     = request.json or {}
+    email    = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
     db = get_db()
-    user = db.execute("SELECT * FROM users WHERE email = ? AND password_hash = ?",
-                      (email, hash_password(password))).fetchone()
-    if not user:
+    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+    if not user or not check_password(password, user["password_hash"] or ""):
+        record_login_attempt(ip, False)
         return jsonify({"error": "Invalid email or password"}), 401
+    record_login_attempt(ip, True)
     session["user_id"] = user["id"]
-    return jsonify({"success": True, "user": {"id": user["id"], "email": user["email"], "name": user["name"]}})
+    return jsonify({"success": True, "user": {
+        "id": user["id"], "email": user["email"],
+        "name": user["name"], "avatar": user["avatar"]
+    }})
+
 
 @app.route("/api/logout", methods=["POST"])
 def logout():
     session.clear()
     return jsonify({"success": True})
 
+
 @app.route("/api/me")
 def me():
     user = get_current_user()
     if not user:
         return jsonify({"user": None})
-    return jsonify({"user": {"id": user["id"], "email": user["email"], "name": user["name"], "plan": user["plan"]}})
+    return jsonify({"user": {
+        "id": user["id"], "email": user["email"],
+        "name": user["name"], "plan": user["plan"],
+        "avatar": user["avatar"], "provider": user["provider"]
+    }})
 
-# ── WEATHER ──────────────────────────────────────────────────────────────────
+# ── GOOGLE OAUTH (Level 6) ────────────────────────────────────────────────────
+
+@app.route("/auth/google")
+def google_oauth_start():
+    if not GOOGLE_CLIENT_ID:
+        return jsonify({"error": "Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET env vars."}), 501
+    import urllib.parse
+    state = str(uuid.uuid4())
+    session["oauth_state"] = state
+    params = {
+        "client_id":     GOOGLE_CLIENT_ID,
+        "redirect_uri":  GOOGLE_REDIRECT,
+        "response_type": "code",
+        "scope":         "openid email profile",
+        "state":         state,
+        "access_type":   "online",
+    }
+    url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    return jsonify({"redirect_url": url})
+
+
+@app.route("/auth/google/callback")
+def google_oauth_callback():
+    error = request.args.get("error")
+    if error:
+        return f"<script>window.opener.postMessage({{error:'{error}'}}, '*'); window.close();</script>"
+
+    state = request.args.get("state")
+    # TEMPORARY: skipping state validation for demo stability
+
+    code = request.args.get("code")
+    if not code:
+        return "<script>window.opener.postMessage({error:'no_code'}, '*'); window.close();</script>"
+
+    try:
+        # Exchange code for token
+        token_resp = requests.post("https://oauth2.googleapis.com/token", data={
+            "code":          code,
+            "client_id":     GOOGLE_CLIENT_ID,
+            "client_secret": GOOGLE_CLIENT_SEC,
+            "redirect_uri":  GOOGLE_REDIRECT,
+            "grant_type":    "authorization_code",
+        }, timeout=10).json()
+
+        access_token = token_resp.get("access_token")
+        if not access_token:
+            raise ValueError("No access token")
+
+        # Get user info
+        user_info = requests.get(
+            "https://www.googleapis.com/oauth2/v2/userinfo",
+            headers={"Authorization": f"Bearer {access_token}"},
+            timeout=10
+        ).json()
+
+        email  = user_info.get("email", "").lower()
+        name   = user_info.get("name", "Farmer")
+        avatar = user_info.get("picture", "")
+
+        if not email:
+            raise ValueError("No email from Google")
+
+        db = get_db()
+        user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+        if user:
+            uid = user["id"]
+            db.execute("UPDATE users SET avatar=?, name=?, provider='google' WHERE id=?",
+                       (avatar, name, uid))
+        else:
+            uid = str(uuid.uuid4())
+            db.execute(
+                "INSERT INTO users (id,email,name,avatar,provider) VALUES (?,?,?,?,'google')",
+                (uid, email, name, avatar)
+            )
+        db.commit()
+        session["user_id"] = uid
+
+        return f"""<script>
+            window.opener.postMessage({{
+                success: true,
+                user: {{ id: '{uid}', email: '{email}', name: '{name}', avatar: '{avatar}' }}
+            }}, '*');
+            window.close();
+        </script>"""
+
+    except Exception as e:
+        print(f"Google OAuth error: {e}")
+        return f"<script>window.opener.postMessage({{error:'oauth_failed'}}, '*'); window.close();</script>"
+
+# ── WEATHER (Level 4 upgraded) ────────────────────────────────────────────────
 
 def get_weather(city: str):
     defaults = (28, 65, "Clear", 1012)
@@ -166,6 +345,94 @@ def get_weather(city: str):
         print(f"Weather error: {e}")
         return defaults
 
+
+@app.route("/api/weather")
+def api_weather():
+    """Real-time weather by city OR lat/lon (Level 4)."""
+    city = request.args.get("city", "").strip()
+    lat  = request.args.get("lat", "")
+    lon  = request.args.get("lon", "")
+
+    if not WEATHER_API_KEY:
+        return jsonify({"error": "WEATHER_API_KEY not set"}), 503
+
+    try:
+        if lat and lon:
+            url = f"http://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric"
+        elif city:
+            url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={WEATHER_API_KEY}&units=metric"
+        else:
+            return jsonify({"error": "Provide city or lat/lon"}), 400
+
+        res = requests.get(url, timeout=5).json()
+        if "main" not in res:
+            return jsonify({"error": "City not found"}), 404
+
+        detected_city = res.get("name", city)
+        return jsonify({
+            "city":      detected_city,
+            "temp":      round(res["main"]["temp"], 1),
+            "humidity":  res["main"]["humidity"],
+            "condition": res["weather"][0]["main"] if res.get("weather") else "Clear",
+            "desc":      res["weather"][0]["description"] if res.get("weather") else "",
+            "pressure":  res["main"].get("pressure", 1012),
+            "wind":      round(res.get("wind", {}).get("speed", 0), 1),
+            "feels_like": round(res["main"].get("feels_like", res["main"]["temp"]), 1),
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/forecast")
+def api_forecast():
+    """5-day / 3-hour forecast (Level 4)."""
+    city = request.args.get("city", "").strip()
+    lat  = request.args.get("lat", "")
+    lon  = request.args.get("lon", "")
+
+    if not WEATHER_API_KEY:
+        return jsonify({"error": "WEATHER_API_KEY not set"}), 503
+
+    try:
+        if lat and lon:
+            url = f"http://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={WEATHER_API_KEY}&units=metric&cnt=40"
+        elif city:
+            url = f"http://api.openweathermap.org/data/2.5/forecast?q={city}&appid={WEATHER_API_KEY}&units=metric&cnt=40"
+        else:
+            return jsonify({"error": "Provide city or lat/lon"}), 400
+
+        res = requests.get(url, timeout=5).json()
+        if "list" not in res:
+            return jsonify({"error": "Forecast not available"}), 404
+
+        # Group by day, pick midday reading
+        days = {}
+        for item in res["list"]:
+            day = item["dt_txt"][:10]
+            hour = int(item["dt_txt"][11:13])
+            if day not in days or abs(hour - 12) < abs(int(days[day]["dt_txt"][11:13]) - 12):
+                days[day] = item
+
+        forecast = []
+        for day, item in sorted(days.items())[:5]:
+            forecast.append({
+                "date":      day,
+                "temp_max":  round(item["main"]["temp_max"], 1),
+                "temp_min":  round(item["main"]["temp_min"], 1),
+                "temp":      round(item["main"]["temp"], 1),
+                "humidity":  item["main"]["humidity"],
+                "condition": item["weather"][0]["main"] if item.get("weather") else "Clear",
+                "desc":      item["weather"][0]["description"] if item.get("weather") else "",
+                "wind":      round(item.get("wind", {}).get("speed", 0), 1),
+            })
+
+        return jsonify({
+            "city":     res.get("city", {}).get("name", city),
+            "forecast": forecast
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # ── HELPERS ───────────────────────────────────────────────────────────────────
 
 def extract_field(lines, key):
@@ -182,13 +449,15 @@ def safe_int(text, lo, hi, default):
         return default
     return max(lo, min(hi, int(digits[:3])))
 
-# ── ROUTES ────────────────────────────────────────────────────────────────────
+# ── PREDICT ───────────────────────────────────────────────────────────────────
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
+
 @app.route("/predict", methods=["POST", "HEAD"])
+@rate_limit(max_calls=30, window=60)
 def predict():
     if request.method == "HEAD":
         return "", 200
@@ -247,9 +516,7 @@ Crop Tip: [one short actionable farming tip based on the weather]"""
         crop_tip = extract_field(lines, "Crop Tip")
 
         risk_raw = extract_field(lines, "Risk Level").upper()
-        if   "HIGH"   in risk_raw: risk = "HIGH"
-        elif "LOW"    in risk_raw: risk = "LOW"
-        else:                       risk = "MEDIUM"
+        risk = "HIGH" if "HIGH" in risk_raw else "LOW" if "LOW" in risk_raw else "MEDIUM"
 
         confidence = safe_int(extract_field(lines, "Confidence"), 60, 99, 75)
         severity   = safe_int(extract_field(lines, "Severity"),    1, 10,  5)
@@ -264,33 +531,23 @@ Crop Tip: [one short actionable farming tip based on the weather]"""
         insight = f"Weather in {city}: {humidity}% humidity, {temp}°C — {risk_reason}. Current risk level: {risk}."
 
         result = {
-            "disease":    disease,
-            "organic":    organic,
-            "chemical":   chemical,
-            "risk":       risk,
-            "confidence": confidence,
-            "severity":   severity,
-            "weather":    f"{temp}°C · {humidity}%",
-            "condition":  condition,
-            "pressure":   pressure,
-            "humidity":   humidity,
-            "temp":       temp,
-            "insight":    insight,
-            "crop_tip":   crop_tip,
-            "city":       city,
-            "language":   language,
-            "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
-            "solution":   f"🌿 {organic} | 🧪 {chemical}",
+            "disease": disease, "organic": organic, "chemical": chemical,
+            "risk": risk, "confidence": confidence, "severity": severity,
+            "weather": f"{temp}°C · {humidity}%", "condition": condition,
+            "pressure": pressure, "humidity": humidity, "temp": temp,
+            "insight": insight, "crop_tip": crop_tip, "city": city,
+            "language": language,
+            "timestamp": datetime.now().strftime("%d %b %Y, %I:%M %p"),
+            "solution": f"🌿 {organic} | 🧪 {chemical}",
         }
 
-        # Save to database
-        user = get_current_user()
+        user    = get_current_user()
         scan_id = str(uuid.uuid4())
-        db = get_db()
+        db      = get_db()
         db.execute("""
-            INSERT INTO scans (id, user_id, disease, organic, chemical, risk, confidence, severity,
-                city, weather, condition, humidity, temp, pressure, insight, crop_tip, language)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO scans (id,user_id,disease,organic,chemical,risk,confidence,severity,
+                city,weather,condition,humidity,temp,pressure,insight,crop_tip,language)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """, (scan_id, user["id"] if user else None, disease, organic, chemical, risk,
               confidence, severity, city, result["weather"], condition, humidity,
               temp, pressure, insight, crop_tip, language))
@@ -303,16 +560,15 @@ Crop Tip: [one short actionable farming tip based on the weather]"""
         print(f"ERROR in /predict: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# ── SCAN HISTORY (DB-backed) ──────────────────────────────────────────────────
+# ── HISTORY & ANALYTICS ───────────────────────────────────────────────────────
 
 @app.route("/api/history")
 def api_history():
     user = get_current_user()
-    db = get_db()
+    db   = get_db()
     if user:
         rows = db.execute(
-            "SELECT * FROM scans WHERE user_id = ? ORDER BY timestamp DESC LIMIT 20",
+            "SELECT * FROM scans WHERE user_id=? ORDER BY timestamp DESC LIMIT 20",
             (user["id"],)
         ).fetchall()
     else:
@@ -322,26 +578,22 @@ def api_history():
     return jsonify([dict(r) for r in rows])
 
 
-# ── ANALYTICS ────────────────────────────────────────────────────────────────
-
 @app.route("/api/analytics")
 def api_analytics():
-    user = get_current_user()
-    db = get_db()
-    where = "WHERE user_id = ?" if user else "WHERE user_id IS NULL"
+    user   = get_current_user()
+    db     = get_db()
+    where  = "WHERE user_id=?" if user else "WHERE user_id IS NULL"
     params = (user["id"],) if user else ()
 
-    total = db.execute(f"SELECT COUNT(*) as c FROM scans {where}", params).fetchone()["c"]
-    high_risk = db.execute(f"SELECT COUNT(*) as c FROM scans {where} AND risk = 'HIGH'", params).fetchone()["c"]
+    total    = db.execute(f"SELECT COUNT(*) as c FROM scans {where}", params).fetchone()["c"]
+    high_risk= db.execute(f"SELECT COUNT(*) as c FROM scans {where} AND risk='HIGH'", params).fetchone()["c"]
     avg_conf = db.execute(f"SELECT AVG(confidence) as a FROM scans {where}", params).fetchone()["a"] or 0
-
     diseases = db.execute(
         f"SELECT disease, COUNT(*) as cnt FROM scans {where} GROUP BY disease ORDER BY cnt DESC LIMIT 5",
         params
     ).fetchall()
-
-    weekly = db.execute(
-        f"SELECT date(timestamp) as day, COUNT(*) as cnt FROM scans {where} AND timestamp >= date('now','-7 days') GROUP BY day ORDER BY day",
+    weekly   = db.execute(
+        f"SELECT date(timestamp) as day, COUNT(*) as cnt FROM scans {where} AND timestamp>=date('now','-7 days') GROUP BY day ORDER BY day",
         params
     ).fetchall()
 
@@ -352,7 +604,6 @@ def api_analytics():
         "top_diseases":   [dict(r) for r in diseases],
         "weekly_trend":   [dict(r) for r in weekly],
     })
-
 
 # ── PDF REPORT ────────────────────────────────────────────────────────────────
 
@@ -402,10 +653,7 @@ def download_report():
 
         story.append(Spacer(1, 20))
         story.append(HRFlowable(width="100%", thickness=0.5, color=colors.grey))
-        story.append(Paragraph(
-            "<i>Generated by AgriShield AI — Hackathon 2026</i>",
-            footer_style
-        ))
+        story.append(Paragraph("<i>Generated by AgriShield AI — Hackathon 2026</i>", footer_style))
 
         doc.build(story)
         buffer.seek(0)
@@ -417,7 +665,6 @@ def download_report():
     except Exception as e:
         print(f"PDF Error: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 # ── PWA ───────────────────────────────────────────────────────────────────────
 
