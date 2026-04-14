@@ -20,14 +20,9 @@ from reportlab.lib import colors
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
 load_dotenv()
 
-# Google OAuth credentials
-CLIENT_ID = os.getenv("GOOGLE_CLIENT_ID")
-CLIENT_SECRET = os.getenv("GOOGLE_CLIENT_SECRET")
-
-# ── Try bcrypt, fall back to hashlib sha256 ──────────────────────────────────
+# ── Try bcrypt, fall back to sha256 ──────────────────────────────────────────
 try:
     import bcrypt
     BCRYPT_AVAILABLE = True
@@ -37,10 +32,14 @@ except ImportError:
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "agrishield-secret-2026-CHANGE-IN-PROD")
-CORS(app, supports_credentials=True)
+
+# FIX #13: Restrict CORS to known origins in production
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "http://localhost:10000").split(",")
+CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 
 GROQ_API_KEY      = os.environ.get("GROQ_API_KEY")
 WEATHER_API_KEY   = os.environ.get("WEATHER_API_KEY")
+# FIX #7: Removed duplicate CLIENT_ID/CLIENT_SECRET at top — use only these:
 GOOGLE_CLIENT_ID  = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SEC = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_REDIRECT   = os.environ.get("GOOGLE_REDIRECT_URI", "http://localhost:10000/auth/google/callback")
@@ -50,11 +49,11 @@ if not GROQ_API_KEY:
 
 client = Groq(api_key=GROQ_API_KEY)
 
-# ── RATE LIMITER (Level 6) ────────────────────────────────────────────────────
-_rate_store = defaultdict(list)   # ip -> [timestamps]
+# FIX #5: Rate limiter with periodic cleanup to prevent memory leak
+_rate_store = defaultdict(list)
 
 def rate_limit(max_calls=10, window=60):
-    """Decorator: max_calls per window seconds per IP."""
+    """Decorator: max_calls per window seconds per IP, with cleanup."""
     def decorator(f):
         @wraps(f)
         def wrapped(*args, **kwargs):
@@ -62,14 +61,20 @@ def rate_limit(max_calls=10, window=60):
             now = time.time()
             calls = [t for t in _rate_store[ip] if now - t < window]
             if len(calls) >= max_calls:
-                return jsonify({"error": f"Too many requests. Try again in {window}s."}), 429
+                return jsonify({"error": f"Rate limit: max {max_calls} requests per {window}s. Slow down."}), 429
             calls.append(now)
             _rate_store[ip] = calls
+            # Cleanup: if store grows too large, purge inactive IPs
+            if len(_rate_store) > 2000:
+                stale = [k for k, v in list(_rate_store.items())
+                         if not any(now - t < window for t in v)]
+                for k in stale[:1000]:
+                    del _rate_store[k]
             return f(*args, **kwargs)
         return wrapped
     return decorator
 
-# ── PASSWORD HELPERS (Level 6) ────────────────────────────────────────────────
+# ── PASSWORD HELPERS ──────────────────────────────────────────────────────────
 
 def hash_password(password: str) -> str:
     if BCRYPT_AVAILABLE:
@@ -106,14 +111,14 @@ def init_db():
         db = get_db()
         db.executescript("""
             CREATE TABLE IF NOT EXISTS users (
-                id          TEXT PRIMARY KEY,
-                email       TEXT UNIQUE NOT NULL,
+                id            TEXT PRIMARY KEY,
+                email         TEXT UNIQUE NOT NULL,
                 password_hash TEXT,
-                name        TEXT,
-                avatar      TEXT,
-                provider    TEXT DEFAULT 'email',
-                created_at  TEXT DEFAULT (datetime('now')),
-                plan        TEXT DEFAULT 'free'
+                name          TEXT,
+                avatar        TEXT,
+                provider      TEXT DEFAULT 'email',
+                created_at    TEXT DEFAULT (datetime('now')),
+                plan          TEXT DEFAULT 'free'
             );
             CREATE TABLE IF NOT EXISTS scans (
                 id          TEXT PRIMARY KEY,
@@ -129,10 +134,13 @@ def init_db():
                 condition   TEXT,
                 humidity    INTEGER,
                 temp        REAL,
+                wind        REAL,
                 pressure    INTEGER,
                 insight     TEXT,
                 crop_tip    TEXT,
+                why_disease TEXT,
                 language    TEXT DEFAULT 'English',
+                source      TEXT DEFAULT 'image',
                 timestamp   TEXT DEFAULT (datetime('now')),
                 FOREIGN KEY (user_id) REFERENCES users(id)
             );
@@ -141,6 +149,9 @@ def init_db():
                 timestamp   REAL,
                 success     INTEGER
             );
+            CREATE INDEX IF NOT EXISTS idx_scans_user ON scans(user_id);
+            CREATE INDEX IF NOT EXISTS idx_scans_ts   ON scans(timestamp);
+            CREATE INDEX IF NOT EXISTS idx_login_ip   ON login_attempts(ip, timestamp);
         """)
         db.commit()
 
@@ -158,6 +169,8 @@ def record_login_attempt(ip, success):
     db = get_db()
     db.execute("INSERT INTO login_attempts (ip, timestamp, success) VALUES (?, ?, ?)",
                (ip, time.time(), 1 if success else 0))
+    # FIX #6: Prune old login attempts (keep only last 24h)
+    db.execute("DELETE FROM login_attempts WHERE timestamp < ?", (time.time() - 86400,))
     db.commit()
 
 def is_login_blocked(ip):
@@ -178,7 +191,7 @@ def register():
     data     = request.json or {}
     email    = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
-    name     = (data.get("name") or "Farmer").strip()
+    name     = (data.get("name") or "Farmer").strip()[:100]  # length cap
     if not email or not password:
         return jsonify({"error": "Email and password required"}), 400
     if len(password) < 6:
@@ -199,7 +212,7 @@ def register():
 @app.route("/api/login", methods=["POST"])
 @rate_limit(max_calls=10, window=60)
 def login():
-    ip   = request.remote_addr or "unknown"
+    ip = request.remote_addr or "unknown"
     if is_login_blocked(ip):
         return jsonify({"error": "Too many failed attempts. Wait 5 minutes."}), 429
     data     = request.json or {}
@@ -235,12 +248,12 @@ def me():
         "avatar": user["avatar"], "provider": user["provider"]
     }})
 
-# ── GOOGLE OAUTH (Level 6) ────────────────────────────────────────────────────
+# ── GOOGLE OAUTH ──────────────────────────────────────────────────────────────
 
 @app.route("/auth/google")
 def google_oauth_start():
     if not GOOGLE_CLIENT_ID:
-        return jsonify({"error": "Google OAuth not configured. Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET env vars."}), 501
+        return jsonify({"error": "Google OAuth not configured. Set GOOGLE_CLIENT_ID env var."}), 501
     import urllib.parse
     state = str(uuid.uuid4())
     session["oauth_state"] = state
@@ -262,15 +275,17 @@ def google_oauth_callback():
     if error:
         return f"<script>window.opener.postMessage({{error:'{error}'}}, '*'); window.close();</script>"
 
-    state = request.args.get("state")
-    # TEMPORARY: skipping state validation for demo stability
+    # FIX #8: Re-enable state validation (CSRF protection)
+    state          = request.args.get("state")
+    expected_state = session.pop("oauth_state", None)
+    if not expected_state or state != expected_state:
+        return "<script>window.opener.postMessage({error:'state_mismatch'}, '*'); window.close();</script>"
 
     code = request.args.get("code")
     if not code:
         return "<script>window.opener.postMessage({error:'no_code'}, '*'); window.close();</script>"
 
     try:
-        # Exchange code for token
         token_resp = requests.post("https://oauth2.googleapis.com/token", data={
             "code":          code,
             "client_id":     GOOGLE_CLIENT_ID,
@@ -281,9 +296,8 @@ def google_oauth_callback():
 
         access_token = token_resp.get("access_token")
         if not access_token:
-            raise ValueError("No access token")
+            raise ValueError("No access token received from Google")
 
-        # Get user info
         user_info = requests.get(
             "https://www.googleapis.com/oauth2/v2/userinfo",
             headers={"Authorization": f"Bearer {access_token}"},
@@ -312,10 +326,11 @@ def google_oauth_callback():
         db.commit()
         session["user_id"] = uid
 
+        safe_name = name.replace("'", "\\'")
         return f"""<script>
             window.opener.postMessage({{
                 success: true,
-                user: {{ id: '{uid}', email: '{email}', name: '{name}', avatar: '{avatar}' }}
+                user: {{ id: '{uid}', email: '{email}', name: '{safe_name}', avatar: '{avatar}' }}
             }}, '*');
             window.close();
         </script>"""
@@ -324,10 +339,12 @@ def google_oauth_callback():
         print(f"Google OAuth error: {e}")
         return f"<script>window.opener.postMessage({{error:'oauth_failed'}}, '*'); window.close();</script>"
 
-# ── WEATHER (Level 4 upgraded) ────────────────────────────────────────────────
+# ── WEATHER ───────────────────────────────────────────────────────────────────
 
+# FIX #2: get_weather now returns wind as 5th element
 def get_weather(city: str):
-    defaults = (28, 65, "Clear", 1012)
+    """Returns (temp, humidity, condition, pressure, wind_speed)"""
+    defaults = (28, 65, "Clear", 1012, 2.5)
     if not WEATHER_API_KEY:
         return defaults
     try:
@@ -339,7 +356,8 @@ def get_weather(city: str):
             round(res["main"]["temp"], 1),
             res["main"]["humidity"],
             res["weather"][0]["main"] if res.get("weather") else "Clear",
-            res["main"].get("pressure", 1012)
+            res["main"].get("pressure", 1012),
+            round(res.get("wind", {}).get("speed", 2.5), 1),  # FIX: wind included
         )
     except Exception as e:
         print(f"Weather error: {e}")
@@ -348,7 +366,7 @@ def get_weather(city: str):
 
 @app.route("/api/weather")
 def api_weather():
-    """Real-time weather by city OR lat/lon (Level 4)."""
+    """Real-time weather by city OR lat/lon."""
     city = request.args.get("city", "").strip()
     lat  = request.args.get("lat", "")
     lon  = request.args.get("lon", "")
@@ -370,13 +388,13 @@ def api_weather():
 
         detected_city = res.get("name", city)
         return jsonify({
-            "city":      detected_city,
-            "temp":      round(res["main"]["temp"], 1),
-            "humidity":  res["main"]["humidity"],
-            "condition": res["weather"][0]["main"] if res.get("weather") else "Clear",
-            "desc":      res["weather"][0]["description"] if res.get("weather") else "",
-            "pressure":  res["main"].get("pressure", 1012),
-            "wind":      round(res.get("wind", {}).get("speed", 0), 1),
+            "city":       detected_city,
+            "temp":       round(res["main"]["temp"], 1),
+            "humidity":   res["main"]["humidity"],
+            "condition":  res["weather"][0]["main"] if res.get("weather") else "Clear",
+            "desc":       res["weather"][0]["description"] if res.get("weather") else "",
+            "pressure":   res["main"].get("pressure", 1012),
+            "wind":       round(res.get("wind", {}).get("speed", 0), 1),
             "feels_like": round(res["main"].get("feels_like", res["main"]["temp"]), 1),
         })
     except Exception as e:
@@ -385,7 +403,7 @@ def api_weather():
 
 @app.route("/api/forecast")
 def api_forecast():
-    """5-day / 3-hour forecast (Level 4)."""
+    """5-day / 3-hour forecast."""
     city = request.args.get("city", "").strip()
     lat  = request.args.get("lat", "")
     lon  = request.args.get("lon", "")
@@ -405,10 +423,9 @@ def api_forecast():
         if "list" not in res:
             return jsonify({"error": "Forecast not available"}), 404
 
-        # Group by day, pick midday reading
         days = {}
         for item in res["list"]:
-            day = item["dt_txt"][:10]
+            day  = item["dt_txt"][:10]
             hour = int(item["dt_txt"][11:13])
             if day not in days or abs(hour - 12) < abs(int(days[day]["dt_txt"][11:13]) - 12):
                 days[day] = item
@@ -449,7 +466,27 @@ def safe_int(text, lo, hi, default):
         return default
     return max(lo, min(hi, int(digits[:3])))
 
-# ── PREDICT ───────────────────────────────────────────────────────────────────
+def save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
+              city, weather_str, condition, humidity, temp, pressure, wind,
+              insight, crop_tip, why, language, source="image"):
+    """Shared helper to persist a scan to DB."""
+    scan_id = str(uuid.uuid4())
+    db.execute("""
+        INSERT INTO scans
+          (id,user_id,disease,organic,chemical,risk,confidence,severity,
+           city,weather,condition,humidity,temp,wind,pressure,
+           insight,crop_tip,why_disease,language,source)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+    """, (scan_id, user["id"] if user else None,
+          disease, organic, chemical, risk, confidence, severity,
+          city, weather_str, condition, humidity, temp, wind, pressure,
+          insight, crop_tip, why, language, source))
+    db.commit()
+    return scan_id
+
+# ── IMAGE PREDICT ─────────────────────────────────────────────────────────────
+
+MAX_IMAGE_BYTES = 8 * 1024 * 1024  # FIX #9: 8 MB limit
 
 @app.route("/")
 def home():
@@ -470,29 +507,41 @@ def predict():
         if not img_bytes:
             return jsonify({"error": "Uploaded file is empty"}), 400
 
+        # FIX #9: Validate image size
+        if len(img_bytes) > MAX_IMAGE_BYTES:
+            return jsonify({"error": f"Image too large. Max size is 8 MB (got {len(img_bytes)//1024//1024} MB)."}), 413
+
         mime_type = file.mimetype or "image/jpeg"
+        if mime_type not in ("image/jpeg", "image/jpg", "image/png", "image/webp", "image/heic"):
+            mime_type = "image/jpeg"
+
         img_b64   = base64.b64encode(img_bytes).decode("utf-8")
         image_url = f"data:{mime_type};base64,{img_b64}"
 
-        city     = (request.form.get("city", "Chennai") or "Chennai").strip()
+        city     = (request.form.get("city", "Chennai") or "Chennai").strip()[:100]
         language = (request.form.get("language", "English") or "English").strip()
 
-        temp, humidity, condition, pressure = get_weather(city)
+        # FIX #2: Unpack 5 values including wind
+        temp, humidity, condition, pressure, wind = get_weather(city)
 
+        # FIX #10: Added Why This Disease + Alternatives to prompt
         prompt = f"""You are an expert plant pathologist AI. Analyze this plant image carefully.
 
-Current weather in {city}: {temp}°C, {humidity}% humidity, {condition}, pressure {pressure} hPa.
+Current weather in {city}: {temp}°C, {humidity}% humidity, {condition}, pressure {pressure} hPa, wind {wind} m/s.
 
 CRITICAL: Respond ENTIRELY in {language}. Every word must be in {language}.
 
 Reply in EXACTLY this format (no extra lines, no markdown):
-Disease Name: [name]
+Disease Name: [name in {language}]
 Organic Solution: [2-3 sentence organic treatment]
 Chemical Solution: [2-3 sentence chemical treatment]
 Risk Level: [LOW or MEDIUM or HIGH]
 Confidence: [integer 60-99]
 Severity: [integer 1-10]
-Crop Tip: [one short actionable farming tip based on the weather]"""
+Crop Tip: [one short actionable tip based on the weather in {city}]
+Why This Disease: [one sentence explaining the key visual symptoms that led to this diagnosis]
+Alternative 1: [second most likely disease — name only]
+Alternative 2: [third most likely disease — name only]"""
 
         response = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
@@ -503,23 +552,25 @@ Crop Tip: [one short actionable farming tip based on the weather]"""
                     {"type": "text", "text": prompt}
                 ]
             }],
-            max_tokens=700,
+            max_tokens=800,
             temperature=0.2,
         )
 
         text  = (response.choices[0].message.content or "").strip()
         lines = text.split("\n")
 
-        disease  = extract_field(lines, "Disease Name")
-        organic  = extract_field(lines, "Organic Solution")
-        chemical = extract_field(lines, "Chemical Solution")
-        crop_tip = extract_field(lines, "Crop Tip")
+        disease     = extract_field(lines, "Disease Name")
+        organic     = extract_field(lines, "Organic Solution")
+        chemical    = extract_field(lines, "Chemical Solution")
+        crop_tip    = extract_field(lines, "Crop Tip")
+        why         = extract_field(lines, "Why This Disease")
+        alt1        = extract_field(lines, "Alternative 1")
+        alt2        = extract_field(lines, "Alternative 2")
 
-        risk_raw = extract_field(lines, "Risk Level").upper()
-        risk = "HIGH" if "HIGH" in risk_raw else "LOW" if "LOW" in risk_raw else "MEDIUM"
-
-        confidence = safe_int(extract_field(lines, "Confidence"), 60, 99, 75)
-        severity   = safe_int(extract_field(lines, "Severity"),    1, 10,  5)
+        risk_raw    = extract_field(lines, "Risk Level").upper()
+        risk        = "HIGH" if "HIGH" in risk_raw else "LOW" if "LOW" in risk_raw else "MEDIUM"
+        confidence  = safe_int(extract_field(lines, "Confidence"), 60, 99, 75)
+        severity    = safe_int(extract_field(lines, "Severity"),    1, 10,  5)
 
         if humidity > 70:
             risk_reason = "high humidity increases fungal spread risk"
@@ -528,36 +579,150 @@ Crop Tip: [one short actionable farming tip based on the weather]"""
         else:
             risk_reason = "conditions are moderate — regular monitoring advised"
 
-        insight = f"Weather in {city}: {humidity}% humidity, {temp}°C — {risk_reason}. Current risk level: {risk}."
+        insight = (
+            f"Weather in {city}: {humidity}% humidity, {temp}°C, wind {wind} m/s — "
+            f"{risk_reason}. Current risk level: {risk}."
+        )
 
         result = {
-            "disease": disease, "organic": organic, "chemical": chemical,
-            "risk": risk, "confidence": confidence, "severity": severity,
-            "weather": f"{temp}°C · {humidity}%", "condition": condition,
-            "pressure": pressure, "humidity": humidity, "temp": temp,
-            "insight": insight, "crop_tip": crop_tip, "city": city,
-            "language": language,
-            "timestamp": datetime.now().strftime("%d %b %Y, %I:%M %p"),
-            "solution": f"🌿 {organic} | 🧪 {chemical}",
+            "disease":    disease,
+            "organic":    organic,
+            "chemical":   chemical,
+            "risk":       risk,
+            "confidence": confidence,
+            "severity":   severity,
+            "weather":    f"{temp}°C · {humidity}%",
+            "condition":  condition,
+            "pressure":   pressure,
+            "humidity":   humidity,
+            "temp":       temp,
+            "wind":       wind,          # FIX #2: now included
+            "insight":    insight,
+            "crop_tip":   crop_tip,
+            "why":        why,           # FIX #10: now included
+            "alt1":       alt1,
+            "alt2":       alt2,
+            "city":       city,
+            "language":   language,
+            "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
         }
 
         user    = get_current_user()
-        scan_id = str(uuid.uuid4())
         db      = get_db()
-        db.execute("""
-            INSERT INTO scans (id,user_id,disease,organic,chemical,risk,confidence,severity,
-                city,weather,condition,humidity,temp,pressure,insight,crop_tip,language)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-        """, (scan_id, user["id"] if user else None, disease, organic, chemical, risk,
-              confidence, severity, city, result["weather"], condition, humidity,
-              temp, pressure, insight, crop_tip, language))
-        db.commit()
-
+        scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
+                            city, result["weather"], condition, humidity, temp, pressure, wind,
+                            insight, crop_tip, why, language, source="image")
         result["scan_id"] = scan_id
         return jsonify(result)
 
     except Exception as e:
         print(f"ERROR in /predict: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ── FIX #1: VOICE DIAGNOSE ROUTE — was completely missing ────────────────────
+
+@app.route("/voice-diagnose", methods=["POST"])
+@rate_limit(max_calls=20, window=60)
+def voice_diagnose():
+    """Diagnose plant disease from a farmer's voice query (text)."""
+    try:
+        data     = request.json or {}
+        query    = (data.get("query") or "").strip()
+        city     = (data.get("city")  or "Chennai").strip()[:100]
+        language = (data.get("language") or "English").strip()
+
+        if not query:
+            return jsonify({"error": "No query provided"}), 400
+        if len(query) > 2000:
+            query = query[:2000]
+
+        temp, humidity, condition, pressure, wind = get_weather(city)
+
+        prompt = f"""You are an expert plant pathologist AI helping a farmer.
+The farmer described their crop problem in {language}:
+
+"{query}"
+
+Current weather in {city}: {temp}°C, {humidity}% humidity, {condition}, wind {wind} m/s.
+
+Based ONLY on the verbal description, give the most likely diagnosis.
+
+CRITICAL: Respond ENTIRELY in {language}.
+
+Reply in EXACTLY this format:
+Disease Name: [name]
+Organic Solution: [2-3 sentence organic treatment]
+Chemical Solution: [2-3 sentence chemical treatment]
+Risk Level: [LOW or MEDIUM or HIGH]
+Confidence: [integer 45-88 — be honest, this is from description not photo]
+Severity: [integer 1-10]
+Crop Tip: [one short actionable tip]
+Why This Disease: [one sentence explaining which symptoms in their description suggest this diagnosis]
+Alternative 1: [second most likely disease]
+Alternative 2: [third most likely disease]"""
+
+        response = client.chat.completions.create(
+            model="meta-llama/llama-4-scout-17b-16e-instruct",
+            messages=[{"role": "user", "content": prompt}],
+            max_tokens=700,
+            temperature=0.3,
+        )
+
+        text  = (response.choices[0].message.content or "").strip()
+        lines = text.split("\n")
+
+        disease    = extract_field(lines, "Disease Name")
+        organic    = extract_field(lines, "Organic Solution")
+        chemical   = extract_field(lines, "Chemical Solution")
+        crop_tip   = extract_field(lines, "Crop Tip")
+        why        = extract_field(lines, "Why This Disease")
+        alt1       = extract_field(lines, "Alternative 1")
+        alt2       = extract_field(lines, "Alternative 2")
+
+        risk_raw   = extract_field(lines, "Risk Level").upper()
+        risk       = "HIGH" if "HIGH" in risk_raw else "LOW" if "LOW" in risk_raw else "MEDIUM"
+        confidence = safe_int(extract_field(lines, "Confidence"), 45, 88, 62)
+        severity   = safe_int(extract_field(lines, "Severity"),    1, 10,  5)
+
+        insight = (
+            f"Voice diagnosis for {city} ({humidity}% humidity, {temp}°C): "
+            f"{why or 'Based on described symptoms.'}"
+        )
+
+        result = {
+            "disease":    disease,
+            "organic":    organic,
+            "chemical":   chemical,
+            "risk":       risk,
+            "confidence": confidence,
+            "severity":   severity,
+            "weather":    f"{temp}°C · {humidity}%",
+            "condition":  condition,
+            "pressure":   pressure,
+            "humidity":   humidity,
+            "temp":       temp,
+            "wind":       wind,
+            "insight":    insight,
+            "crop_tip":   crop_tip,
+            "why":        why,
+            "alt1":       alt1,
+            "alt2":       alt2,
+            "city":       city,
+            "language":   language,
+            "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
+        }
+
+        user    = get_current_user()
+        db      = get_db()
+        scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
+                            city, result["weather"], condition, humidity, temp, pressure, wind,
+                            insight, crop_tip, why, language, source="voice")
+        result["scan_id"] = scan_id
+        return jsonify(result)
+
+    except Exception as e:
+        print(f"ERROR in /voice-diagnose: {e}")
         return jsonify({"error": str(e)}), 500
 
 # ── HISTORY & ANALYTICS ───────────────────────────────────────────────────────
@@ -582,18 +747,27 @@ def api_history():
 def api_analytics():
     user   = get_current_user()
     db     = get_db()
-    where  = "WHERE user_id=?" if user else "WHERE user_id IS NULL"
-    params = (user["id"],) if user else ()
 
-    total    = db.execute(f"SELECT COUNT(*) as c FROM scans {where}", params).fetchone()["c"]
-    high_risk= db.execute(f"SELECT COUNT(*) as c FROM scans {where} AND risk='HIGH'", params).fetchone()["c"]
-    avg_conf = db.execute(f"SELECT AVG(confidence) as a FROM scans {where}", params).fetchone()["a"] or 0
-    diseases = db.execute(
-        f"SELECT disease, COUNT(*) as cnt FROM scans {where} GROUP BY disease ORDER BY cnt DESC LIMIT 5",
+    # FIX #11: Use explicit parameterized building to avoid accidental SQL breaks
+    if user:
+        uid_filter = "user_id = ?"
+        params     = (user["id"],)
+    else:
+        uid_filter = "user_id IS NULL"
+        params     = ()
+
+    total     = db.execute(f"SELECT COUNT(*) as c FROM scans WHERE {uid_filter}", params).fetchone()["c"]
+    high_risk = db.execute(f"SELECT COUNT(*) as c FROM scans WHERE {uid_filter} AND risk='HIGH'", params).fetchone()["c"]
+    avg_conf  = db.execute(f"SELECT AVG(confidence) as a FROM scans WHERE {uid_filter}", params).fetchone()["a"] or 0
+    diseases  = db.execute(
+        f"SELECT disease, COUNT(*) as cnt FROM scans WHERE {uid_filter} GROUP BY disease ORDER BY cnt DESC LIMIT 5",
         params
     ).fetchall()
-    weekly   = db.execute(
-        f"SELECT date(timestamp) as day, COUNT(*) as cnt FROM scans {where} AND timestamp>=date('now','-7 days') GROUP BY day ORDER BY day",
+    weekly    = db.execute(
+        f"""SELECT date(timestamp) as day, COUNT(*) as cnt
+            FROM scans
+            WHERE {uid_filter} AND timestamp >= date('now','-7 days')
+            GROUP BY day ORDER BY day""",
         params
     ).fetchall()
 
@@ -608,6 +782,7 @@ def api_analytics():
 # ── PDF REPORT ────────────────────────────────────────────────────────────────
 
 @app.route("/download-report", methods=["POST"])
+@rate_limit(max_calls=10, window=60)
 def download_report():
     try:
         data   = request.json or {}
@@ -632,6 +807,7 @@ def download_report():
         row("Date",     data.get("timestamp"))
         row("Location", data.get("city"))
         row("Weather",  data.get("weather"))
+        row("Wind",     f"{data.get('wind', '--')} m/s")
         row("Language", data.get("language", "English"))
         story.append(Spacer(1, 6))
 
@@ -640,6 +816,10 @@ def download_report():
         row("Risk Level",    data.get("risk"))
         row("AI Confidence", f"{data.get('confidence', 'N/A')}%")
         row("Severity",      f"{data.get('severity', 'N/A')}/10")
+        if data.get("why") and data.get("why") != "N/A":
+            row("Why Detected",  data.get("why"))
+        if data.get("alt1") and data.get("alt1") != "N/A":
+            row("Alternative",   f"{data.get('alt1')} / {data.get('alt2', '')}")
         story.append(Spacer(1, 6))
 
         story.append(Paragraph("Treatment", head_style))
