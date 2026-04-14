@@ -29,23 +29,18 @@ body.farmer-mode{
   --muted:#a07840;--card:rgba(20,10,0,0.94);--cb:rgba(245,200,66,0.16);
   font-family:'Noto Sans Tamil','DM Sans',sans-serif;background:#0f0800;
 }
-
-/* ═══════════════════════════════════ RESET & BASE ═══════════════════════════ */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 html{scroll-behavior:smooth;}
-body{
-  font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);
-  min-height:100vh;overflow-x:hidden;cursor:none;
-}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;cursor:none;}
 
-/* ═══════════════════════════════════ CUSTOM CURSOR ══════════════════════════ */
+/* ═══ CURSOR ═══ */
 .c-dot{position:fixed;width:7px;height:7px;background:var(--lime);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:0 0 8px var(--lime);}
 .c-ring{position:fixed;width:28px;height:28px;border:1.5px solid rgba(168,230,61,0.4);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:width .2s,height .2s,border-color .2s;}
 .c-ring.hov{width:44px;height:44px;border-color:rgba(168,230,61,.7);}
 .c-glow{position:fixed;width:380px;height:380px;background:radial-gradient(circle,rgba(168,230,61,0.06) 0%,transparent 70%);pointer-events:none;z-index:0;transform:translate(-50%,-50%);transition:left .12s,top .12s;}
 @media(max-width:640px){.c-dot,.c-ring,.c-glow{display:none!important;}body{cursor:auto!important;}}
 
-/* ═══════════════════════════════════ BACKGROUND ═════════════════════════════ */
+/* ═══ BACKGROUND ═══ */
 .bg-grad{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 70% 60% at 15% 10%,rgba(100,200,30,0.07) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 85% 85%,rgba(60,150,10,0.06) 0%,transparent 60%);}
 body.farmer-mode .bg-grad{background:radial-gradient(ellipse 70% 60% at 20% 20%,rgba(200,120,20,0.1) 0%,transparent 60%),radial-gradient(ellipse 50% 40% at 80% 80%,rgba(150,80,10,0.08) 0%,transparent 60%);}
 .grid-ov{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(168,230,61,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(168,230,61,0.03) 1px,transparent 1px);background-size:48px 48px;}
@@ -58,7 +53,7 @@ body.farmer-mode .orb1{background:rgba(200,140,20,0.05);}
 body.farmer-mode .orb2{background:rgba(180,100,10,0.06);}
 @keyframes floatO{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-30px) scale(1.1)}}
 
-/* ═══════════════════════════════════ NAVBAR ══════════════════════════════════ */
+/* ═══ NAVBAR ═══ */
 nav{position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:.85rem 2rem;background:rgba(6,18,2,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--lb);gap:12px;flex-wrap:wrap;transition:background .4s,border-color .4s;}
 body.farmer-mode nav{background:rgba(15,8,0,0.92);padding:1rem 1.5rem;}
 .logo{display:flex;align-items:center;gap:12px;}
@@ -81,7 +76,7 @@ body.farmer-mode .farmer-btn{font-size:14px;padding:8px 18px;}
 .off-badge{background:rgba(255,90,30,0.15);border:1px solid rgba(255,90,30,0.35);color:#ff9060;font-size:11px;font-weight:700;padding:4px 11px;border-radius:100px;display:none;align-items:center;gap:5px;}
 .uav{width:28px;height:28px;border-radius:50%;object-fit:cover;border:1px solid var(--lb);}
 
-/* ═══════════════════════════════════ MODALS ══════════════════════════════════ */
+/* ═══ MODALS ═══ */
 .modal-ov{position:fixed;inset:0;background:rgba(0,0,0,0.82);backdrop-filter:blur(8px);z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;}
 .modal-ov.open{opacity:1;pointer-events:all;}
 .modal-card{background:rgba(8,22,3,0.97);border:1px solid var(--lb);border-radius:20px;padding:2rem;width:90%;max-width:440px;position:relative;animation:mIn .3s ease;max-height:90vh;overflow-y:auto;}
@@ -120,18 +115,18 @@ body.farmer-mode .farmer-btn{font-size:14px;padding:8px 18px;}
 .ms-box.ok{background:rgba(100,200,30,.1);border:1px solid rgba(100,200,30,.25);color:var(--lime);}
 .ms-box.err{background:rgba(255,60,20,.08);border:1px solid rgba(255,60,20,.2);color:#ff7a60;}
 
-/* ═══════════════════════════════════ PAGE WRAPPER ═══════════════════════════ */
+/* ═══ PAGE WRAPPER ═══ */
 .pw{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:2rem 1.5rem 5rem;}
 body.farmer-mode .pw{max-width:900px;padding:1rem 1rem 6rem;}
 
-/* ═══════════════════════════════════ APP TABS ═══════════════════════════════ */
+/* ═══ APP TABS ═══ */
 .app-tabs{display:flex;gap:4px;margin-bottom:1.5rem;background:rgba(168,230,61,.04);border:1px solid var(--lb);border-radius:14px;padding:4px;}
 .app-tab{flex:1;padding:9px 0;text-align:center;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;color:var(--muted);cursor:none;transition:all .2s;background:transparent;border:none;}
 .app-tab.active{background:var(--lg);color:var(--lime);border:1px solid var(--lb);}
 .app-sec{display:none;}
 .app-sec.active{display:block;}
 
-/* ═══════════════════════════════════ HERO ════════════════════════════════════ */
+/* ═══ HERO ═══ */
 .hero{text-align:center;padding-bottom:1.75rem;}
 .hero-ey{display:inline-flex;align-items:center;gap:8px;background:var(--lg);border:1px solid var(--lb);color:var(--lime);font-size:11px;font-weight:600;padding:5px 16px;border-radius:100px;letter-spacing:.1em;margin-bottom:1.25rem;animation:fdDown .6s ease both;}
 .hero h1{font-family:'Syne',sans-serif;font-size:clamp(1.9rem,4vw,3.1rem);font-weight:800;line-height:1.1;letter-spacing:-1.5px;margin-bottom:.6rem;animation:fdUp .7s ease .1s both;}
@@ -140,7 +135,7 @@ body.farmer-mode .pw{max-width:900px;padding:1rem 1rem 6rem;}
 @keyframes fdDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fdUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
 
-/* ═══════════════════════════════════ FARMER HERO ════════════════════════════ */
+/* ═══ FARMER HERO ═══ */
 .farmer-hero{display:none;text-align:center;padding:2rem 1rem 1.5rem;animation:fdUp .5s ease;}
 body.farmer-mode .farmer-hero{display:block;}
 body.farmer-mode .hero{display:none;}
@@ -150,11 +145,11 @@ body.farmer-mode .app-tabs{display:none;}
 .fh-title{font-family:'Syne',sans-serif;font-size:clamp(2rem,6vw,3.5rem);font-weight:800;color:var(--lime);line-height:1.1;margin-bottom:8px;}
 .fh-sub{font-size:clamp(1rem,3vw,1.3rem);color:var(--text);opacity:0.85;margin-bottom:16px;}
 .fh-lang-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;}
-.fh-lang-btn{padding:8px 18px;border-radius:100px;background:var(--lg);border:1px solid var(--lb);color:var(--lime);font-size:14px;font-weight:700;cursor:none;transition:all .2s;data-lang:'';}
+.fh-lang-btn{padding:8px 18px;border-radius:100px;background:var(--lg);border:1px solid var(--lb);color:var(--lime);font-size:14px;font-weight:700;cursor:none;transition:all .2s;}
 .fh-lang-btn.sel{background:var(--lime);color:#0f0800;border-color:var(--lime);}
 .fh-lang-btn:hover{background:rgba(245,200,66,0.25);}
 
-/* ═══════════════════════════════════ FARMER VOICE BOX ═══════════════════════ */
+/* ═══ FARMER VOICE BOX ═══ */
 .farmer-voice-box{display:none;margin:0 0 1rem;background:var(--card);border:2px solid var(--lb);border-radius:24px;padding:2rem;text-align:center;transition:border-color .3s;}
 body.farmer-mode .farmer-voice-box{display:block;}
 .farmer-voice-box.listening{border-color:var(--lime);box-shadow:0 0 40px rgba(245,200,66,0.2);}
@@ -174,7 +169,7 @@ body.farmer-mode .controls-row{grid-template-columns:1fr auto auto;}
 body.farmer-mode .lang-field-wrap{display:none !important;}
 body.farmer-mode .offline-ai-banner{display:none !important;}
 
-/* ═══════════════════════════════════ MAIN CARD ═══════════════════════════════ */
+/* ═══ MAIN CARD ═══ */
 .main-card{background:var(--card);border:1px solid var(--cb);border-radius:22px;backdrop-filter:blur(28px);box-shadow:0 0 80px rgba(100,200,30,.05),0 32px 64px rgba(0,0,0,.55);overflow:hidden;transform-style:preserve-3d;transition:transform .4s,box-shadow .4s;}
 body.farmer-mode .main-card{border-radius:28px;border-width:2px;}
 #section-top{padding:1.1rem 1.6rem .9rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(168,230,61,.06);}
@@ -186,7 +181,7 @@ body.farmer-mode .main-card{border-radius:28px;border-width:2px;}
 .setup-link-btn{background:rgba(255,140,40,.2);border:1px solid rgba(255,140,40,.4);color:#ffa040;font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;cursor:none;transition:all .2s;white-space:nowrap;}
 .setup-link-btn:hover{background:rgba(255,140,40,.35);}
 
-/* ═══════════════════════════════════ FORECAST ═══════════════════════════════ */
+/* ═══ FORECAST ═══ */
 #forecast-panel{display:none;margin:.8rem 1.6rem 0;animation:slIn .4s ease;}
 .fc-grid{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;}
 .fc-grid::-webkit-scrollbar{display:none;}
@@ -199,7 +194,7 @@ body.farmer-mode .fc-day{min-width:80px;border-radius:14px;}
 .fc-tmp{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--lime);}
 .fc-hm{font-size:9px;color:var(--muted);}
 
-/* ═══════════════════════════════════ CONTROLS ═══════════════════════════════ */
+/* ═══ CONTROLS ═══ */
 .controls-row{display:grid;grid-template-columns:1fr auto auto 1fr;gap:8px;padding:1rem 1.6rem 0;align-items:end;}
 body.farmer-mode .controls-row{padding:1.2rem 1.6rem 0;gap:10px;}
 .fld{position:relative;}
@@ -216,7 +211,7 @@ body.farmer-mode .icon-btn{padding:14px 18px;font-size:18px;border-radius:14px;}
 .mic-btn.listening{background:rgba(255,80,50,.15);border-color:rgba(255,80,50,.4);color:#ff7a60;animation:micPulse .8s ease-in-out infinite;}
 body.farmer-mode .mic-btn{padding:14px 18px;font-size:18px;border-radius:14px;}
 
-/* ═══════════════════════════════════ WEATHER STRIP ══════════════════════════ */
+/* ═══ WEATHER STRIP ═══ */
 #weather-strip{display:none;margin:.8rem 1.6rem 0;background:linear-gradient(135deg,rgba(40,90,10,.3),rgba(20,60,5,.2));border:1px solid rgba(168,230,61,.12);border-radius:13px;padding:.8rem 1.1rem;animation:slIn .4s ease;}
 body.farmer-mode #weather-strip{border-radius:18px;padding:1.1rem 1.4rem;}
 .w-grid{display:flex;align-items:center;justify-content:space-around;}
@@ -230,7 +225,7 @@ body.farmer-mode .w-val{font-size:18px;}
 body.farmer-mode .w-key{font-size:11px;}
 .w-city{text-align:center;font-size:10px;color:var(--muted);margin-top:6px;font-style:italic;}
 
-/* ═══════════════════════════════════ LIVE CAMERA ════════════════════════════ */
+/* ═══ LIVE CAMERA ═══ */
 #live-camera-wrap{display:none;margin:.9rem 1.6rem 0;border-radius:16px;overflow:hidden;border:1px solid rgba(168,230,61,.15);position:relative;background:#000;}
 #liveVideo{width:100%;max-height:300px;object-fit:cover;display:block;}
 .live-badge{position:absolute;top:10px;left:10px;background:rgba(220,40,30,.9);color:white;font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;letter-spacing:.08em;animation:blink 1s ease-in-out infinite;z-index:10;}
@@ -254,7 +249,7 @@ body.farmer-mode .w-key{font-size:11px;}
 .live-scan-status{position:absolute;top:44px;left:10px;font-size:10px;color:rgba(168,230,61,.8);font-weight:600;z-index:10;background:rgba(0,0,0,.5);padding:3px 10px;border-radius:100px;}
 #liveCanvas{display:none;}
 
-/* ═══════════════════════════════════ UPLOAD / DROPZONE ══════════════════════ */
+/* ═══ UPLOAD / DROPZONE ═══ */
 .upload-wrap{padding:.9rem 1.6rem 0;}
 .dropzone{border:2px dashed rgba(168,230,61,.2);border-radius:14px;padding:2.2rem 1.5rem;text-align:center;cursor:default;position:relative;background:rgba(168,230,61,.02);transition:all .25s;}
 body.farmer-mode .dropzone{border-radius:20px;padding:2.8rem 1.5rem;border-color:rgba(245,200,66,.25);}
@@ -279,7 +274,7 @@ body.farmer-mode .up-live{background:rgba(255,100,40,.15);border:1px solid rgba(
 .fmtc{background:rgba(168,230,61,.06);border:1px solid rgba(168,230,61,.12);color:var(--muted);font-size:9px;font-weight:600;padding:2px 8px;border-radius:100px;letter-spacing:.06em;}
 body.farmer-mode .fmt-chips{display:none;}
 
-/* ═══════════════════════════════════ PREVIEW ════════════════════════════════ */
+/* ═══ PREVIEW ═══ */
 #preview-wrap{display:none;margin:.9rem 1.6rem 0;border-radius:13px;overflow:hidden;border:1px solid rgba(168,230,61,.15);position:relative;}
 body.farmer-mode #preview-wrap{border-radius:20px;}
 #preview{width:100%;max-height:260px;object-fit:cover;display:block;}
@@ -292,19 +287,19 @@ body.farmer-mode .prev-chip{font-size:14px;padding:5px 14px;}
 .prev-chg:hover{color:var(--lime);}
 body.farmer-mode .prev-chg{font-size:13px;padding:6px 14px;}
 
-/* ═══════════════════════════════════ RISK BANNER ════════════════════════════ */
+/* ═══ RISK BANNER ═══ */
 #risk-banner{display:none;margin:.7rem 1.6rem 0;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:600;align-items:center;gap:10px;}
 body.farmer-mode #risk-banner{font-size:17px;padding:14px 18px;border-radius:16px;}
 #risk-banner.high{background:rgba(255,60,20,.1);border:1px solid rgba(255,60,20,.3);color:#ff7a60;}
 #risk-banner.medium{background:rgba(240,168,32,.1);border:1px solid rgba(240,168,32,.3);color:#f0c860;}
 #risk-banner.low{background:rgba(100,200,30,.1);border:1px solid rgba(100,200,30,.25);color:var(--lime);}
 
-/* ═══════════════════════════════════ ERROR / LANG BARS ══════════════════════ */
+/* ═══ ERROR / LANG BARS ═══ */
 #error-card{display:none;margin:.7rem 1.6rem 0;background:rgba(50,10,5,.85);border:1px solid rgba(200,50,30,.35);border-radius:10px;padding:.85rem 1rem;font-size:12px;color:#f08070;line-height:1.75;}
 body.farmer-mode #error-card{font-size:16px;}
 #lang-tr-bar{display:none;margin:.7rem 1.6rem 0;background:rgba(168,230,61,.08);border:1px solid rgba(168,230,61,.2);border-radius:10px;padding:9px 14px;font-size:12px;color:var(--lime2);align-items:center;gap:8px;}
 
-/* ═══════════════════════════════════ RESULT CARD ════════════════════════════ */
+/* ═══ RESULT CARD ═══ */
 #result-card{display:none;position:relative;margin:.9rem 1.6rem 0;border-radius:17px;overflow:hidden;border:1px solid rgba(168,230,61,.15);opacity:0;transform:translateY(12px) scale(.98);transition:opacity .5s,transform .5s;}
 body.farmer-mode #result-card{border-radius:22px;border-width:2px;}
 #result-card.show{opacity:1;transform:translateY(0) scale(1);}
@@ -338,14 +333,11 @@ body.farmer-mode .t-btn{font-size:16px;padding:10px 22px;border-radius:12px;}
 body.farmer-mode .sol-txt{font-size:18px;line-height:2.1;}
 .crop-tip{background:rgba(168,230,61,.05);border:1px solid rgba(168,230,61,.1);border-left:3px solid var(--lime3);border-radius:8px;padding:9px 13px;margin-top:7px;font-size:12px;color:var(--lime2);line-height:1.7;}
 body.farmer-mode .crop-tip{font-size:16px;padding:14px 18px;border-radius:14px;line-height:2;}
-
-/* ── NEW: Why Box + Alt Box ── */
 .why-box{display:none;background:rgba(168,230,61,.04);border:1px solid rgba(168,230,61,.12);border-left:3px solid rgba(168,230,61,.5);border-radius:8px;padding:9px 13px;margin-top:7px;font-size:12px;color:rgba(220,255,160,.85);line-height:1.7;font-style:italic;}
 body.farmer-mode .why-box{font-size:15px;padding:12px 16px;}
 .alt-box{display:none;margin-top:8px;gap:5px;flex-wrap:wrap;align-items:center;}
 .alt-box.show{display:flex;}
 .alt-lbl{font-size:10px;font-weight:700;color:var(--muted);}
-
 .meters-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:5px;}
 .m-box{background:rgba(168,230,61,.03);border:1px solid rgba(168,230,61,.1);border-radius:11px;padding:11px 13px;}
 body.farmer-mode .m-box{border-radius:16px;padding:16px;}
@@ -364,7 +356,7 @@ body.farmer-mode .bar-bg{height:8px;}
 .mp{background:rgba(168,230,61,.06);border:1px solid rgba(168,230,61,.12);color:var(--muted);font-size:10px;font-weight:600;padding:3px 10px;border-radius:100px;}
 body.farmer-mode .mp{font-size:12px;padding:5px 12px;}
 
-/* ═══════════════════════════════════ CALENDAR ═══════════════════════════════ */
+/* ═══ CALENDAR ═══ */
 #calendar-section{display:none;padding:0 1.4rem 1.1rem;background:rgba(6,16,2,.9);border-top:1px solid rgba(168,230,61,.06);}
 .cal-grid{display:flex;gap:5px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none;}
 .cal-grid::-webkit-scrollbar{display:none;}
@@ -375,7 +367,7 @@ body.farmer-mode .mp{font-size:12px;padding:5px 12px;}
 .cm-ic{font-size:15px;margin:3px 0;}
 .cm-act{font-size:8px;color:var(--lime3);}
 
-/* ═══════════════════════════════════ HISTORY ════════════════════════════════ */
+/* ═══ HISTORY ═══ */
 #history-section{display:none;margin:0 1.6rem;}
 .h-hdr{font-family:'Syne',sans-serif;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;}
 .h-list{display:flex;flex-direction:column;gap:5px;}
@@ -390,7 +382,7 @@ body.farmer-mode .h-met{font-size:13px;}
 .h-risk.MEDIUM{background:rgba(240,168,32,.1);color:#f0c840;}
 .h-risk.HIGH{background:rgba(255,60,20,.1);color:#ff7a60;}
 
-/* ═══════════════════════════════════ BUTTONS ════════════════════════════════ */
+/* ═══ BUTTONS ═══ */
 .btn-area{padding:1.1rem 1.6rem 1.6rem;display:flex;flex-direction:column;gap:7px;}
 .btn-primary{position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#6ab820 0%,#3d8005 100%);color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:none;transition:all .25s;letter-spacing:.02em;box-shadow:0 4px 22px rgba(100,184,32,.25);}
 body.farmer-mode .btn-primary{font-size:20px;padding:20px;border-radius:18px;}
@@ -404,7 +396,7 @@ body.farmer-mode .btn-pdf{font-size:18px;padding:16px;border-radius:16px;}
 .spinner{display:none;width:17px;height:17px;border:2px solid rgba(255,255,255,.25);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ═══════════════════════════════════ ANALYTICS ══════════════════════════════ */
+/* ═══ ANALYTICS ═══ */
 .an-card{background:var(--card);border:1px solid var(--cb);border-radius:18px;padding:1.5rem;margin-bottom:1rem;}
 .an-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--lime);margin-bottom:1rem;}
 .sg{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.25rem;}
@@ -420,16 +412,16 @@ body.farmer-mode .btn-pdf{font-size:18px;padding:16px;border-radius:16px;}
 .dc{font-size:10px;color:var(--muted);font-weight:600;min-width:20px;text-align:right;}
 .no-data{text-align:center;color:var(--muted);font-size:13px;padding:2rem;font-style:italic;}
 
-/* ═══════════════════════════════════ TOAST ══════════════════════════════════ */
+/* ═══ TOAST ═══ */
 #toast{position:fixed;bottom:2rem;right:1.5rem;z-index:10000;background:rgba(8,22,3,.95);border:1px solid rgba(168,230,61,.3);border-radius:12px;padding:10px 16px;font-size:12px;font-weight:600;color:var(--lime);box-shadow:0 8px 32px rgba(0,0,0,.5);transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;backdrop-filter:blur(12px);max-width:280px;}
 #toast.show{transform:translateY(0);opacity:1;}
 body.farmer-mode #toast{font-size:16px;padding:14px 20px;border-radius:16px;}
 @keyframes slIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
-/* ═══════════════════════════════════ FOOTER ═════════════════════════════════ */
+/* ═══ FOOTER ═══ */
 footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:1px solid rgba(168,230,61,.06);font-size:11px;color:#2a4a12;margin-top:2rem;}
 
-/* ═══════════════════════════════════ RESPONSIVE ═════════════════════════════ */
+/* ═══ RESPONSIVE ═══ */
 @media(max-width:640px){
   nav{padding:.8rem 1rem;}
   .pw{padding:1.25rem .75rem 2.5rem;}
@@ -452,7 +444,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
 <div class="orb orb1"></div><div class="orb orb2"></div><div class="orb orb3"></div>
 <div id="toast"></div>
 
-<!-- ══════════════════════ AUTH MODAL ══════════════════════ -->
+<!-- AUTH MODAL -->
 <div class="modal-ov" id="authModal" role="dialog" aria-modal="true" aria-label="Authentication">
   <div class="modal-card">
     <button class="mc" onclick="closeModal('authModal')" aria-label="Close">✕</button>
@@ -483,7 +475,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
   </div>
 </div>
 
-<!-- ══════════════════════ OFFLINE AI SETUP MODAL ══════════════════════ -->
+<!-- OFFLINE AI SETUP MODAL -->
 <div class="modal-ov" id="setupModal" role="dialog" aria-modal="true" aria-label="Offline AI Setup">
   <div class="modal-card">
     <button class="mc" onclick="closeModal('setupModal')" aria-label="Close">✕</button>
@@ -496,7 +488,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
   </div>
 </div>
 
-<!-- ══════════════════════ NAVBAR ══════════════════════ -->
+<!-- NAVBAR -->
 <nav>
   <div class="logo">
     <div class="logo-mark" aria-hidden="true">🌱</div>
@@ -516,7 +508,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
   </div>
 </nav>
 
-<!-- ══════════════════════ PAGE WRAPPER ══════════════════════ -->
+<!-- PAGE WRAPPER -->
 <div class="pw">
   <!-- NORMAL HERO -->
   <div class="hero" id="normalHero">
@@ -546,9 +538,8 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
     <button class="app-tab" onclick="switchAppTab('analytics')">📊 Analytics</button>
   </div>
 
-  <!-- ══ SCAN SECTION ══ -->
+  <!-- SCAN SECTION -->
   <div class="app-sec active" id="tab-scan">
-
     <!-- FARMER VOICE BOX -->
     <div class="farmer-voice-box" id="farmerVoiceBox">
       <button class="fv-mic-btn" id="fvMicBtn" onclick="toggleFarmerVoice()" aria-label="Toggle voice input">🎤</button>
@@ -681,14 +672,11 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
           </div>
           <div class="t-con active" id="tab-organic"><p class="sol-txt" id="organicText">—</p></div>
           <div class="t-con" id="tab-chemical"><p class="sol-txt" id="chemicalText">—</p></div>
-
-          <!-- Crop tip + Why + Alternatives — FIX: WHY/ALT NOW IN DOM -->
           <div class="crop-tip" id="cropTipBox"></div>
           <div class="why-box" id="whyBox"></div>
           <div class="alt-box" id="altBox">
             <span class="alt-lbl">DIFFERENTIALS:</span>
           </div>
-
           <p class="s-lbl">Weather Intelligence</p>
           <p class="sol-txt" id="insightText">—</p>
           <p class="s-lbl">Diagnostics</p>
@@ -734,7 +722,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
     </div><!-- /main-card -->
   </div><!-- /tab-scan -->
 
-  <!-- ══ HISTORY SECTION ══ -->
+  <!-- HISTORY TAB -->
   <div class="app-sec" id="tab-history">
     <div class="an-card">
       <div class="an-title">📋 Scan History</div>
@@ -742,7 +730,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
     </div>
   </div>
 
-  <!-- ══ ANALYTICS SECTION ══ -->
+  <!-- ANALYTICS TAB -->
   <div class="app-sec" id="tab-analytics">
     <div class="an-card">
       <div class="an-title">📊 Your Dashboard</div>
@@ -759,1391 +747,604 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
 
 <footer>AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + SQLite + Teachable Machine Offline AI</footer>
 
-<!-- ══════════════════════════════════════════════════════════════════
-     JAVASCRIPT — ALL BUGS FIXED, ALL PATCHES MERGED
-══════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-/* ════════════════════════════════════════════════════════════════
-   CONSTANTS
-════════════════════════════════════════════════════════════════ */
-const WI = {
-  Clear:'☀️', Clouds:'☁️', Rain:'🌧️', Drizzle:'🌦️',
-  Thunderstorm:'⛈️', Snow:'❄️', Mist:'🌫️', Haze:'🌫️',
-  Smoke:'🌫️', Fog:'🌫️'
-};
-const LC = {
-  English:'en-IN', Tamil:'ta-IN', Hindi:'hi-IN',
-  Telugu:'te-IN', Kannada:'kn-IN', Malayalam:'ml-IN'
-};
+/* ═══════════ CONSTANTS ═══════════ */
+const WI = { Clear:'☀️',Clouds:'☁️',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Haze:'🌫️',Smoke:'🌫️',Fog:'🌫️' };
+const LC = { English:'en-IN',Tamil:'ta-IN',Hindi:'hi-IN',Telugu:'te-IN',Kannada:'kn-IN',Malayalam:'ml-IN' };
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-const CAL_IC  = ['🌱','🌿','☀️','💧','🌾','✂️','🌧️','🧪','🌱','🌿','🌾','❄️'];
-const CAL_AC  = ['Sow seeds','Thin seedlings','Fertilize','Irrigate','Spray','Prune','Harvest','Test soil','Sow seeds','Mulch','Harvest','Rest'];
-
-// ── Your default TM model URL ──
+const CAL_IC = ['🌱','🌿','☀️','💧','🌾','✂️','🌧️','🧪','🌱','🌿','🌾','❄️'];
+const CAL_AC = ['Sow seeds','Thin seedlings','Fertilize','Irrigate','Spray','Prune','Harvest','Test soil','Sow seeds','Mulch','Harvest','Rest'];
 const DEFAULT_TM_URL = 'https://teachablemachine.withgoogle.com/models/oFRykH3Qw/';
 const TM_KEY = 'agrishield_tm_model_url';
-
-// ── Disease treatment library ──
 const OFFLINE_TX = {
-  healthy: { organic:'✅ Plant appears healthy. Maintain regular watering and organic compost.', chemical:'No chemical treatment needed. Continue preventive spray every 2 weeks.', risk:'LOW', tip:'Keep soil pH between 6–7 for optimal nutrient uptake.' },
-  scab:    { organic:'Apply neem oil spray (5ml/L) every 7 days. Remove infected leaves.', chemical:'Spray Mancozeb 75WP at 2g/L or Captan 50WP at 2.5g/L fortnightly.', risk:'MEDIUM', tip:'Avoid overhead irrigation to reduce leaf wetness.' },
-  rot:     { organic:'Use copper-based fungicide. Remove and destroy all infected parts.', chemical:'Apply Carbendazim 50WP at 1g/L or Thiophanate-methyl 70WP at 1.5g/L weekly.', risk:'HIGH', tip:'Improve field drainage and reduce plant density.' },
-  rust:    { organic:'Sulfur dust or neem oil spray — apply early morning.', chemical:'Apply Propiconazole 25EC at 1ml/L or Hexaconazole 5EC at 2ml/L every 10 days.', risk:'MEDIUM', tip:'Avoid excess nitrogen.' },
-  blight:  { organic:'Spray copper hydroxide 77WP at 3g/L. Destroy infected material.', chemical:'Apply Metalaxyl-M + Mancozeb at 2g/L or Dimethomorph 50WP at 1g/L.', risk:'HIGH', tip:'Use certified disease-free seeds and resistant varieties.' },
-  mildew:  { organic:'Mix baking soda 5g + soap 2ml per liter water. Spray weekly.', chemical:'Apply Triadimefon 25WP at 0.5g/L or Myclobutanil 10WP at 1g/L every 14 days.', risk:'MEDIUM', tip:'Improve plant spacing for better airflow and sunlight.' },
-  spot:    { organic:'Remove infected leaves. Apply compost tea spray for beneficial microbes.', chemical:'Use Chlorothalonil 75WP at 2g/L or Azoxystrobin 23SC at 1ml/L fortnightly.', risk:'MEDIUM', tip:'Mulch around base of plant to prevent soil-splash infection.' },
-  mosaic:  { organic:'No cure — remove infected plants immediately. Control aphid vectors.', chemical:'No chemical cures virus. Apply imidacloprid to control insect vectors.', risk:'HIGH', tip:'Use virus-resistant seed varieties and control weeds.' },
-  curl:    { organic:'Control whitefly with yellow sticky traps and neem-based sprays every 5d.', chemical:'Apply Imidacloprid 17.8SL at 0.3ml/L or Thiamethoxam 25WG at 0.3g/L.', risk:'HIGH', tip:'Use reflective mulch and insect-proof nets in nursery.' },
-  default: { organic:'Apply neem oil spray at 5ml per liter water. Maintain proper plant hygiene.', chemical:'Consult local agricultural extension officer for specific recommendation.', risk:'MEDIUM', tip:'Regular field monitoring twice weekly for early detection.' }
+  healthy:{ organic:'✅ Plant appears healthy. Maintain regular watering and organic compost.',chemical:'No chemical treatment needed. Continue preventive spray every 2 weeks.',risk:'LOW',tip:'Keep soil pH between 6–7 for optimal nutrient uptake.' },
+  scab:   { organic:'Apply neem oil spray (5ml/L) every 7 days. Remove infected leaves.',chemical:'Spray Mancozeb 75WP at 2g/L or Captan 50WP at 2.5g/L fortnightly.',risk:'MEDIUM',tip:'Avoid overhead irrigation to reduce leaf wetness.' },
+  rot:    { organic:'Use copper-based fungicide. Remove and destroy all infected parts.',chemical:'Apply Carbendazim 50WP at 1g/L or Thiophanate-methyl 70WP at 1.5g/L weekly.',risk:'HIGH',tip:'Improve field drainage and reduce plant density.' },
+  rust:   { organic:'Sulfur dust or neem oil spray — apply early morning.',chemical:'Apply Propiconazole 25EC at 1ml/L or Hexaconazole 5EC at 2ml/L every 10 days.',risk:'MEDIUM',tip:'Avoid excess nitrogen.' },
+  blight: { organic:'Spray copper hydroxide 77WP at 3g/L. Destroy infected material.',chemical:'Apply Metalaxyl-M + Mancozeb at 2g/L or Dimethomorph 50WP at 1g/L.',risk:'HIGH',tip:'Use certified disease-free seeds and resistant varieties.' },
+  mildew: { organic:'Mix baking soda 5g + soap 2ml per liter water. Spray weekly.',chemical:'Apply Triadimefon 25WP at 0.5g/L or Myclobutanil 10WP at 1g/L every 14 days.',risk:'MEDIUM',tip:'Improve plant spacing for better airflow and sunlight.' },
+  spot:   { organic:'Remove infected leaves. Apply compost tea spray for beneficial microbes.',chemical:'Use Chlorothalonil 75WP at 2g/L or Azoxystrobin 23SC at 1ml/L fortnightly.',risk:'MEDIUM',tip:'Mulch around base of plant to prevent soil-splash infection.' },
+  mosaic: { organic:'No cure — remove infected plants immediately. Control aphid vectors.',chemical:'No chemical cures virus. Apply imidacloprid to control insect vectors.',risk:'HIGH',tip:'Use virus-resistant seed varieties and control weeds.' },
+  curl:   { organic:'Control whitefly with yellow sticky traps and neem-based sprays every 5d.',chemical:'Apply Imidacloprid 17.8SL at 0.3ml/L or Thiamethoxam 25WG at 0.3g/L.',risk:'HIGH',tip:'Use reflective mulch and insect-proof nets in nursery.' },
+  default:{ organic:'Apply neem oil spray at 5ml per liter water. Maintain proper plant hygiene.',chemical:'Consult local agricultural extension officer for specific recommendation.',risk:'MEDIUM',tip:'Regular field monitoring twice weekly for early detection.' }
 };
-
-// ── Farmer language strings ──
 const FARMER_LANGS = {
-  Tamil:     { title:'உங்கள் பயிரை பாதுகாப்போம்', sub:'படம் எடுக்கவும் அல்லது பேசவும் — உடனே பதில் கிடைக்கும்', mic:'மைக்கை அழுத்தி பேசுங்கள்', micsub:'உங்கள் பயிரில் என்ன பிரச்சனை என்று சொல்லுங்கள்', send:'AI-க்கு அனுப்பு' },
-  Hindi:     { title:'अपनी फसल की रक्षा करें', sub:'फोटो लें या बोलें — तुरंत जवाब पाएं', mic:'माइक दबाएं और बोलें', micsub:'अपनी फसल की समस्या बताएं', send:'AI को भेजें' },
-  Telugu:    { title:'మీ పంటను రక్షించుకోండి', sub:'ఫోటో తీయండి లేదా మాట్లాడండి — వెంటనే జవాబు', mic:'మైక్ నొక్కి మాట్లాడండి', micsub:'మీ పంటలో సమస్య ఏమిటో చెప్పండి', send:'AI కి పంపండి' },
-  Kannada:   { title:'ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ರಕ್ಷಿಸಿ', sub:'ಫೋಟೋ ತೆಗೆಯಿರಿ ಅಥವಾ ಮಾತಾಡಿ — ತಕ್ಷಣ ಉತ್ತರ', mic:'ಮೈಕ್ ಒತ್ತಿ ಮಾತಾಡಿ', micsub:'ನಿಮ್ಮ ಬೆಳೆಯ ಸಮಸ್ಯೆ ಹೇಳಿ', send:'AI ಗೆ ಕಳುಹಿಸಿ' },
-  Malayalam: { title:'നിങ്ങളുടെ വിളയെ സംരക്ഷിക്കൂ', sub:'ഫോട്ടോ എടുക്കൂ അല്ലെങ്കിൽ സംസാരിക്കൂ', mic:'മൈക്ക് ഞെക്കി സംസാരിക്കൂ', micsub:'നിങ്ങളുടെ പ്രശ്നം പറയൂ', send:'AI ക്ക് അയക്കൂ' },
-  English:   { title:'Protect Your Harvest', sub:'Take a photo or speak — get instant help', mic:'Tap mic and describe your issue', micsub:'Tell us what you see on your crop leaves', send:'Send to AI' }
+  Tamil:    { title:'உங்கள் பயிரை பாதுகாப்போம்',sub:'படம் எடுக்கவும் அல்லது பேசவும் — உடனே பதில் கிடைக்கும்',mic:'மைக்கை அழுத்தி பேசுங்கள்',micsub:'உங்கள் பயிரில் என்ன பிரச்சனை என்று சொல்லுங்கள்',send:'AI-க்கு அனுப்பு' },
+  Hindi:    { title:'अपनी फसल की रक्षा करें',sub:'फोटो लें या बोलें — तुरंत जवाब पाएं',mic:'माइक दबाएं और बोलें',micsub:'अपनी फसल की समस्या बताएं',send:'AI को भेजें' },
+  Telugu:   { title:'మీ పంటను రక్షించుకోండి',sub:'ఫోటో తీయండి లేదా మాట్లాడండి — వెంటనే జవాబు',mic:'మైక్ నొక్కి మాట్లాడండి',micsub:'మీ పంటలో సమస్య ఏమిటో చెప్పండి',send:'AI కి పంపండి' },
+  Kannada:  { title:'ನಿಮ್ಮ ಬೆಳೆಯನ್ನು ರಕ್ಷಿಸಿ',sub:'ಫೋಟೋ ತೆಗೆಯಿರಿ ಅಥವಾ ಮಾತಾಡಿ — ತಕ್ಷಣ ಉತ್ತರ',mic:'ಮೈಕ್ ಒತ್ತಿ ಮಾತಾಡಿ',micsub:'ನಿಮ್ಮ ಬೆಳೆಯ ಸಮಸ್ಯೆ ಹೇಳಿ',send:'AI ಗೆ ಕಳುಹಿಸಿ' },
+  Malayalam:{ title:'നിങ്ങളുടെ വിളയെ സംരക്ഷിക്കൂ',sub:'ഫോട്ടോ എടുക്കൂ അല്ലെങ്കിൽ സംസാരിക്കൂ',mic:'മൈക്ക് ഞെക്കി സംസാരിക്കൂ',micsub:'നിങ്ങളുടെ പ്രശ്നം പറയൂ',send:'AI ക്ക് അയക്കൂ' },
+  English:  { title:'Protect Your Harvest',sub:'Take a photo or speak — get instant help',mic:'Tap mic and describe your issue',micsub:'Tell us what you see on your crop leaves',send:'Send to AI' }
 };
 
-/* ════════════════════════════════════════════════════════════════
-   STATE
-════════════════════════════════════════════════════════════════ */
-let lastResult       = null;
-let lastImageFile    = null;
-let activeTab        = 'organic';
-let isSpeaking       = false;
-let currentUser      = null;
-let liveStream       = null;
-let isFarmerMode     = false;
-let weeklyChart      = null;
-let isOnline         = navigator.onLine;
-let currentLat       = null;
-let currentLon       = null;
-let farmerLang       = 'Tamil';
-let farmerLangCode   = 'ta-IN';
-let farmerVoiceActive = false;
-let farmerTranscript = '';
-let tmModel          = null;
-let tmLoaded         = false;
-let tmClasses        = [];
-let liveInferInterval = null;
-let liveLastResult   = null;
-let _historyFetchedAt = 0;  // FIX #15: throttle history fetches
+/* ═══════════ STATE ═══════════ */
+let lastResult=null, lastImageFile=null, activeTab='organic';
+let isSpeaking=false, currentUser=null;
+let liveStream=null, isFarmerMode=false, weeklyChart=null;
+let isOnline=navigator.onLine, currentLat=null, currentLon=null;
+let farmerLang='Tamil', farmerLangCode='ta-IN';
+let farmerVoiceActive=false, farmerTranscript='';
+let tmModel=null, tmLoaded=false, tmClasses=[];
+let liveInferInterval=null, liveLastResult=null;
+let _historyFetchedAt=0;
 
-/* ════════════════════════════════════════════════════════════════
-   NETWORK STATUS
-════════════════════════════════════════════════════════════════ */
-function updateOnlineStatus() {
-  isOnline = navigator.onLine;
-  const badge = document.getElementById('offlineBadge');
-  const banner = document.getElementById('offlineAiBanner');
-  badge.style.display  = isOnline ? 'none' : 'flex';
-  banner.classList.toggle('show', !isOnline);
-  if (!isOnline && !tmLoaded) {
-    const url = localStorage.getItem(TM_KEY) || DEFAULT_TM_URL;
-    loadTMModel(url);
-  }
+/* ═══════════ ONLINE STATUS ═══════════ */
+function updateOnlineStatus(){
+  isOnline=navigator.onLine;
+  document.getElementById('offlineBadge').style.display=isOnline?'none':'flex';
+  document.getElementById('offlineAiBanner').classList.toggle('show',!isOnline);
+  if(!isOnline&&!tmLoaded) loadTMModel(localStorage.getItem(TM_KEY)||DEFAULT_TM_URL);
 }
-window.addEventListener('online',  updateOnlineStatus);
-window.addEventListener('offline', updateOnlineStatus);
+window.addEventListener('online',updateOnlineStatus);
+window.addEventListener('offline',updateOnlineStatus);
 updateOnlineStatus();
 
-// FIX #7: cleanup on page unload
-window.addEventListener('beforeunload', () => {
-  stopLiveCamera();
-  stopVoice();
-  if (fvRecognition) { fvRecognition.onend = null; fvRecognition.stop(); }
-  if (cityRecog)     { cityRecog.onend = null; cityRecog.stop(); }
-});
+window.addEventListener('beforeunload',()=>{ stopLiveCamera(); stopVoice(); if(fvRecognition){fvRecognition.onend=null;fvRecognition.stop();} if(cityRecog){cityRecog.onend=null;cityRecog.stop();} });
 
-/* ════════════════════════════════════════════════════════════════
-   TEACHABLE MACHINE — FIXED #10: use window.tmImage safely
-════════════════════════════════════════════════════════════════ */
-async function loadTMModel(baseUrl) {
-  const el = document.getElementById('offlineModelStatus');
-  el.textContent = 'Loading…';
-  try {
-    // FIX #10: check window.tmImage (the global from the CDN script)
-    if (typeof window.tmImage === 'undefined') throw new Error('TM library not loaded yet');
-    if (!baseUrl.endsWith('/')) baseUrl += '/';
-    tmModel   = await window.tmImage.load(baseUrl + 'model.json', baseUrl + 'metadata.json');
-    tmClasses = tmModel.getClassLabels();
-    tmLoaded  = true;
-    el.textContent = `✓ ${tmClasses.length} classes`;
+/* ═══════════ TEACHABLE MACHINE ═══════════ */
+async function loadTMModel(baseUrl){
+  const el=document.getElementById('offlineModelStatus');
+  el.textContent='Loading…';
+  try{
+    if(typeof window.tmImage==='undefined') throw new Error('TM library not loaded yet');
+    if(!baseUrl.endsWith('/')) baseUrl+='/';
+    tmModel=await window.tmImage.load(baseUrl+'model.json',baseUrl+'metadata.json');
+    tmClasses=tmModel.getClassLabels();
+    tmLoaded=true;
+    el.textContent=`✓ ${tmClasses.length} classes`;
     showToast(`⚡ AI model ready — ${tmClasses.length} classes loaded!`);
     return true;
-  } catch (e) {
-    console.error('TM load error:', e);
-    el.textContent = 'Load failed';
-    tmLoaded = false;
+  }catch(e){
+    console.error('TM load error:',e);
+    el.textContent='Load failed';
+    tmLoaded=false;
     return false;
   }
 }
-
-async function runTMInference(imageEl) {
-  if (!tmModel) throw new Error('No model loaded');
-  const preds = await tmModel.predict(imageEl);
-  return [...preds].sort((a, b) => b.probability - a.probability);
-}
-
-async function runTMOnFile(file) {
-  return new Promise((res, rej) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
-    img.onload = async () => {
-      try {
-        const p = await runTMInference(img);
-        URL.revokeObjectURL(url);
-        res(p);
-      } catch (e) {
-        URL.revokeObjectURL(url);
-        rej(e);
-      }
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('Image load failed')); };
-    img.src = url;
+async function runTMInference(imageEl){ if(!tmModel) throw new Error('No model loaded'); const p=await tmModel.predict(imageEl); return [...p].sort((a,b)=>b.probability-a.probability); }
+async function runTMOnFile(file){
+  return new Promise((res,rej)=>{
+    const img=new Image(); const url=URL.createObjectURL(file);
+    img.onload=async()=>{ try{ const p=await runTMInference(img); URL.revokeObjectURL(url); res(p); }catch(e){ URL.revokeObjectURL(url); rej(e); } };
+    img.onerror=()=>{ URL.revokeObjectURL(url); rej(new Error('Image load failed')); };
+    img.src=url;
   });
 }
-
-// FIX #4 + BONUS: tmResultToData now includes why/alt1/alt2
-function tmResultToData(preds) {
-  const top  = preds[0];
-  const alt1 = preds[1] ? preds[1].className.replace(/_/g, ' ') : 'N/A';
-  const alt2 = preds[2] ? preds[2].className.replace(/_/g, ' ') : 'N/A';
-
-  const cl   = (top.className || '').toLowerCase().trim();
-  const conf = Math.min(Math.round(top.probability * 100), 97);
-  const city = document.getElementById('cityInput').value || 'your location';
-
-  let txKey = 'default';
-  if      (cl.includes('health'))                              txKey = 'healthy';
-  else if (cl.includes('blight'))                              txKey = 'blight';
-  else if (cl.includes('rust'))                                txKey = 'rust';
-  else if (cl.includes('mildew') || cl.includes('powder'))     txKey = 'mildew';
-  else if (cl.includes('scab'))                                txKey = 'scab';
-  else if (cl.includes('rot'))                                 txKey = 'rot';
-  else if (cl.includes('spot') || cl.includes('leaf'))         txKey = 'spot';
-  else if (cl.includes('mosaic') || cl.includes('virus'))      txKey = 'mosaic';
-  else if (cl.includes('curl'))                                txKey = 'curl';
-
-  const tx          = OFFLINE_TX[txKey] || OFFLINE_TX.default;
-  const displayName = top.className.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  const alt1Pct     = preds[1] ? Math.round(preds[1].probability * 100) : 0;
-  const whyText     = `On-device AI: ${displayName} at ${conf}% confidence` +
-    (alt1 !== 'N/A' ? ` vs ${alt1} (${alt1Pct}%)` : '') + '.';
-
-  return {
-    disease:    displayName,
-    organic:    tx.organic,
-    chemical:   tx.chemical,
-    risk:       tx.risk,
-    confidence: conf,
-    severity:   tx.risk === 'HIGH' ? 8 : tx.risk === 'MEDIUM' ? 5 : 2,
-    weather:    '--°C · --%',
-    condition:  'Offline',
-    pressure:   1013,
-    humidity:   60,
-    temp:       28,
-    wind:       0,
-    insight:    `On-device AI analysis for ${city}. Connect internet for weather data & cloud AI.`,
-    crop_tip:   tx.tip,
-    why:        whyText,
-    alt1,
-    alt2,
-    city,
-    language:   document.getElementById('langInput').value,
-    timestamp:  fmtTimestamp(),
-    isOffline:  true,
-  };
+function tmResultToData(preds){
+  const top=preds[0], alt1=preds[1]?preds[1].className.replace(/_/g,' '):'N/A', alt2=preds[2]?preds[2].className.replace(/_/g,' '):'N/A';
+  const cl=(top.className||'').toLowerCase().trim();
+  const conf=Math.min(Math.round(top.probability*100),97);
+  const city=document.getElementById('cityInput').value||'your location';
+  let txKey='default';
+  if(cl.includes('health')) txKey='healthy';
+  else if(cl.includes('blight')) txKey='blight';
+  else if(cl.includes('rust')) txKey='rust';
+  else if(cl.includes('mildew')||cl.includes('powder')) txKey='mildew';
+  else if(cl.includes('scab')) txKey='scab';
+  else if(cl.includes('rot')) txKey='rot';
+  else if(cl.includes('spot')||cl.includes('leaf')) txKey='spot';
+  else if(cl.includes('mosaic')||cl.includes('virus')) txKey='mosaic';
+  else if(cl.includes('curl')) txKey='curl';
+  const tx=OFFLINE_TX[txKey]||OFFLINE_TX.default;
+  const displayName=top.className.replace(/_/g,' ').replace(/\b\w/g,l=>l.toUpperCase());
+  const alt1Pct=preds[1]?Math.round(preds[1].probability*100):0;
+  const whyText=`On-device AI: ${displayName} at ${conf}% confidence`+(alt1!=='N/A'?` vs ${alt1} (${alt1Pct}%)`:'.')+'.';
+  return { disease:displayName,organic:tx.organic,chemical:tx.chemical,risk:tx.risk,confidence:conf,severity:tx.risk==='HIGH'?8:tx.risk==='MEDIUM'?5:2,weather:'--°C · --%',condition:'Offline',pressure:1013,humidity:60,temp:28,wind:0,insight:`On-device AI for ${city}. Connect internet for cloud AI.`,crop_tip:tx.tip,why:whyText,alt1,alt2,city,language:document.getElementById('langInput').value,timestamp:fmtTimestamp(),isOffline:true };
 }
 
-/* ════════════════════════════════════════════════════════════════
-   MODALS — FIX #25: ESC key closes modal
-════════════════════════════════════════════════════════════════ */
-function openModal(id) {
-  if (id === 'setupModal') {
-    const saved = localStorage.getItem(TM_KEY) || DEFAULT_TM_URL;
-    document.getElementById('modelUrlInput').value = saved;
-  }
-  document.getElementById(id).classList.add('open');
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove('open');
-}
-
-// Click-outside to close
-document.querySelectorAll('.modal-ov').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('open'); });
-});
-
-// FIX #25: ESC closes any open modal
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    document.querySelectorAll('.modal-ov.open').forEach(m => m.classList.remove('open'));
-  }
-});
-
-async function saveModelUrl() {
-  const url = document.getElementById('modelUrlInput').value.trim();
-  const sb  = document.getElementById('modelStatusBox');
-  if (!url) { sb.textContent = '⚠️ Please enter a URL'; sb.className = 'ms-box err'; sb.style.display = 'block'; return; }
-  sb.textContent = '⏳ Loading model…'; sb.className = 'ms-box ok'; sb.style.display = 'block';
-  localStorage.setItem(TM_KEY, url);
-  const ok = await loadTMModel(url);
-  if (ok) {
-    sb.textContent = `✅ Loaded! Classes: ${tmClasses.join(', ')}`;
-    setTimeout(() => closeModal('setupModal'), 2500);
-  } else {
-    sb.textContent = '❌ Failed. Make sure the URL is publicly shared from Teachable Machine.';
-    sb.className = 'ms-box err';
-  }
+/* ═══════════ MODALS ═══════════ */
+function openModal(id){ if(id==='setupModal'){ document.getElementById('modelUrlInput').value=localStorage.getItem(TM_KEY)||DEFAULT_TM_URL; } document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-ov').forEach(m=>{ m.addEventListener('click',e=>{ if(e.target===m) m.classList.remove('open'); }); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-ov.open').forEach(m=>m.classList.remove('open')); });
+async function saveModelUrl(){
+  const url=document.getElementById('modelUrlInput').value.trim();
+  const sb=document.getElementById('modelStatusBox');
+  if(!url){ sb.textContent='⚠️ Please enter a URL'; sb.className='ms-box err'; sb.style.display='block'; return; }
+  sb.textContent='⏳ Loading model…'; sb.className='ms-box ok'; sb.style.display='block';
+  localStorage.setItem(TM_KEY,url);
+  const ok=await loadTMModel(url);
+  if(ok){ sb.textContent=`✅ Loaded! Classes: ${tmClasses.join(', ')}`; setTimeout(()=>closeModal('setupModal'),2500); }
+  else{ sb.textContent='❌ Failed. Make sure the URL is publicly shared from Teachable Machine.'; sb.className='ms-box err'; }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   LIVE CAMERA — FIX #8,#9: reset liveLastResult, wait for video ready
-════════════════════════════════════════════════════════════════ */
-async function startLiveCamera() {
-  try {
-    liveStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 480 } },
-      audio: false
-    });
-    const video = document.getElementById('liveVideo');
-    video.srcObject = liveStream;
-    document.getElementById('live-camera-wrap').style.display = 'block';
-    document.getElementById('dropzone').style.display = 'none';
-    document.getElementById('preview-wrap').style.display = 'none';
-    document.getElementById('liveScanStatus').textContent = 'Waiting for video…';
-
-    // FIX #8: reset stale result
-    liveLastResult = null;
-
-    await new Promise(r => { video.onloadedmetadata = r; });
+/* ═══════════ LIVE CAMERA ═══════════ */
+async function startLiveCamera(){
+  try{
+    liveStream=await navigator.mediaDevices.getUserMedia({ video:{facingMode:'environment',width:{ideal:640},height:{ideal:480}},audio:false });
+    const video=document.getElementById('liveVideo');
+    video.srcObject=liveStream;
+    document.getElementById('live-camera-wrap').style.display='block';
+    document.getElementById('dropzone').style.display='none';
+    document.getElementById('preview-wrap').style.display='none';
+    document.getElementById('liveScanStatus').textContent='Waiting for video…';
+    liveLastResult=null;
+    await new Promise(r=>{ video.onloadedmetadata=r; });
     await video.play();
-
     showToast('🔴 Live AI Scan — point at your plant!');
     await startLiveInference();
-  } catch (e) {
-    showToast('❌ Camera access denied');
-    console.error('Camera error:', e);
-  }
+  }catch(e){ showToast('❌ Camera access denied'); console.error('Camera error:',e); }
 }
-
-async function startLiveInference() {
-  const video  = document.getElementById('liveVideo');
-  const canvas = document.getElementById('liveCanvas');
-  const ctx    = canvas.getContext('2d');
-
-  if (!tmLoaded) {
-    const url = localStorage.getItem(TM_KEY) || DEFAULT_TM_URL;
-    document.getElementById('liveScanStatus').textContent = 'Loading AI model…';
-    await loadTMModel(url);
-  }
-
-  if (tmLoaded) {
+async function startLiveInference(){
+  const video=document.getElementById('liveVideo');
+  const canvas=document.getElementById('liveCanvas');
+  const ctx=canvas.getContext('2d');
+  if(!tmLoaded){ const url=localStorage.getItem(TM_KEY)||DEFAULT_TM_URL; document.getElementById('liveScanStatus').textContent='Loading AI model…'; await loadTMModel(url); }
+  if(tmLoaded){
     document.getElementById('liveAiBadge').classList.add('show');
-    document.getElementById('liveScanStatus').textContent = '⚡ Real-time AI active';
-
-    liveInferInterval = setInterval(async () => {
-      // FIX #9: guard video ready state
-      if (!liveStream || video.readyState < 2 || video.videoWidth === 0) return;
-      try {
-        canvas.width  = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const preds = await runTMInference(canvas);
-        renderLiveOverlay(preds);
-        liveLastResult = { fromTM: true, preds };
-      } catch (e) { console.warn('Live infer err:', e); }
-    }, 1200);
-
-  } else if (isOnline) {
+    document.getElementById('liveScanStatus').textContent='⚡ Real-time AI active';
+    liveInferInterval=setInterval(async()=>{
+      if(!liveStream||video.readyState<2||video.videoWidth===0) return;
+      try{ canvas.width=video.videoWidth; canvas.height=video.videoHeight; ctx.drawImage(video,0,0,canvas.width,canvas.height); const preds=await runTMInference(canvas); renderLiveOverlay(preds); liveLastResult={fromTM:true,preds}; }catch(e){ console.warn('Live infer err:',e); }
+    },1200);
+  } else if(isOnline){
     document.getElementById('liveAiBadge').classList.add('show');
-    document.getElementById('liveScanStatus').textContent = '🌐 Server AI streaming…';
-
-    liveInferInterval = setInterval(async () => {
-      if (!liveStream || video.readyState < 2 || video.videoWidth === 0) return;
-      try {
-        canvas.width  = video.videoWidth;
-        canvas.height = video.videoHeight;
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(async blob => {
-          if (!blob) return;
-          const fd = new FormData();
-          fd.append('image', new File([blob], 'frame.jpg', { type: 'image/jpeg' }));
-          fd.append('city', document.getElementById('cityInput').value || 'Chennai');
-          fd.append('language', document.getElementById('langInput').value);
-          try {
-            const r = await fetch('/predict', {
-              method: 'POST', body: fd, credentials: 'include',
-              signal: AbortSignal.timeout(4000)
-            });
-            if (r.ok) {
-              const d = await r.json();
-              renderLiveOverlayFromResult(d);
-              liveLastResult = { fromServer: true, data: d };
-            }
-          } catch (e) { /* timeout silently */ }
-        }, 'image/jpeg', 0.65);
-      } catch (e) { console.warn('Live server infer err:', e); }
-    }, 2500);
-
-  } else {
-    document.getElementById('liveScanStatus').textContent = '⚠️ No model — capture only';
-  }
+    document.getElementById('liveScanStatus').textContent='🌐 Server AI streaming…';
+    liveInferInterval=setInterval(async()=>{
+      if(!liveStream||video.readyState<2||video.videoWidth===0) return;
+      try{
+        canvas.width=video.videoWidth; canvas.height=video.videoHeight; ctx.drawImage(video,0,0,canvas.width,canvas.height);
+        canvas.toBlob(async blob=>{
+          if(!blob) return;
+          const fd=new FormData(); fd.append('image',new File([blob],'frame.jpg',{type:'image/jpeg'})); fd.append('city',document.getElementById('cityInput').value||'Chennai'); fd.append('language',document.getElementById('langInput').value);
+          try{ const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include',signal:AbortSignal.timeout(4000)}); if(r.ok){ const d=await r.json(); renderLiveOverlayFromResult(d); liveLastResult={fromServer:true,data:d}; } }catch(e){}
+        },'image/jpeg',0.65);
+      }catch(e){ console.warn('Live server infer err:',e); }
+    },2500);
+  } else { document.getElementById('liveScanStatus').textContent='⚠️ No model — capture only'; }
 }
-
-function renderLiveOverlay(preds) {
-  if (!preds || !preds.length) return;
+function renderLiveOverlay(preds){
+  if(!preds||!preds.length) return;
   document.getElementById('livePredBox').classList.add('show');
-  const top = preds[0];
-  document.getElementById('livePredName').textContent = top.className.replace(/_/g, ' ');
-  document.getElementById('livePredConf').textContent = `${Math.round(top.probability * 100)}% confidence`;
-  document.getElementById('livePredBars').innerHTML   = preds.slice(0, 4).map(p => {
-    const pct = Math.round(p.probability * 100);
-    const col = pct > 60 ? '#a8e63d' : pct > 30 ? '#f0c840' : '#ff7a60';
-    return `<div class="lpb-row"><span class="lpb-name">${p.className.replace(/_/g,' ')}</span><div class="lpb-bar"><div class="lpb-fill" style="width:${pct}%;background:${col}"></div></div><span class="lpb-pct">${pct}%</span></div>`;
-  }).join('');
+  const top=preds[0];
+  document.getElementById('livePredName').textContent=top.className.replace(/_/g,' ');
+  document.getElementById('livePredConf').textContent=`${Math.round(top.probability*100)}% confidence`;
+  document.getElementById('livePredBars').innerHTML=preds.slice(0,4).map(p=>{ const pct=Math.round(p.probability*100); const col=pct>60?'#a8e63d':pct>30?'#f0c840':'#ff7a60'; return `<div class="lpb-row"><span class="lpb-name">${p.className.replace(/_/g,' ')}</span><div class="lpb-bar"><div class="lpb-fill" style="width:${pct}%;background:${col}"></div></div><span class="lpb-pct">${pct}%</span></div>`; }).join('');
 }
-
-function renderLiveOverlayFromResult(data) {
-  document.getElementById('livePredBox').classList.add('show');
-  document.getElementById('livePredName').textContent = data.disease || 'Unknown';
-  document.getElementById('livePredConf').textContent = `${data.confidence || 0}% · ${data.risk || ''} risk`;
-  document.getElementById('livePredBars').innerHTML   = '';
-}
-
-// FIX #7, #8: stopLiveCamera clears interval, stream, and resets state
-function stopLiveCamera() {
-  if (liveInferInterval) { clearInterval(liveInferInterval); liveInferInterval = null; }
-  if (liveStream) { liveStream.getTracks().forEach(t => t.stop()); liveStream = null; }
-  liveLastResult = null; // FIX #8
-  const wrap = document.getElementById('live-camera-wrap');
-  if (wrap) wrap.style.display = 'none';
+function renderLiveOverlayFromResult(data){ document.getElementById('livePredBox').classList.add('show'); document.getElementById('livePredName').textContent=data.disease||'Unknown'; document.getElementById('livePredConf').textContent=`${data.confidence||0}% · ${data.risk||''} risk`; document.getElementById('livePredBars').innerHTML=''; }
+function stopLiveCamera(){
+  if(liveInferInterval){ clearInterval(liveInferInterval); liveInferInterval=null; }
+  if(liveStream){ liveStream.getTracks().forEach(t=>t.stop()); liveStream=null; }
+  liveLastResult=null;
+  const wrap=document.getElementById('live-camera-wrap'); if(wrap) wrap.style.display='none';
   document.getElementById('liveAiBadge').classList.remove('show');
   document.getElementById('livePredBox').classList.remove('show');
-  document.getElementById('dropzone').style.display = 'block';
+  document.getElementById('dropzone').style.display='block';
+}
+async function snapAndAnalyze(){
+  const video=document.getElementById('liveVideo'), canvas=document.getElementById('liveCanvas');
+  if(!video.videoWidth||!video.videoHeight){ showToast('⚠️ Camera not ready yet'); return; }
+  canvas.width=video.videoWidth; canvas.height=video.videoHeight;
+  canvas.getContext('2d').drawImage(video,0,0);
+  canvas.toBlob(blob=>{
+    const file=new File([blob],'live-capture.jpg',{type:'image/jpeg'});
+    if(liveLastResult&&liveLastResult.fromServer&&liveLastResult.data){ stopLiveCamera(); handleFile(file); renderResult(liveLastResult.data,false); showToast('⚡ Instant result from live AI!'); }
+    else if(liveLastResult&&liveLastResult.fromTM&&liveLastResult.preds){ const result=tmResultToData(liveLastResult.preds); stopLiveCamera(); handleFile(file); renderResult(result,true); showToast('⚡ AI capture analyzed!'); }
+    else{ stopLiveCamera(); handleFile(file); showToast('📸 Captured — analyzing…'); setTimeout(()=>analyze(),400); }
+  },'image/jpeg',0.92);
 }
 
-async function snapAndAnalyze() {
-  const video  = document.getElementById('liveVideo');
-  const canvas = document.getElementById('liveCanvas');
-
-  // FIX #9: ensure dimensions are set from live video
-  if (!video.videoWidth || !video.videoHeight) {
-    showToast('⚠️ Camera not ready yet'); return;
-  }
-  canvas.width  = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-
-  canvas.toBlob(blob => {
-    const file = new File([blob], 'live-capture.jpg', { type: 'image/jpeg' });
-    if (liveLastResult && liveLastResult.fromServer && liveLastResult.data) {
-      stopLiveCamera();
-      handleFile(file);
-      renderResult(liveLastResult.data, false);
-      showToast('⚡ Instant result from live AI!');
-    } else if (liveLastResult && liveLastResult.fromTM && liveLastResult.preds) {
-      const result = tmResultToData(liveLastResult.preds);
-      stopLiveCamera();
-      handleFile(file);
-      renderResult(result, true);
-      showToast('⚡ AI capture analyzed!');
-    } else {
-      stopLiveCamera();
-      handleFile(file);
-      showToast('📸 Captured — analyzing…');
-      setTimeout(() => analyze(), 400);
-    }
-  }, 'image/jpeg', 0.92);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   GPS & WEATHER
-════════════════════════════════════════════════════════════════ */
-async function fetchWeatherByCoords(lat, lon) {
-  try {
-    const r = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
-    if (!r.ok) return; // FIX #19: guard non-ok
-    const d = await r.json();
-    if (d.error) return;
-    document.getElementById('cityInput').value  = d.city;
-    document.getElementById('wIcon').textContent = WI[d.condition] || '🌤️';
-    document.getElementById('wCond').textContent = d.condition;
-    document.getElementById('wTemp').textContent = `${d.temp}°C`;
-    document.getElementById('wHum').textContent  = `${d.humidity}%`;
-    document.getElementById('wWind').textContent = `${d.wind ?? '--'} m/s`; // FIX #2
-    document.getElementById('wCity').textContent = `📍 ${d.city} — auto-detected`;
-    document.getElementById('weather-strip').style.display = 'block';
+/* ═══════════ GPS & WEATHER ═══════════ */
+async function fetchWeatherByCoords(lat,lon){
+  try{
+    const r=await fetch(`/api/weather?lat=${lat}&lon=${lon}`); if(!r.ok) return;
+    const d=await r.json(); if(d.error) return;
+    document.getElementById('cityInput').value=d.city;
+    document.getElementById('wIcon').textContent=WI[d.condition]||'🌤️';
+    document.getElementById('wCond').textContent=d.condition;
+    document.getElementById('wTemp').textContent=`${d.temp}°C`;
+    document.getElementById('wHum').textContent=`${d.humidity}%`;
+    document.getElementById('wWind').textContent=`${d.wind??'--'} m/s`;
+    document.getElementById('wCity').textContent=`📍 ${d.city} — auto-detected`;
+    document.getElementById('weather-strip').style.display='block';
     showToast(`📡 ${d.city} — weather loaded!`);
-    fetchForecast(null, lat, lon);
-  } catch (e) { console.warn('Weather fetch error:', e); }
+    fetchForecast(null,lat,lon);
+  }catch(e){ console.warn('Weather fetch error:',e); }
 }
-
-async function fetchForecast(city, lat, lon) {
-  try {
-    let url = '/api/forecast?';
-    if (lat && lon)  url += `lat=${lat}&lon=${lon}`;
-    else if (city)   url += `city=${encodeURIComponent(city)}`;
+async function fetchForecast(city,lat,lon){
+  try{
+    let url='/api/forecast?';
+    if(lat&&lon) url+=`lat=${lat}&lon=${lon}`;
+    else if(city) url+=`city=${encodeURIComponent(city)}`;
     else return;
-    const r = await fetch(url);
-    if (!r.ok) return;
-    const d = await r.json();
-    if (d.forecast) renderForecast(d.forecast);
-  } catch (e) { console.warn('Forecast error:', e); }
+    const r=await fetch(url); if(!r.ok) return;
+    const d=await r.json(); if(d.forecast) renderForecast(d.forecast);
+  }catch(e){ console.warn('Forecast error:',e); }
+}
+function renderForecast(days){
+  if(!days||!days.length) return;
+  const grid=document.getElementById('forecastGrid');
+  const today=new Date().toISOString().slice(0,10);
+  grid.innerHTML=days.map(day=>{ const isTd=day.date===today; const dt=new Date(day.date+'T00:00:00Z'); const lbl=isTd?'Today':dt.toLocaleDateString('en-IN',{weekday:'short',day:'numeric',timeZone:'UTC'}); return `<div class="fc-day${isTd?' today':''}"><div class="fc-dt">${lbl}</div><div class="fc-ic">${WI[day.condition]||'🌤️'}</div><div class="fc-tmp">${day.temp_max}° <span style="color:var(--muted);font-size:10px">${day.temp_min}°</span></div><div class="fc-hm">💧${day.humidity}%</div></div>`; }).join('');
+  document.getElementById('forecast-panel').style.display='block';
+}
+function autoDetectLocation(){
+  if(!navigator.geolocation) return;
+  navigator.permissions&&navigator.permissions.query({name:'geolocation'}).then(p=>{ if(p.state==='denied') return; navigator.geolocation.getCurrentPosition(pos=>{ currentLat=pos.coords.latitude; currentLon=pos.coords.longitude; fetchWeatherByCoords(currentLat,currentLon); },e=>console.log('GPS denied:',e.message),{timeout:8000,maximumAge:300000}); }).catch(()=>{ navigator.geolocation.getCurrentPosition(pos=>{ currentLat=pos.coords.latitude; currentLon=pos.coords.longitude; fetchWeatherByCoords(currentLat,currentLon); },()=>{}); });
+}
+async function getGPS(){
+  const btn=document.getElementById('gpsBtn'); btn.textContent='⏳';
+  if(!navigator.geolocation){ showToast('GPS not supported'); btn.textContent='📡'; return; }
+  navigator.geolocation.getCurrentPosition(async pos=>{
+    currentLat=pos.coords.latitude; currentLon=pos.coords.longitude;
+    try{ const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLon}&format=json`,{headers:{'User-Agent':'AgriShieldAI/1.0'}}); const d=await r.json(); document.getElementById('cityInput').value=d.address.city||d.address.town||d.address.village||'Chennai'; }catch(e){}
+    await fetchWeatherByCoords(currentLat,currentLon); btn.textContent='✅'; setTimeout(()=>btn.textContent='📡',2500);
+  },()=>{ btn.textContent='📡'; showToast('GPS denied — enter city manually'); });
 }
 
-// FIX #16: use UTC date parts to avoid locale-based off-by-one
-function renderForecast(days) {
-  if (!days || !days.length) return;
-  const grid  = document.getElementById('forecastGrid');
-  const today = new Date().toISOString().slice(0, 10);
-  grid.innerHTML = days.map(day => {
-    const isTd = day.date === today;
-    const dt   = new Date(day.date + 'T00:00:00Z'); // FIX #16: force UTC
-    const lbl  = isTd ? 'Today' : dt.toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', timeZone: 'UTC' });
-    return `<div class="fc-day${isTd ? ' today' : ''}">
-      <div class="fc-dt">${lbl}</div>
-      <div class="fc-ic">${WI[day.condition] || '🌤️'}</div>
-      <div class="fc-tmp">${day.temp_max}° <span style="color:var(--muted);font-size:10px">${day.temp_min}°</span></div>
-      <div class="fc-hm">💧${day.humidity}%</div>
-    </div>`;
-  }).join('');
-  document.getElementById('forecast-panel').style.display = 'block';
-}
-
-// FIX #20: only auto-detect if user hasn't blocked location
-function autoDetectLocation() {
-  if (!navigator.geolocation) return;
-  navigator.permissions && navigator.permissions.query({ name: 'geolocation' }).then(p => {
-    if (p.state === 'denied') return;
-    navigator.geolocation.getCurrentPosition(
-      pos => {
-        currentLat = pos.coords.latitude;
-        currentLon = pos.coords.longitude;
-        fetchWeatherByCoords(currentLat, currentLon);
-      },
-      e => console.log('GPS denied:', e.message),
-      { timeout: 8000, maximumAge: 300000 }
-    );
-  }).catch(() => {
-    // Permissions API not available — try anyway
-    navigator.geolocation.getCurrentPosition(
-      pos => { currentLat = pos.coords.latitude; currentLon = pos.coords.longitude; fetchWeatherByCoords(currentLat, currentLon); },
-      () => {}
-    );
-  });
-}
-
-async function getGPS() {
-  const btn = document.getElementById('gpsBtn');
-  btn.textContent = '⏳';
-  if (!navigator.geolocation) { showToast('GPS not supported'); btn.textContent = '📡'; return; }
-  navigator.geolocation.getCurrentPosition(async pos => {
-    currentLat = pos.coords.latitude;
-    currentLon = pos.coords.longitude;
-    try {
-      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${currentLat}&lon=${currentLon}&format=json`, { headers: { 'User-Agent': 'AgriShieldAI/1.0' } });
-      const d = await r.json();
-      document.getElementById('cityInput').value = d.address.city || d.address.town || d.address.village || 'Chennai';
-    } catch (e) {}
-    await fetchWeatherByCoords(currentLat, currentLon);
-    btn.textContent = '✅';
-    setTimeout(() => btn.textContent = '📡', 2500);
-  }, () => { btn.textContent = '📡'; showToast('GPS denied — enter city manually'); });
-}
-
-/* ════════════════════════════════════════════════════════════════
-   CUSTOM CURSOR
-════════════════════════════════════════════════════════════════ */
-(function () {
-  const dot  = document.getElementById('cDot');
-  const ring = document.getElementById('cRing');
-  const glow = document.getElementById('cGlow');
-  if (!dot || window.innerWidth <= 640) return;
-  let rx = 0, ry = 0, mx = 0, my = 0;
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    dot.style.left  = mx + 'px'; dot.style.top  = my + 'px';
-    glow.style.left = mx + 'px'; glow.style.top = my + 'px';
-  });
-  (function anim() {
-    rx += (mx - rx) * .14; ry += (my - ry) * .14;
-    ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
-    requestAnimationFrame(anim);
-  })();
-  document.querySelectorAll('button,a,.dropzone,.h-item,.t-btn,.cal-m,.prev-chg,.app-tab,.mtab,.fc-day,.fh-lang-btn').forEach(el => {
-    el.addEventListener('mouseenter', () => ring.classList.add('hov'));
-    el.addEventListener('mouseleave', () => ring.classList.remove('hov'));
-  });
+/* ═══════════ CUSTOM CURSOR ═══════════ */
+(function(){
+  const dot=document.getElementById('cDot'), ring=document.getElementById('cRing'), glow=document.getElementById('cGlow');
+  if(!dot||window.innerWidth<=640) return;
+  let rx=0,ry=0,mx=0,my=0;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; glow.style.left=mx+'px'; glow.style.top=my+'px'; });
+  (function anim(){ rx+=(mx-rx)*.14; ry+=(my-ry)*.14; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(anim); })();
+  document.querySelectorAll('button,a,.dropzone,.h-item,.t-btn,.cal-m,.prev-chg,.app-tab,.mtab,.fc-day,.fh-lang-btn').forEach(el=>{ el.addEventListener('mouseenter',()=>ring.classList.add('hov')); el.addEventListener('mouseleave',()=>ring.classList.remove('hov')); });
 })();
-
-// 3D card tilt
-(function () {
-  const card = document.getElementById('mainCard');
-  if (!card) return;
-  card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    const x = (e.clientX - r.left - r.width / 2)  / (r.width  / 2);
-    const y = (e.clientY - r.top  - r.height / 2) / (r.height / 2);
-    card.style.transform = `perspective(1200px) rotateY(${x * 2.5}deg) rotateX(${-y * 1.5}deg)`;
-  });
-  card.addEventListener('mouseleave', () => { card.style.transform = 'perspective(1200px) rotateY(0deg) rotateX(0deg)'; });
+(function(){
+  const card=document.getElementById('mainCard'); if(!card) return;
+  card.addEventListener('mousemove',e=>{ const r=card.getBoundingClientRect(); const x=(e.clientX-r.left-r.width/2)/(r.width/2); const y=(e.clientY-r.top-r.height/2)/(r.height/2); card.style.transform=`perspective(1200px) rotateY(${x*2.5}deg) rotateX(${-y*1.5}deg)`; });
+  card.addEventListener('mouseleave',()=>{ card.style.transform='perspective(1200px) rotateY(0deg) rotateX(0deg)'; });
 })();
+document.getElementById('analyzeBtn').addEventListener('click',function(e){ if(this.disabled) return; const r=this.getBoundingClientRect(); const rpl=document.createElement('span'); rpl.className='ripple'; rpl.style.cssText=`width:${r.width}px;height:${r.width}px;left:${e.clientX-r.left-r.width/2}px;top:${e.clientY-r.top-r.width/2}px`; this.appendChild(rpl); setTimeout(()=>rpl.remove(),600); });
 
-// FIX #13: ripple only fires when button is NOT disabled
-document.getElementById('analyzeBtn').addEventListener('click', function (e) {
-  if (this.disabled) return; // FIX #13
-  const r   = this.getBoundingClientRect();
-  const rpl = document.createElement('span');
-  rpl.className = 'ripple';
-  rpl.style.cssText = `width:${r.width}px;height:${r.width}px;left:${e.clientX - r.left - r.width / 2}px;top:${e.clientY - r.top - r.width / 2}px`;
-  this.appendChild(rpl);
-  setTimeout(() => rpl.remove(), 600);
-});
+/* ═══════════ TOAST ═══════════ */
+let toastTimer=null;
+function showToast(msg,dur=2800){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); if(toastTimer) clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'),dur); }
 
-/* ════════════════════════════════════════════════════════════════
-   TOAST
-════════════════════════════════════════════════════════════════ */
-let toastTimer = null;
-function showToast(msg, dur = 2800) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.classList.add('show');
-  if (toastTimer) clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+/* ═══════════ FARMER MODE ═══════════ */
+function toggleFarmerMode(){
+  isFarmerMode=!isFarmerMode;
+  document.body.classList.toggle('farmer-mode',isFarmerMode);
+  const btn=document.getElementById('farmerToggle');
+  if(isFarmerMode){ btn.textContent='🏙️ Normal Mode'; document.getElementById('navModeLabel').textContent='🌾 FARMER'; setFarmerLang('Tamil','ta-IN'); showToast('🌾 Farmer Mode — Voice-First & Simplified',3500); }
+  else{ btn.textContent='🌾 Farmer Mode'; document.getElementById('navModeLabel').textContent='LIVE AI'; document.getElementById('langInput').value='English'; showToast('🏙️ Normal Mode'); }
 }
-
-/* ════════════════════════════════════════════════════════════════
-   FARMER MODE
-════════════════════════════════════════════════════════════════ */
-function toggleFarmerMode() {
-  isFarmerMode = !isFarmerMode;
-  document.body.classList.toggle('farmer-mode', isFarmerMode);
-  const btn = document.getElementById('farmerToggle');
-  if (isFarmerMode) {
-    btn.textContent = '🏙️ Normal Mode';
-    document.getElementById('navModeLabel').textContent = '🌾 FARMER';
-    setFarmerLang('Tamil', 'ta-IN');
-    showToast('🌾 Farmer Mode — Voice-First & Simplified', 3500);
-  } else {
-    btn.textContent = '🌾 Farmer Mode';
-    document.getElementById('navModeLabel').textContent = 'LIVE AI';
-    document.getElementById('langInput').value = 'English';
-    showToast('🏙️ Normal Mode');
-  }
-}
-
-// FIX #17: use data-lang attribute instead of fragile onclick.toString()
-function setFarmerLang(lang, code) {
-  farmerLang     = lang;
-  farmerLangCode = code;
-  document.getElementById('langInput').value = lang;
-  const txt = FARMER_LANGS[lang] || FARMER_LANGS.English;
-  document.getElementById('fhTitle').textContent    = txt.title;
-  document.getElementById('fhSub').textContent      = txt.sub;
-  document.getElementById('fvLabel').textContent    = txt.mic;
-  document.getElementById('fvSublabel').textContent = txt.micsub;
-  document.getElementById('fvSendBtn').innerHTML    = `🔍 ${txt.send}`;
-
-  // FIX #17: match by data-lang attribute
-  document.querySelectorAll('.fh-lang-btn').forEach(b => {
-    b.classList.toggle('sel', b.dataset.lang === lang);
-  });
-
-  farmerTranscript = '';
-  const tr = document.getElementById('fvTranscript');
-  tr.textContent = ''; tr.classList.remove('has-text');
+function setFarmerLang(lang,code){
+  farmerLang=lang; farmerLangCode=code;
+  document.getElementById('langInput').value=lang;
+  const txt=FARMER_LANGS[lang]||FARMER_LANGS.English;
+  document.getElementById('fhTitle').textContent=txt.title;
+  document.getElementById('fhSub').textContent=txt.sub;
+  document.getElementById('fvLabel').textContent=txt.mic;
+  document.getElementById('fvSublabel').textContent=txt.micsub;
+  document.getElementById('fvSendBtn').innerHTML=`🔍 ${txt.send}`;
+  document.querySelectorAll('.fh-lang-btn').forEach(b=>b.classList.toggle('sel',b.dataset.lang===lang));
+  farmerTranscript='';
+  const tr=document.getElementById('fvTranscript'); tr.textContent=''; tr.classList.remove('has-text');
   document.getElementById('fvSendBtn').classList.remove('show');
 }
 
-/* ════════════════════════════════════════════════════════════════
-   FARMER VOICE — FIX #11: race condition on restart
-════════════════════════════════════════════════════════════════ */
-const SR_API = window.SpeechRecognition || window.webkitSpeechRecognition;
-let fvRecognition = null;
-
-function toggleFarmerVoice() { farmerVoiceActive ? stopFarmerVoice() : startFarmerVoice(); }
-
-function startFarmerVoice() {
-  if (!SR_API) { showToast('⚠️ Voice not supported in this browser'); return; }
-  // FIX #21: stop any existing instance first
-  if (fvRecognition) { fvRecognition.onend = null; fvRecognition.stop(); fvRecognition = null; }
-
-  fvRecognition = new SR_API();
-  fvRecognition.lang             = farmerLangCode;
-  fvRecognition.continuous       = true;
-  fvRecognition.interimResults   = true;
-  fvRecognition.maxAlternatives  = 1;
-
-  const btn = document.getElementById('fvMicBtn');
-  const box = document.getElementById('farmerVoiceBox');
-  const tr  = document.getElementById('fvTranscript');
-  btn.classList.add('listening'); btn.textContent = '🔴';
-  box.classList.add('listening');
-  farmerVoiceActive = true;
-  document.getElementById('fvLabel').textContent = '🎤 Listening…';
-
-  fvRecognition.onresult = e => {
-    let final = '', interim = '';
-    for (let i = e.resultIndex; i < e.results.length; i++) {
-      if (e.results[i].isFinal) final   += e.results[i][0].transcript;
-      else                       interim += e.results[i][0].transcript;
-    }
-    if (final) farmerTranscript += (farmerTranscript ? ' ' : '') + final;
-    tr.textContent = farmerTranscript + (interim ? ' ' + interim : '');
-    tr.classList.add('has-text');
-    if (farmerTranscript.trim()) document.getElementById('fvSendBtn').classList.add('show');
-  };
-
-  // FIX #11: only restart if still actively listening
-  fvRecognition.onend = () => {
-    if (farmerVoiceActive && fvRecognition) fvRecognition.start();
-  };
-  fvRecognition.onerror = e => {
-    console.warn('Voice err:', e.error);
-    stopFarmerVoice();
-    showToast('🎤 Voice error: ' + e.error);
-  };
+/* ═══════════ FARMER VOICE ═══════════ */
+const SR_API=window.SpeechRecognition||window.webkitSpeechRecognition;
+let fvRecognition=null;
+function toggleFarmerVoice(){ farmerVoiceActive?stopFarmerVoice():startFarmerVoice(); }
+function startFarmerVoice(){
+  if(!SR_API){ showToast('⚠️ Voice not supported in this browser'); return; }
+  if(fvRecognition){ fvRecognition.onend=null; fvRecognition.stop(); fvRecognition=null; }
+  fvRecognition=new SR_API(); fvRecognition.lang=farmerLangCode; fvRecognition.continuous=true; fvRecognition.interimResults=true; fvRecognition.maxAlternatives=1;
+  const btn=document.getElementById('fvMicBtn'), box=document.getElementById('farmerVoiceBox'), tr=document.getElementById('fvTranscript');
+  btn.classList.add('listening'); btn.textContent='🔴'; box.classList.add('listening'); farmerVoiceActive=true;
+  document.getElementById('fvLabel').textContent='🎤 Listening…';
+  fvRecognition.onresult=e=>{ let final='',interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal) final+=e.results[i][0].transcript; else interim+=e.results[i][0].transcript; } if(final) farmerTranscript+=(farmerTranscript?' ':'')+final; tr.textContent=farmerTranscript+(interim?' '+interim:''); tr.classList.add('has-text'); if(farmerTranscript.trim()) document.getElementById('fvSendBtn').classList.add('show'); };
+  fvRecognition.onend=()=>{ if(farmerVoiceActive&&fvRecognition) fvRecognition.start(); };
+  fvRecognition.onerror=e=>{ console.warn('Voice err:',e.error); stopFarmerVoice(); showToast('🎤 Voice error: '+e.error); };
   fvRecognition.start();
 }
-
-function stopFarmerVoice() {
-  farmerVoiceActive = false;
-  if (fvRecognition) {
-    fvRecognition.onend = null; // FIX #11: prevent auto-restart
-    fvRecognition.stop();
-    fvRecognition = null;
-  }
-  const btn = document.getElementById('fvMicBtn');
-  btn.classList.remove('listening'); btn.textContent = '🎤';
+function stopFarmerVoice(){
+  farmerVoiceActive=false;
+  if(fvRecognition){ fvRecognition.onend=null; fvRecognition.stop(); fvRecognition=null; }
+  const btn=document.getElementById('fvMicBtn'); btn.classList.remove('listening'); btn.textContent='🎤';
   document.getElementById('farmerVoiceBox').classList.remove('listening');
-  const txt = FARMER_LANGS[farmerLang] || FARMER_LANGS.English;
-  document.getElementById('fvLabel').textContent = txt.mic;
+  const txt=FARMER_LANGS[farmerLang]||FARMER_LANGS.English; document.getElementById('fvLabel').textContent=txt.mic;
 }
-
-async function sendVoiceQuery() {
-  const query = farmerTranscript.trim();
-  if (!query) { showToast('⚠️ No voice input detected'); return; }
+async function sendVoiceQuery(){
+  const query=farmerTranscript.trim(); if(!query){ showToast('⚠️ No voice input detected'); return; }
   stopFarmerVoice();
-  const city = document.getElementById('cityInput').value.trim() || 'Chennai';
-  showToast('🤖 AI analyzing your voice query…', 5000);
-  const btn = document.getElementById('fvSendBtn');
-  btn.textContent = '⏳ Processing…'; btn.disabled = true;
-  try {
-    const r = await fetch('/voice-diagnose', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({ query, city, language: farmerLang })
-    });
-    if (!r.ok) throw new Error('Server error ' + r.status);
-    const d = await r.json();
-    if (d.error) throw new Error(d.error);
-    renderResult(d, false);
-    showToast('✅ Voice diagnosis complete!');
-    setTimeout(() => speak(), 600);
-  } catch (e) {
-    const result = textQueryFallback(query);
-    renderResult(result, true);
-    showToast('⚡ Offline voice analysis (connect for better results)');
-    setTimeout(() => speak(), 600);
-  } finally {
-    const txt2 = FARMER_LANGS[farmerLang] || FARMER_LANGS.English;
-    btn.innerHTML = `🔍 ${txt2.send}`; btn.disabled = false;
-    farmerTranscript = '';
-    document.getElementById('fvTranscript').textContent = '';
-    document.getElementById('fvTranscript').classList.remove('has-text');
-    document.getElementById('fvSendBtn').classList.remove('show');
+  const city=document.getElementById('cityInput').value.trim()||'Chennai';
+  showToast('🤖 AI analyzing your voice query…',5000);
+  const btn=document.getElementById('fvSendBtn'); btn.textContent='⏳ Processing…'; btn.disabled=true;
+  try{
+    const r=await fetch('/voice-diagnose',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({query,city,language:farmerLang})});
+    if(!r.ok) throw new Error('Server error '+r.status);
+    const d=await r.json(); if(d.error) throw new Error(d.error);
+    renderResult(d,false); showToast('✅ Voice diagnosis complete!'); setTimeout(()=>speak(),600);
+  }catch(e){ const result=textQueryFallback(query); renderResult(result,true); showToast('⚡ Offline voice analysis (connect for better results)'); setTimeout(()=>speak(),600); }
+  finally{
+    const txt2=FARMER_LANGS[farmerLang]||FARMER_LANGS.English; btn.innerHTML=`🔍 ${txt2.send}`; btn.disabled=false;
+    farmerTranscript=''; document.getElementById('fvTranscript').textContent=''; document.getElementById('fvTranscript').classList.remove('has-text'); document.getElementById('fvSendBtn').classList.remove('show');
   }
 }
-
-// FIX #1, #3: textQueryFallback — string key lookup (not object reference)
-function textQueryFallback(query) {
-  const q = query.toLowerCase();
-  const diseaseNames = {
-    healthy: 'Healthy Plant', blight: 'Blight', rust: 'Rust',
-    mildew: 'Powdery Mildew', rot: 'Root Rot', spot: 'Leaf Spot',
-    curl: 'Leaf Curl', mosaic: 'Mosaic Virus', scab: 'Scab', default: 'Unknown Disease'
-  };
-
-  let txKey = 'default';
-  if      (q.includes('healthy') || q.includes('பச்சை')  || q.includes('स्वस्थ')  || q.includes('ఆరోగ్య')) txKey = 'healthy';
-  else if (q.includes('blight')  || q.includes('burn')    || q.includes('கருகல்')   || q.includes('झुलसा'))  txKey = 'blight';
-  else if (q.includes('rust')    || q.includes('தம்பு')   || q.includes('जंग'))                             txKey = 'rust';
-  else if (q.includes('mildew')  || q.includes('powder')  || q.includes('வெள்ளை')  || q.includes('फफूंद'))  txKey = 'mildew';
-  else if (q.includes('rot')     || q.includes('அழுகல்')  || q.includes('सड़न'))                            txKey = 'rot';
-  else if (q.includes('spot')    || q.includes('yellow')  || q.includes('மஞ்சள்')   || q.includes('पीला'))   txKey = 'spot';
-  else if (q.includes('curl')    || q.includes('சுருட்டு')|| q.includes('मुड़ा'))                            txKey = 'curl';
-  else if (q.includes('mosaic')  || q.includes('virus')   || q.includes('வைரஸ்'))                           txKey = 'mosaic';
-  else if (q.includes('scab')    || q.includes('கரும்புள்ளி'))                                             txKey = 'scab';
-
-  const tx      = OFFLINE_TX[txKey] || OFFLINE_TX.default;
-  const disease = diseaseNames[txKey] || 'Unknown Disease';
-  const city    = document.getElementById('cityInput').value || 'your area';
-
-  return {
-    disease,
-    organic:    tx.organic,
-    chemical:   tx.chemical,
-    risk:       tx.risk,
-    confidence: 58,
-    severity:   tx.risk === 'HIGH' ? 8 : tx.risk === 'MEDIUM' ? 5 : 2,
-    weather:    '--°C · --%',
-    condition:  'Voice',
-    temp: 28, humidity: 60, wind: 0,
-    insight:    `Voice query for ${city}: "${query.slice(0, 80)}"`,
-    crop_tip:   tx.tip,
-    why:        'Diagnosed from verbal description — photo scan recommended for higher confidence.',
-    alt1:       'N/A',
-    alt2:       'N/A',
-    city,
-    language:   farmerLang,
-    timestamp:  fmtTimestamp(),
-    isOffline:  true,
-  };
+function textQueryFallback(query){
+  const q=query.toLowerCase();
+  const diseaseNames={healthy:'Healthy Plant',blight:'Blight',rust:'Rust',mildew:'Powdery Mildew',rot:'Root Rot',spot:'Leaf Spot',curl:'Leaf Curl',mosaic:'Mosaic Virus',scab:'Scab',default:'Unknown Disease'};
+  let txKey='default';
+  if(q.includes('healthy')||q.includes('பச்சை')||q.includes('स्वस्थ')||q.includes('ఆరోగ్య')) txKey='healthy';
+  else if(q.includes('blight')||q.includes('burn')||q.includes('கருகல்')||q.includes('झुलसा')) txKey='blight';
+  else if(q.includes('rust')||q.includes('தம்பு')||q.includes('जंग')) txKey='rust';
+  else if(q.includes('mildew')||q.includes('powder')||q.includes('வெள்ளை')||q.includes('फफूंद')) txKey='mildew';
+  else if(q.includes('rot')||q.includes('அழுகல்')||q.includes('सड़न')) txKey='rot';
+  else if(q.includes('spot')||q.includes('yellow')||q.includes('மஞ்சள்')||q.includes('पीला')) txKey='spot';
+  else if(q.includes('curl')||q.includes('சுருட்டு')||q.includes('मुड़ा')) txKey='curl';
+  else if(q.includes('mosaic')||q.includes('virus')||q.includes('வைரஸ்')) txKey='mosaic';
+  else if(q.includes('scab')||q.includes('கரும்புள்ளி')) txKey='scab';
+  const tx=OFFLINE_TX[txKey]||OFFLINE_TX.default; const disease=diseaseNames[txKey]||'Unknown Disease';
+  const city=document.getElementById('cityInput').value||'your area';
+  return { disease,organic:tx.organic,chemical:tx.chemical,risk:tx.risk,confidence:58,severity:tx.risk==='HIGH'?8:tx.risk==='MEDIUM'?5:2,weather:'--°C · --%',condition:'Voice',temp:28,humidity:60,wind:0,insight:`Voice query for ${city}: "${query.slice(0,80)}"`,crop_tip:tx.tip,why:'Diagnosed from verbal description — photo scan recommended.',alt1:'N/A',alt2:'N/A',city,language:farmerLang,timestamp:fmtTimestamp(),isOffline:true };
 }
 
-/* ════════════════════════════════════════════════════════════════
-   APP TABS
-════════════════════════════════════════════════════════════════ */
-function switchAppTab(tab) {
-  const tabs = ['scan', 'history', 'analytics'];
-  document.querySelectorAll('.app-tab').forEach((b, i) => b.classList.toggle('active', tabs[i] === tab));
-  tabs.forEach((id, i) => document.getElementById(`tab-${tabs[i]}`).classList.toggle('active', tabs[i] === tab));
-  if (tab === 'history')   loadDbHistory();
-  if (tab === 'analytics') loadAnalytics();
+/* ═══════════ APP TABS ═══════════ */
+function switchAppTab(tab){
+  const tabs=['scan','history','analytics'];
+  document.querySelectorAll('.app-tab').forEach((b,i)=>b.classList.toggle('active',tabs[i]===tab));
+  tabs.forEach(id=>document.getElementById(`tab-${id}`).classList.toggle('active',id===tab));
+  if(tab==='history') loadDbHistory();
+  if(tab==='analytics') loadAnalytics();
 }
 
-/* ════════════════════════════════════════════════════════════════
-   AUTH — FIX #12: cleanup google OAuth listener on timeout
-════════════════════════════════════════════════════════════════ */
-function switchAuthTab(tab) {
-  document.getElementById('loginTabBtn').classList.toggle('active', tab === 'login');
-  document.getElementById('regTabBtn').classList.toggle('active',   tab === 'register');
-  document.getElementById('loginForm').style.display = tab === 'login'     ? 'block' : 'none';
-  document.getElementById('regForm').style.display   = tab === 'register'  ? 'block' : 'none';
+/* ═══════════ AUTH ═══════════ */
+function switchAuthTab(tab){
+  document.getElementById('loginTabBtn').classList.toggle('active',tab==='login');
+  document.getElementById('regTabBtn').classList.toggle('active',tab==='register');
+  document.getElementById('loginForm').style.display=tab==='login'?'block':'none';
+  document.getElementById('regForm').style.display=tab==='register'?'block':'none';
 }
-
-async function googleLogin() {
-  try {
-    const r = await fetch('/auth/google');
-    const d = await r.json();
-    if (d.error) { showToast('⚠️ Google OAuth not configured on server'); return; }
-    window.open(d.redirect_url, 'GoogleOAuth', 'width=500,height=600,left=100,top=100');
-
-    // FIX #12: remove listener after 5 minutes to avoid memory leak
+async function googleLogin(){
+  try{
+    const r=await fetch('/auth/google'); const d=await r.json();
+    if(d.error){ showToast('⚠️ Google OAuth not configured on server'); return; }
+    window.open(d.redirect_url,'GoogleOAuth','width=500,height=600,left=100,top=100');
     let oauthHandler;
-    const oauthTimeout = setTimeout(() => window.removeEventListener('message', oauthHandler), 300000);
-    oauthHandler = e => {
-      if (e.data && e.data.success) {
-        window.removeEventListener('message', oauthHandler);
-        clearTimeout(oauthTimeout);
-        setUser(e.data.user);
-        closeModal('authModal');
-        showToast(`🎉 Welcome, ${e.data.user.name}!`);
-      } else if (e.data && e.data.error) {
-        window.removeEventListener('message', oauthHandler);
-        clearTimeout(oauthTimeout);
-        showToast('❌ Google login failed');
-      }
-    };
-    window.addEventListener('message', oauthHandler);
-  } catch (e) { showToast('❌ Google OAuth error'); }
+    const oauthTimeout=setTimeout(()=>window.removeEventListener('message',oauthHandler),300000);
+    oauthHandler=e=>{ if(e.data&&e.data.success){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); setUser(e.data.user); closeModal('authModal'); showToast(`🎉 Welcome, ${e.data.user.name}!`); } else if(e.data&&e.data.error){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); showToast('❌ Google login failed'); } };
+    window.addEventListener('message',oauthHandler);
+  }catch(e){ showToast('❌ Google OAuth error'); }
 }
-
-function setUser(user) {
-  currentUser = user;
-  const disp = document.getElementById('userDisplay');
-  if (user) {
-    document.getElementById('authBtn').style.display = 'none';
-    disp.style.display = 'flex';
-    document.getElementById('userPill').textContent = `👤 ${user.name || user.email}`;
-    const av = document.getElementById('userAvatar');
-    if (user.avatar) { av.src = user.avatar; av.style.display = 'block'; } else av.style.display = 'none';
-  } else {
-    document.getElementById('authBtn').style.display = 'flex';
-    disp.style.display = 'none';
-  }
+function setUser(user){
+  currentUser=user;
+  if(user){ document.getElementById('authBtn').style.display='none'; document.getElementById('userDisplay').style.display='flex'; document.getElementById('userPill').textContent=`👤 ${user.name||user.email}`; const av=document.getElementById('userAvatar'); if(user.avatar){ av.src=user.avatar; av.style.display='block'; } else av.style.display='none'; }
+  else{ document.getElementById('authBtn').style.display='flex'; document.getElementById('userDisplay').style.display='none'; }
 }
-
-async function checkAuth() {
-  try {
-    const r = await fetch('/api/me', { credentials: 'include' });
-    const d = await r.json();
-    setUser(d.user);
-  } catch (e) {}
+async function checkAuth(){ try{ const r=await fetch('/api/me',{credentials:'include'}); const d=await r.json(); setUser(d.user); }catch(e){} }
+async function doLogin(){
+  const email=document.getElementById('loginEmail').value, pass=document.getElementById('loginPass').value, err=document.getElementById('loginErr');
+  err.style.display='none';
+  try{ const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,password:pass})}); const d=await r.json(); if(!r.ok){ err.textContent=d.error; err.style.display='block'; return; } setUser(d.user); closeModal('authModal'); showToast(`🌱 Welcome back, ${d.user.name||d.user.email}!`); }catch(e){ err.textContent='Connection error'; err.style.display='block'; }
 }
-
-async function doLogin() {
-  const email = document.getElementById('loginEmail').value;
-  const pass  = document.getElementById('loginPass').value;
-  const err   = document.getElementById('loginErr');
-  err.style.display = 'none';
-  try {
-    const r = await fetch('/api/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', body: JSON.stringify({ email, password: pass })
-    });
-    const d = await r.json();
-    if (!r.ok) { err.textContent = d.error; err.style.display = 'block'; return; }
-    setUser(d.user); closeModal('authModal');
-    showToast(`🌱 Welcome back, ${d.user.name || d.user.email}!`);
-  } catch (e) { err.textContent = 'Connection error'; err.style.display = 'block'; }
+async function doRegister(){
+  const name=document.getElementById('regName').value, email=document.getElementById('regEmail').value, pass=document.getElementById('regPass').value, err=document.getElementById('regErr');
+  err.style.display='none';
+  try{ const r=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,email,password:pass})}); const d=await r.json(); if(!r.ok){ err.textContent=d.error; err.style.display='block'; return; } setUser(d.user); closeModal('authModal'); showToast(`🎉 Welcome, ${d.user.name}!`); }catch(e){ err.textContent='Connection error'; err.style.display='block'; }
 }
+async function doLogout(){ await fetch('/api/logout',{method:'POST',credentials:'include'}); setUser(null); showToast('👋 Signed out'); }
 
-async function doRegister() {
-  const name  = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const pass  = document.getElementById('regPass').value;
-  const err   = document.getElementById('regErr');
-  err.style.display = 'none';
-  try {
-    const r = await fetch('/api/register', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      credentials: 'include', body: JSON.stringify({ name, email, password: pass })
-    });
-    const d = await r.json();
-    if (!r.ok) { err.textContent = d.error; err.style.display = 'block'; return; }
-    setUser(d.user); closeModal('authModal');
-    showToast(`🎉 Welcome, ${d.user.name}!`);
-  } catch (e) { err.textContent = 'Connection error'; err.style.display = 'block'; }
-}
-
-async function doLogout() {
-  await fetch('/api/logout', { method: 'POST', credentials: 'include' });
-  setUser(null);
-  showToast('👋 Signed out');
-}
-
-/* ════════════════════════════════════════════════════════════════
-   VOICE CITY — FIX #21: stop previous recognition first
-════════════════════════════════════════════════════════════════ */
-let cityRecog = null;
-function startVoiceCity() {
-  if (!SR_API) { showToast('⚠️ Voice not supported'); return; }
-  // FIX #21: kill previous instance
-  if (cityRecog) { cityRecog.onend = null; cityRecog.stop(); cityRecog = null; }
-  const btn = document.getElementById('micBtn');
-  cityRecog = new SR_API();
-  cityRecog.lang            = LC[document.getElementById('langInput').value] || 'en-IN';
-  cityRecog.continuous      = false;
-  cityRecog.interimResults  = false;
-  btn.classList.add('listening'); btn.textContent = '🔴';
-  showToast('🎤 Listening… say your city name');
+/* ═══════════ VOICE CITY ═══════════ */
+let cityRecog=null;
+function startVoiceCity(){
+  if(!SR_API){ showToast('⚠️ Voice not supported'); return; }
+  if(cityRecog){ cityRecog.onend=null; cityRecog.stop(); cityRecog=null; }
+  const btn=document.getElementById('micBtn');
+  cityRecog=new SR_API(); cityRecog.lang=LC[document.getElementById('langInput').value]||'en-IN'; cityRecog.continuous=false; cityRecog.interimResults=false;
+  btn.classList.add('listening'); btn.textContent='🔴'; showToast('🎤 Listening… say your city name');
   cityRecog.start();
-  cityRecog.onresult = e => {
-    const city = e.results[0][0].transcript.trim();
-    document.getElementById('cityInput').value = city;
-    showToast(`📍 Got: "${city}"`);
-    fetchForecast(city, null, null);
-  };
-  cityRecog.onend  = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; cityRecog = null; };
-  cityRecog.onerror = () => { btn.classList.remove('listening'); btn.textContent = '🎤'; showToast('🎤 Voice error'); cityRecog = null; };
+  cityRecog.onresult=e=>{ const city=e.results[0][0].transcript.trim(); document.getElementById('cityInput').value=city; showToast(`📍 Got: "${city}"`); fetchForecast(city,null,null); };
+  cityRecog.onend=()=>{ btn.classList.remove('listening'); btn.textContent='🎤'; cityRecog=null; };
+  cityRecog.onerror=()=>{ btn.classList.remove('listening'); btn.textContent='🎤'; showToast('🎤 Voice error'); cityRecog=null; };
 }
 
-/* ════════════════════════════════════════════════════════════════
-   IMAGE HANDLING
-════════════════════════════════════════════════════════════════ */
-document.getElementById('cameraInput').addEventListener('change', function () { handleFile(this.files[0]); });
-document.getElementById('galleryInput').addEventListener('change', function () { handleFile(this.files[0]); });
-
-const dz = document.getElementById('dropzone');
-dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag-over'); });
-dz.addEventListener('dragleave', ()  => dz.classList.remove('drag-over'));
-dz.addEventListener('drop', e => {
-  e.preventDefault(); dz.classList.remove('drag-over');
-  const f = e.dataTransfer.files[0];
-  if (f) handleFile(f);
-});
-
-function handleFile(file) {
-  if (!file) return;
-  lastImageFile = file;
-  const reader  = new FileReader();
-  reader.onload = e => {
-    document.getElementById('preview').src             = e.target.result;
-    document.getElementById('preview-wrap').style.display  = 'block';
-    dz.style.display                                   = 'none';
-    document.getElementById('live-camera-wrap').style.display = 'none';
-    showToast('📸 Image loaded — ready to analyze!');
-  };
+/* ═══════════ IMAGE HANDLING ═══════════ */
+document.getElementById('cameraInput').addEventListener('change',function(){ handleFile(this.files[0]); });
+document.getElementById('galleryInput').addEventListener('change',function(){ handleFile(this.files[0]); });
+const dz=document.getElementById('dropzone');
+dz.addEventListener('dragover',e=>{ e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) handleFile(f); });
+function handleFile(file){
+  if(!file) return;
+  lastImageFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{ document.getElementById('preview').src=e.target.result; document.getElementById('preview-wrap').style.display='block'; dz.style.display='none'; document.getElementById('live-camera-wrap').style.display='none'; showToast('📸 Image loaded — ready to analyze!'); };
   reader.readAsDataURL(file);
-  document.getElementById('analyzeBtn').disabled       = false;
-  document.getElementById('btnText').textContent       = 'Analyze Plant Disease';
-  document.getElementById('result-card').style.display = 'none';
+  document.getElementById('analyzeBtn').disabled=false;
+  document.getElementById('btnText').textContent='Analyze Plant Disease';
+  document.getElementById('result-card').style.display='none';
   document.getElementById('result-card').classList.remove('show');
-  document.getElementById('error-card').style.display  = 'none';
-  document.getElementById('risk-banner').style.display  = 'none';
-  document.getElementById('lang-tr-bar').style.display  = 'none';
+  document.getElementById('error-card').style.display='none';
+  document.getElementById('risk-banner').style.display='none';
+  document.getElementById('lang-tr-bar').style.display='none';
   stopVoice();
-  const old = document.getElementById('pdfBtn');
-  if (old) old.remove();
+  const old=document.getElementById('pdfBtn'); if(old) old.remove();
+}
+function resetImage(){
+  lastImageFile=null;
+  document.getElementById('cameraInput').value=''; document.getElementById('galleryInput').value='';
+  document.getElementById('preview-wrap').style.display='none'; dz.style.display='block';
+  document.getElementById('analyzeBtn').disabled=true; document.getElementById('btnText').textContent='Select an image first'; stopVoice();
 }
 
-function resetImage() {
-  lastImageFile = null;
-  document.getElementById('cameraInput').value  = '';
-  document.getElementById('galleryInput').value = '';
-  document.getElementById('preview-wrap').style.display = 'none';
-  dz.style.display = 'block';
-  document.getElementById('analyzeBtn').disabled = true;
-  document.getElementById('btnText').textContent = 'Select an image first';
+/* ═══════════ ANALYZE ═══════════ */
+const aiMsgs=['Scanning leaf texture…','Detecting disease patterns…','Matching AI database…','Generating treatment plan…','Consulting weather data…','Almost there…'];
+const offMsgs=['Loading AI model…','Preprocessing image…','Running on-device AI…','Generating results…'];
+let aiIdx=0, aiTimer=null;
+async function analyze(){
+  if(!lastImageFile) return;
   stopVoice();
-}
-
-/* ════════════════════════════════════════════════════════════════
-   ANALYZE
-════════════════════════════════════════════════════════════════ */
-const aiMsgs  = ['Scanning leaf texture…','Detecting disease patterns…','Matching AI database…','Generating treatment plan…','Consulting weather data…','Almost there…'];
-const offMsgs = ['Loading AI model…','Preprocessing image…','Running on-device AI…','Generating results…'];
-let aiIdx = 0, aiTimer = null;
-
-async function analyze() {
-  if (!lastImageFile) return;
-  stopVoice();
-  document.getElementById('btnIcon').style.display  = 'none';
-  document.getElementById('spinner').style.display  = 'block';
-  document.getElementById('analyzeBtn').disabled    = true;
-  document.getElementById('error-card').style.display  = 'none';
-  document.getElementById('result-card').style.display = 'none';
-  document.getElementById('result-card').classList.remove('show');
-  document.getElementById('risk-banner').style.display = 'none';
-  document.getElementById('lang-tr-bar').style.display = 'none';
-  document.getElementById('statusTopText').textContent = 'Analyzing…';
-
-  const msgs = isOnline ? aiMsgs : offMsgs;
-  aiIdx = 0;
-  document.getElementById('btnText').textContent = msgs[0];
-  aiTimer = setInterval(() => {
-    aiIdx = (aiIdx + 1) % msgs.length;
-    document.getElementById('btnText').textContent = msgs[aiIdx];
-  }, 1300);
-
-  try {
-    if (!isOnline) {
-      const savedUrl = localStorage.getItem(TM_KEY) || DEFAULT_TM_URL;
-      if (!tmLoaded) {
-        const ok = await loadTMModel(savedUrl);
-        if (!ok) throw new Error('Failed to load AI model. Go online at least once to download it.');
-      }
-      document.getElementById('btnText').textContent = 'Running on-device AI…';
-      const preds  = await runTMOnFile(lastImageFile);
-      renderResult(tmResultToData(preds), true);
+  document.getElementById('btnIcon').style.display='none'; document.getElementById('spinner').style.display='block';
+  document.getElementById('analyzeBtn').disabled=true;
+  document.getElementById('error-card').style.display='none';
+  document.getElementById('result-card').style.display='none'; document.getElementById('result-card').classList.remove('show');
+  document.getElementById('risk-banner').style.display='none'; document.getElementById('lang-tr-bar').style.display='none';
+  document.getElementById('statusTopText').textContent='Analyzing…';
+  const msgs=isOnline?aiMsgs:offMsgs; aiIdx=0;
+  document.getElementById('btnText').textContent=msgs[0];
+  aiTimer=setInterval(()=>{ aiIdx=(aiIdx+1)%msgs.length; document.getElementById('btnText').textContent=msgs[aiIdx]; },1300);
+  try{
+    if(!isOnline){
+      const savedUrl=localStorage.getItem(TM_KEY)||DEFAULT_TM_URL;
+      if(!tmLoaded){ const ok=await loadTMModel(savedUrl); if(!ok) throw new Error('Failed to load AI model. Go online at least once to download it.'); }
+      document.getElementById('btnText').textContent='Running on-device AI…';
+      const preds=await runTMOnFile(lastImageFile); renderResult(tmResultToData(preds),true);
     } else {
-      const fd = new FormData();
-      fd.append('image',    lastImageFile);
-      fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
-      fd.append('language', document.getElementById('langInput').value);
-      const r = await fetch('/predict', { method: 'POST', body: fd, credentials: 'include' });
-      const d = await r.json();
-      if (!r.ok) throw new Error(d.error || 'Server error');
-      renderResult(d, false);
-      const city = document.getElementById('cityInput').value.trim();
-      if (city) fetchForecast(city, currentLat, currentLon);
+      const fd=new FormData(); fd.append('image',lastImageFile); fd.append('city',document.getElementById('cityInput').value.trim()||'Chennai'); fd.append('language',document.getElementById('langInput').value);
+      const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include'}); const d=await r.json();
+      if(!r.ok) throw new Error(d.error||'Server error');
+      renderResult(d,false);
+      const city=document.getElementById('cityInput').value.trim(); if(city) fetchForecast(city,currentLat,currentLon);
     }
-  } catch (err) {
-    const ec = document.getElementById('error-card');
-    ec.innerHTML = `⚠️ <strong>Error:</strong> ${err.message}`;
-    ec.style.display = 'block';
-    document.getElementById('btnText').textContent = 'Try Again';
-    showToast('❌ Analysis failed');
-  } finally {
-    clearInterval(aiTimer);
-    document.getElementById('spinner').style.display = 'none';
-    document.getElementById('btnIcon').style.display  = 'inline';
-    document.getElementById('btnIcon').textContent    = '🔍';
-    document.getElementById('analyzeBtn').disabled    = false;
-    document.getElementById('statusTopText').textContent = 'Ready';
+  }catch(err){
+    const ec=document.getElementById('error-card'); ec.innerHTML=`⚠️ <strong>Error:</strong> ${err.message}`; ec.style.display='block';
+    document.getElementById('btnText').textContent='Try Again'; showToast('❌ Analysis failed');
+  }finally{
+    clearInterval(aiTimer); document.getElementById('spinner').style.display='none'; document.getElementById('btnIcon').style.display='inline'; document.getElementById('btnIcon').textContent='🔍'; document.getElementById('analyzeBtn').disabled=false; document.getElementById('statusTopText').textContent='Ready';
   }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   LANG RETRANSLATE
-════════════════════════════════════════════════════════════════ */
-async function onLangChange() {
-  stopVoice();
-  if (!lastResult || !lastImageFile || !isOnline) return;
-  const lang = document.getElementById('langInput').value;
-  const bar  = document.getElementById('lang-tr-bar');
-  document.getElementById('langBarTxt').textContent = `Translating to ${lang}…`;
-  bar.style.display = 'flex';
-  const fd = new FormData();
-  fd.append('image',    lastImageFile);
-  fd.append('city',     document.getElementById('cityInput').value.trim() || 'Chennai');
-  fd.append('language', lang);
-  try {
-    const r = await fetch('/predict', { method: 'POST', body: fd, credentials: 'include' });
-    const d = await r.json();
-    if (!r.ok) throw new Error(d.error || 'Server error');
-    renderResult(d, false);
-    bar.style.display = 'none';
-    showToast(`🌐 Translated to ${lang}`);
-  } catch (err) {
-    bar.style.display = 'none';
-    showToast('❌ Translation failed');
-  }
+/* ═══════════ LANG RETRANSLATE ═══════════ */
+async function onLangChange(){
+  stopVoice(); if(!lastResult||!lastImageFile||!isOnline) return;
+  const lang=document.getElementById('langInput').value, bar=document.getElementById('lang-tr-bar');
+  document.getElementById('langBarTxt').textContent=`Translating to ${lang}…`; bar.style.display='flex';
+  const fd=new FormData(); fd.append('image',lastImageFile); fd.append('city',document.getElementById('cityInput').value.trim()||'Chennai'); fd.append('language',lang);
+  try{ const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include'}); const d=await r.json(); if(!r.ok) throw new Error(d.error||'Server error'); renderResult(d,false); bar.style.display='none'; showToast(`🌐 Translated to ${lang}`); }
+  catch(err){ bar.style.display='none'; showToast('❌ Translation failed'); }
 }
 
-/* ════════════════════════════════════════════════════════════════
-   VOICE OUTPUT
-════════════════════════════════════════════════════════════════ */
-function toggleVoice() { isSpeaking ? stopVoice() : speak(); }
-
-function stopVoice() {
-  window.speechSynthesis.cancel();
-  isSpeaking = false;
-  const btn = document.getElementById('voiceBtn');
-  if (btn) { btn.innerHTML = '🔊 Listen'; btn.classList.remove('playing'); }
+/* ═══════════ VOICE OUTPUT ═══════════ */
+function toggleVoice(){ isSpeaking?stopVoice():speak(); }
+function stopVoice(){ window.speechSynthesis.cancel(); isSpeaking=false; const btn=document.getElementById('voiceBtn'); if(btn){ btn.innerHTML='🔊 Listen'; btn.classList.remove('playing'); } }
+function speak(){
+  if(!lastResult) return;
+  const lang=document.getElementById('langInput').value;
+  const text=`${lastResult.disease}. ${activeTab==='chemical'?lastResult.chemical:lastResult.organic}`;
+  const u=new SpeechSynthesisUtterance(text); u.lang=LC[lang]||'en-IN'; u.rate=0.88;
+  window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  isSpeaking=true; const btn=document.getElementById('voiceBtn'); btn.innerHTML='⏹ Stop'; btn.classList.add('playing');
+  u.onend=u.onerror=stopVoice;
+}
+function switchTab(tab){
+  activeTab=tab; stopVoice();
+  document.querySelectorAll('.t-btn').forEach((b,i)=>b.classList.toggle('active',i===(tab==='organic'?0:1)));
+  document.getElementById('tab-organic').classList.toggle('active',tab==='organic');
+  document.getElementById('tab-chemical').classList.toggle('active',tab==='chemical');
+}
+function animCounter(id,start,end,dur,suf=''){
+  const el=document.getElementById(id); if(!el) return;
+  if(start===end){ el.textContent=end+suf; return; }
+  let cur=start; const step=Math.max(1,Math.ceil((end-start)/(dur/16)));
+  const t=setInterval(()=>{ cur=Math.min(cur+step,end); el.textContent=cur+suf; if(cur>=end) clearInterval(t); },16);
 }
 
-function speak() {
-  if (!lastResult) return;
-  const lang = document.getElementById('langInput').value;
-  const text = `${lastResult.disease}. ${activeTab === 'chemical' ? lastResult.chemical : lastResult.organic}`;
-  const u    = new SpeechSynthesisUtterance(text);
-  u.lang     = LC[lang] || 'en-IN';
-  u.rate     = 0.88;
-  window.speechSynthesis.cancel();
-  window.speechSynthesis.speak(u);
-  isSpeaking = true;
-  const btn  = document.getElementById('voiceBtn');
-  btn.innerHTML = '⏹ Stop'; btn.classList.add('playing');
-  u.onend = u.onerror = stopVoice;
-}
-
-function switchTab(tab) {
-  activeTab = tab; stopVoice();
-  document.querySelectorAll('.t-btn').forEach((b, i) => b.classList.toggle('active', i === (tab === 'organic' ? 0 : 1)));
-  document.getElementById('tab-organic').classList.toggle('active',   tab === 'organic');
-  document.getElementById('tab-chemical').classList.toggle('active', tab === 'chemical');
-}
-
-// FIX #14: animCounter guard when start === end
-function animCounter(id, start, end, dur, suf = '') {
-  const el = document.getElementById(id);
-  if (!el) return;
-  if (start === end) { el.textContent = end + suf; return; } // FIX #14
-  let cur  = start;
-  const step = Math.max(1, Math.ceil((end - start) / (dur / 16)));
-  const t  = setInterval(() => {
-    cur = Math.min(cur + step, end);
-    el.textContent = cur + suf;
-    if (cur >= end) clearInterval(t);
-  }, 16);
-}
-
-/* ════════════════════════════════════════════════════════════════
-   RENDER RESULT — FIX #2,#3,#6,#10,#15,#23
-════════════════════════════════════════════════════════════════ */
-function renderResult(data, isOffline = false) {
-  lastResult = data; stopVoice(); activeTab = 'organic'; switchTab('organic');
-
-  const isH = data.disease.toLowerCase().includes('health');
-  document.getElementById('statusIcon').textContent    = isH ? '✅' : '⚠️';
-  document.getElementById('diseaseTag').textContent    = isH ? 'HEALTHY PLANT' : 'DISEASE DETECTED';
-  document.getElementById('diseaseName').textContent   = data.disease;
-  document.getElementById('offlineTag').style.display  = isOffline ? 'inline' : 'none';
-
-  document.getElementById('organicText').textContent  = (data.organic  && data.organic  !== 'N/A') ? data.organic  : 'No recommendation available';
-  document.getElementById('chemicalText').textContent = (data.chemical && data.chemical !== 'N/A') ? data.chemical : 'No recommendation available';
-  document.getElementById('cropTipBox').textContent   = data.crop_tip ? `💡 ${data.crop_tip}` : '';
-
-  // FIX #3/#10: Why box (now in DOM)
-  const whyBox = document.getElementById('whyBox');
-  if (data.why && data.why !== 'N/A') {
-    whyBox.textContent = `🔬 ${data.why}`;
-    whyBox.style.display = 'block';
-  } else {
-    whyBox.style.display = 'none';
-  }
-
-  // FIX #3/#10: Alternatives box (now in DOM)
-  const altBox = document.getElementById('altBox');
-  const hasAlts = data.alt1 && data.alt1 !== 'N/A';
-  if (hasAlts) {
-    altBox.classList.add('show');
-    // clear any old pills except the label
-    while (altBox.children.length > 1) altBox.removeChild(altBox.lastChild);
-    const p1 = document.createElement('span'); p1.className = 'mp'; p1.textContent = data.alt1; altBox.appendChild(p1);
-    if (data.alt2 && data.alt2 !== 'N/A') {
-      const p2 = document.createElement('span'); p2.className = 'mp'; p2.textContent = data.alt2; altBox.appendChild(p2);
-    }
-  } else {
-    altBox.classList.remove('show');
-  }
-
-  // Weather strip — FIX #2: wind uses nullish coalescing
-  if (!isOffline) {
-    document.getElementById('wIcon').textContent  = WI[data.condition] || '🌤️';
-    document.getElementById('wCond').textContent  = data.condition;
-    document.getElementById('wTemp').textContent  = `${data.temp}°C`;
-    document.getElementById('wHum').textContent   = `${data.humidity}%`;
-    document.getElementById('wWind').textContent  = `${data.wind ?? '--'} m/s`; // FIX #2
-    document.getElementById('wCity').textContent  = `📍 ${data.city}`;
-    document.getElementById('weather-strip').style.display = 'block';
-  }
-
-  document.getElementById('insightText').textContent = data.insight;
-
-  const ft = fmtTimestamp();
-  document.getElementById('timeVal').textContent = ft;
-
-  const conf = data.confidence || 75;
-  const sev  = data.severity   || 5;
-  animCounter('confVal', 0, conf, 900, '%');
-  animCounter('sevVal',  0, sev,  700, '/10');
-  setTimeout(() => {
-    document.getElementById('confBar').style.width = `${conf}%`;
-    const sb = document.getElementById('sevBar');
-    sb.className    = 'bar-f ' + (sev <= 3 ? 'bs-l' : sev <= 6 ? 'bs-m' : 'bs-h');
-    sb.style.width  = `${sev * 10}%`;
-  }, 150);
-
-  document.getElementById('mWeather').textContent = `🌦️ ${data.weather || '--'}`;
-  document.getElementById('mRisk').textContent    = `⚠️ ${data.risk} RISK`;
-  document.getElementById('mTime').textContent    = `🕐 ${data.timestamp || ft}`;
-
-  const banner = document.getElementById('risk-banner');
-  const rmsgs  = {
-    HIGH:   '🚨 HIGH RISK — Immediate action required within 24 hours.',
-    MEDIUM: '⚠️ MEDIUM RISK — Apply treatment within 3–5 days.',
-    LOW:    '✅ LOW RISK — Follow preventive care routine.',
-  };
-  banner.className   = data.risk.toLowerCase();
-  banner.textContent = rmsgs[data.risk] || rmsgs.MEDIUM;
-  banner.style.display = 'flex';
-
+/* ═══════════ RENDER RESULT ═══════════ */
+function renderResult(data,isOffline=false){
+  lastResult=data; stopVoice(); activeTab='organic'; switchTab('organic');
+  const isH=data.disease.toLowerCase().includes('health');
+  document.getElementById('statusIcon').textContent=isH?'✅':'⚠️';
+  document.getElementById('diseaseTag').textContent=isH?'HEALTHY PLANT':'DISEASE DETECTED';
+  document.getElementById('diseaseName').textContent=data.disease;
+  document.getElementById('offlineTag').style.display=isOffline?'inline':'none';
+  document.getElementById('organicText').textContent=(data.organic&&data.organic!=='N/A')?data.organic:'No recommendation available';
+  document.getElementById('chemicalText').textContent=(data.chemical&&data.chemical!=='N/A')?data.chemical:'No recommendation available';
+  document.getElementById('cropTipBox').textContent=data.crop_tip?`💡 ${data.crop_tip}`:'';
+  const whyBox=document.getElementById('whyBox');
+  if(data.why&&data.why!=='N/A'){ whyBox.textContent=`🔬 ${data.why}`; whyBox.style.display='block'; } else { whyBox.style.display='none'; }
+  const altBox=document.getElementById('altBox');
+  const hasAlts=data.alt1&&data.alt1!=='N/A';
+  if(hasAlts){ altBox.classList.add('show'); while(altBox.children.length>1) altBox.removeChild(altBox.lastChild); const p1=document.createElement('span'); p1.className='mp'; p1.textContent=data.alt1; altBox.appendChild(p1); if(data.alt2&&data.alt2!=='N/A'){ const p2=document.createElement('span'); p2.className='mp'; p2.textContent=data.alt2; altBox.appendChild(p2); } } else { altBox.classList.remove('show'); }
+  if(!isOffline){ document.getElementById('wIcon').textContent=WI[data.condition]||'🌤️'; document.getElementById('wCond').textContent=data.condition; document.getElementById('wTemp').textContent=`${data.temp}°C`; document.getElementById('wHum').textContent=`${data.humidity}%`; document.getElementById('wWind').textContent=`${data.wind??'--'} m/s`; document.getElementById('wCity').textContent=`📍 ${data.city}`; document.getElementById('weather-strip').style.display='block'; }
+  document.getElementById('insightText').textContent=data.insight;
+  const ft=fmtTimestamp(); document.getElementById('timeVal').textContent=ft;
+  const conf=data.confidence||75, sev=data.severity||5;
+  animCounter('confVal',0,conf,900,'%'); animCounter('sevVal',0,sev,700,'/10');
+  setTimeout(()=>{ document.getElementById('confBar').style.width=`${conf}%`; const sb=document.getElementById('sevBar'); sb.className='bar-f '+(sev<=3?'bs-l':sev<=6?'bs-m':'bs-h'); sb.style.width=`${sev*10}%`; },150);
+  document.getElementById('mWeather').textContent=`🌦️ ${data.weather||'--'}`;
+  document.getElementById('mRisk').textContent=`⚠️ ${data.risk} RISK`;
+  document.getElementById('mTime').textContent=`🕐 ${data.timestamp||ft}`;
+  const banner=document.getElementById('risk-banner');
+  const rmsgs={HIGH:'🚨 HIGH RISK — Immediate action required within 24 hours.',MEDIUM:'⚠️ MEDIUM RISK — Apply treatment within 3–5 days.',LOW:'✅ LOW RISK — Follow preventive care routine.'};
+  banner.className=data.risk.toLowerCase(); banner.textContent=rmsgs[data.risk]||rmsgs.MEDIUM; banner.style.display='flex';
   renderCalendar();
-
-  // FIX #15: throttle history widget refresh (30s debounce)
-  const now = Date.now();
-  if (now - _historyFetchedAt > 30000) {
-    _historyFetchedAt = now;
-    // FIX #23: only show scan history if user is logged in
-    if (currentUser) loadScanHistoryWidget();
-  }
-
-  const old = document.getElementById('pdfBtn');
-  if (old) old.remove();
-  const pdf         = document.createElement('button');
-  pdf.id            = 'pdfBtn';
-  pdf.className     = 'btn-pdf';
-  pdf.innerHTML     = '📄 Download PDF Report';
-  pdf.onclick       = () => downloadPDF(data);
-  document.querySelector('.btn-area').appendChild(pdf);
-
-  const rc = document.getElementById('result-card');
-  rc.style.display = 'block';
-  document.getElementById('calendar-section').style.display = 'block';
-  requestAnimationFrame(() => requestAnimationFrame(() => rc.classList.add('show')));
-  rc.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-  document.getElementById('btnText').textContent = isOffline ? '⚡ Analyze Another (offline)' : 'Analyze Another Plant';
-  showToast(`🎯 ${isOffline ? '⚡ Offline' : 'Online'} — ${data.disease} — ${data.risk} risk`);
-  if (isFarmerMode) setTimeout(() => speak(), 800);
+  const now=Date.now(); if(now-_historyFetchedAt>30000){ _historyFetchedAt=now; if(currentUser) loadScanHistoryWidget(); }
+  const old=document.getElementById('pdfBtn'); if(old) old.remove();
+  const pdf=document.createElement('button'); pdf.id='pdfBtn'; pdf.className='btn-pdf'; pdf.innerHTML='📄 Download PDF Report'; pdf.onclick=()=>downloadPDF(data); document.querySelector('.btn-area').appendChild(pdf);
+  const rc=document.getElementById('result-card'); rc.style.display='block'; document.getElementById('calendar-section').style.display='block';
+  requestAnimationFrame(()=>requestAnimationFrame(()=>rc.classList.add('show')));
+  rc.scrollIntoView({behavior:'smooth',block:'nearest'});
+  document.getElementById('btnText').textContent=isOffline?'⚡ Analyze Another (offline)':'Analyze Another Plant';
+  showToast(`🎯 ${isOffline?'⚡ Offline':'Online'} — ${data.disease} — ${data.risk} risk`);
+  if(isFarmerMode) setTimeout(()=>speak(),800);
+}
+function renderCalendar(){
+  const now=new Date().getMonth(), grid=document.getElementById('calGrid'); grid.innerHTML='';
+  for(let i=0;i<12;i++){ const m=document.createElement('div'); m.className='cal-m'+(i===now?' now':''); m.innerHTML=`<div class="cm-mon">${MONTHS[i]}</div><div class="cm-ic">${CAL_IC[i]}</div><div class="cm-act">${CAL_AC[i]}</div>`; grid.appendChild(m); }
+}
+async function loadScanHistoryWidget(){
+  if(!currentUser) return;
+  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length) return; document.getElementById('history-section').style.display='block'; document.getElementById('historyList').innerHTML=data.slice(0,5).map(s=>`<div class="h-item"><div><div class="h-dis">${s.disease}</div><div class="h-met">📍 ${s.city} · ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${s.risk}">${s.risk}</span></div>`).join(''); }catch(e){}
+}
+async function loadDbHistory(){
+  const c=document.getElementById('dbHistoryList'); c.innerHTML='<div class="no-data">Loading…</div>';
+  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length){ c.innerHTML='<div class="no-data">No scans yet. Scan a plant to start!</div>'; return; } c.innerHTML=data.map(s=>`<div class="h-item"><div><div class="h-dis">${s.disease}</div><div class="h-met">📍 ${s.city} · 🌡️ ${s.temp}°C · 💧${s.humidity}% · Conf: ${s.confidence}%</div><div class="h-met">🕐 ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${s.risk}">${s.risk}</span></div>`).join(''); }catch(e){ c.innerHTML='<div class="no-data">Failed to load history.</div>'; }
+}
+async function loadAnalytics(){
+  try{
+    const r=await fetch('/api/analytics',{credentials:'include'}); const d=await r.json();
+    document.getElementById('statTotal').textContent=d.total_scans; document.getElementById('statHigh').textContent=d.high_risk; document.getElementById('statConf').textContent=d.avg_confidence+'%';
+    const dc=document.getElementById('diseaseChart');
+    if(d.top_diseases&&d.top_diseases.length){ const max=Math.max(...d.top_diseases.map(x=>x.cnt),1); dc.innerHTML=d.top_diseases.map(x=>`<div class="dr"><span class="dl">${x.disease}</span><div class="dbb"><div class="dbf" style="width:${Math.round((x.cnt/max)*100)}%"></div></div><span class="dc">${x.cnt}</span></div>`).join(''); } else { dc.innerHTML='<div class="no-data">No data yet</div>'; }
+    const ctx=document.getElementById('weeklyChart').getContext('2d');
+    if(weeklyChart){ weeklyChart.destroy(); weeklyChart=null; }
+    weeklyChart=new Chart(ctx,{ type:'bar', data:{ labels:(d.weekly_trend||[]).map(x=>x.day.slice(5)), datasets:[{ label:'Scans',data:(d.weekly_trend||[]).map(x=>x.cnt),backgroundColor:'rgba(168,230,61,.4)',borderColor:'rgba(168,230,61,.8)',borderWidth:1,borderRadius:5 }] }, options:{ responsive:true, plugins:{legend:{display:false}}, scales:{ x:{ticks:{color:'#5a7a3a',font:{size:10}},grid:{color:'rgba(168,230,61,.05)'}}, y:{ticks:{color:'#5a7a3a',font:{size:10}},grid:{color:'rgba(168,230,61,.05)'}} } } });
+  }catch(e){ console.warn('Analytics error:',e); }
 }
 
-// FIX #24: renderCalendar highlights current month correctly
-function renderCalendar() {
-  const now  = new Date().getMonth();
-  const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
-  for (let i = 0; i < 12; i++) {
-    const m = document.createElement('div');
-    m.className = 'cal-m' + (i === now ? ' now' : '');
-    m.innerHTML = `<div class="cm-mon">${MONTHS[i]}</div><div class="cm-ic">${CAL_IC[i]}</div><div class="cm-act">${CAL_AC[i]}</div>`;
-    grid.appendChild(m);
-  }
-}
-
-async function loadScanHistoryWidget() {
-  // FIX #23: only fetch if logged in
-  if (!currentUser) return;
-  try {
-    const r    = await fetch('/api/history', { credentials: 'include' });
-    const data = await r.json();
-    if (!data || !data.length) return;
-    const sec  = document.getElementById('history-section');
-    sec.style.display = 'block';
-    document.getElementById('historyList').innerHTML = data.slice(0, 5).map(s =>
-      `<div class="h-item">
-        <div>
-          <div class="h-dis">${s.disease}</div>
-          <div class="h-met">📍 ${s.city} · ${new Date(s.timestamp).toLocaleString('en-IN', { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</div>
-        </div>
-        <span class="h-risk ${s.risk}">${s.risk}</span>
-      </div>`
-    ).join('');
-  } catch (e) {}
-}
-
-async function loadDbHistory() {
-  const c = document.getElementById('dbHistoryList');
-  c.innerHTML = '<div class="no-data">Loading…</div>';
-  try {
-    const r    = await fetch('/api/history', { credentials: 'include' });
-    const data = await r.json();
-    if (!data || !data.length) { c.innerHTML = '<div class="no-data">No scans yet. Scan a plant to start!</div>'; return; }
-    c.innerHTML = data.map(s =>
-      `<div class="h-item">
-        <div>
-          <div class="h-dis">${s.disease}</div>
-          <div class="h-met">📍 ${s.city} · 🌡️ ${s.temp}°C · 💧${s.humidity}% · Conf: ${s.confidence}%</div>
-          <div class="h-met">🕐 ${new Date(s.timestamp).toLocaleString('en-IN', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' })}</div>
-        </div>
-        <span class="h-risk ${s.risk}">${s.risk}</span>
-      </div>`
-    ).join('');
-  } catch (e) { c.innerHTML = '<div class="no-data">Failed to load history.</div>'; }
-}
-
-async function loadAnalytics() {
-  try {
-    const r = await fetch('/api/analytics', { credentials: 'include' });
-    const d = await r.json();
-    document.getElementById('statTotal').textContent = d.total_scans;
-    document.getElementById('statHigh').textContent  = d.high_risk;
-    document.getElementById('statConf').textContent  = d.avg_confidence + '%';
-
-    const dc = document.getElementById('diseaseChart');
-    if (d.top_diseases && d.top_diseases.length) {
-      const max = Math.max(...d.top_diseases.map(x => x.cnt), 1);
-      dc.innerHTML = d.top_diseases.map(x =>
-        `<div class="dr">
-          <span class="dl">${x.disease}</span>
-          <div class="dbb"><div class="dbf" style="width:${Math.round((x.cnt / max) * 100)}%"></div></div>
-          <span class="dc">${x.cnt}</span>
-        </div>`
-      ).join('');
-    } else { dc.innerHTML = '<div class="no-data">No data yet</div>'; }
-
-    // FIX #15: destroy old chart before creating new one
-    const ctx = document.getElementById('weeklyChart').getContext('2d');
-    if (weeklyChart) { weeklyChart.destroy(); weeklyChart = null; }
-    weeklyChart = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels:   (d.weekly_trend || []).map(x => x.day.slice(5)),
-        datasets: [{
-          label: 'Scans', data: (d.weekly_trend || []).map(x => x.cnt),
-          backgroundColor: 'rgba(168,230,61,.4)', borderColor: 'rgba(168,230,61,.8)',
-          borderWidth: 1, borderRadius: 5
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { display: false } },
-        scales: {
-          x: { ticks: { color: '#5a7a3a', font: { size: 10 } }, grid: { color: 'rgba(168,230,61,.05)' } },
-          y: { ticks: { color: '#5a7a3a', font: { size: 10 } }, grid: { color: 'rgba(168,230,61,.05)' } }
-        }
-      }
-    });
-  } catch (e) { console.warn('Analytics error:', e); }
-}
-
-/* ════════════════════════════════════════════════════════════════
-   DOWNLOAD PDF — FIX #5,#22: clean payload, no dead delete
-════════════════════════════════════════════════════════════════ */
-function downloadPDF(data) {
+/* ═══════════ PDF ═══════════ */
+function downloadPDF(data){
   showToast('📄 Generating PDF…');
-  // FIX #5: build explicit clean payload (no image_b64 to delete)
-  // FIX #22: include all fields backend might need
-  const payload = {
-    disease:    data.disease,
-    organic:    data.organic,
-    chemical:   data.chemical,
-    risk:       data.risk,
-    confidence: data.confidence,
-    severity:   data.severity,
-    weather:    data.weather,
-    condition:  data.condition,
-    humidity:   data.humidity,
-    temp:       data.temp,
-    wind:       data.wind ?? 0, // FIX #2
-    pressure:   data.pressure,
-    insight:    data.insight,
-    crop_tip:   data.crop_tip,
-    why:        data.why,
-    alt1:       data.alt1,
-    alt2:       data.alt2,
-    city:       data.city,
-    language:   data.language,
-    timestamp:  data.timestamp,
-    isOffline:  data.isOffline || false,
-  };
-
-  fetch('/download-report', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
-    body: JSON.stringify(payload),
-  })
-    .then(r => { if (!r.ok) throw new Error('PDF generation failed'); return r.blob(); })
-    .then(blob => {
-      const url = URL.createObjectURL(blob);
-      const a   = document.createElement('a');
-      a.href     = url;
-      a.download = `AgriShield_${data.city || 'report'}_${Date.now()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-      showToast('✅ PDF downloaded!');
-    })
-    .catch(err => showToast('❌ PDF error: ' + err.message));
+  const payload={ disease:data.disease,organic:data.organic,chemical:data.chemical,risk:data.risk,confidence:data.confidence,severity:data.severity,weather:data.weather,condition:data.condition,humidity:data.humidity,temp:data.temp,wind:data.wind??0,pressure:data.pressure,insight:data.insight,crop_tip:data.crop_tip,why:data.why,alt1:data.alt1,alt2:data.alt2,city:data.city,language:data.language,timestamp:data.timestamp,isOffline:data.isOffline||false };
+  fetch('/download-report',{ method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include', body:JSON.stringify(payload) })
+    .then(r=>{ if(!r.ok) throw new Error('PDF generation failed'); return r.blob(); })
+    .then(blob=>{ const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=`AgriShield_${data.city||'report'}_${Date.now()}.pdf`; document.body.appendChild(a); a.click(); URL.revokeObjectURL(url); document.body.removeChild(a); showToast('✅ PDF downloaded!'); })
+    .catch(err=>showToast('❌ PDF error: '+err.message));
 }
 
-/* ════════════════════════════════════════════════════════════════
-   HELPERS
-════════════════════════════════════════════════════════════════ */
-function fmtTimestamp() {
-  return new Date().toLocaleString('en-IN', {
-    day: '2-digit', month: 'short', year: 'numeric',
-    hour: '2-digit', minute: '2-digit', hour12: true
-  });
-}
+/* ═══════════ HELPERS ═══════════ */
+function fmtTimestamp(){ return new Date().toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}); }
 
-/* ════════════════════════════════════════════════════════════════
-   PWA
-════════════════════════════════════════════════════════════════ */
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('/static/sw.js').catch(() => {}));
-}
-let deferredPrompt = null;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  document.getElementById('installBtn').style.display = 'flex';
-  showToast('📱 App can be installed!');
-});
-function installApp() {
-  if (!deferredPrompt) { showToast('📱 Use "Add to Home Screen" in browser'); return; }
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(c => {
-    if (c.outcome === 'accepted') showToast('🎉 AgriShield installed!');
-    deferredPrompt = null;
-    document.getElementById('installBtn').style.display = 'none';
-  });
-}
+/* ═══════════ PWA ═══════════ */
+if('serviceWorker' in navigator){ window.addEventListener('load',()=>navigator.serviceWorker.register('/static/sw.js').catch(()=>{})); }
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{ e.preventDefault(); deferredPrompt=e; document.getElementById('installBtn').style.display='flex'; showToast('📱 App can be installed!'); });
+function installApp(){ if(!deferredPrompt){ showToast('📱 Use "Add to Home Screen" in browser'); return; } deferredPrompt.prompt(); deferredPrompt.userChoice.then(c=>{ if(c.outcome==='accepted') showToast('🎉 AgriShield installed!'); deferredPrompt=null; document.getElementById('installBtn').style.display='none'; }); }
 
-/* ════════════════════════════════════════════════════════════════
-   INIT — auto-load TM model + check auth + location
-════════════════════════════════════════════════════════════════ */
+/* ═══════════ INIT ═══════════ */
 checkAuth();
 autoDetectLocation();
-
-// Pre-load TM model in background (FIX #10: after DOM + scripts loaded)
-window.addEventListener('load', async () => {
-  const saved = localStorage.getItem(TM_KEY) || DEFAULT_TM_URL;
-  if (!localStorage.getItem(TM_KEY)) localStorage.setItem(TM_KEY, DEFAULT_TM_URL);
-  document.getElementById('offlineModelStatus').textContent = 'Pre-loading…';
+window.addEventListener('load',async()=>{
+  const saved=localStorage.getItem(TM_KEY)||DEFAULT_TM_URL;
+  if(!localStorage.getItem(TM_KEY)) localStorage.setItem(TM_KEY,DEFAULT_TM_URL);
+  document.getElementById('offlineModelStatus').textContent='Pre-loading…';
   await loadTMModel(saved);
 });
 </script>
