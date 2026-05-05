@@ -812,12 +812,15 @@ Alternative 2: [third most likely disease — name only]"""
             "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
         }
 
-        user    = get_current_user()
-        db      = get_db()
-        scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
-                            city, result["weather"], condition, humidity, temp, pressure, wind,
-                            insight, crop_tip, why, language, alt1, alt2, source="image")
-        result["scan_id"] = scan_id
+        try:
+            user    = get_current_user()
+            db      = get_db()
+            scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
+                                city, result["weather"], condition, humidity, temp, pressure, wind,
+                                insight, crop_tip, why, language, alt1, alt2, source="image")
+            result["scan_id"] = scan_id
+        except Exception as db_err:
+            print(f"DB save skipped: {db_err}")
         return jsonify(result)
 
     except Exception as e:
@@ -966,12 +969,15 @@ Alternative 2: [third most likely disease or N/A]"""
             "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
         }
 
-        user    = get_current_user()
-        db      = get_db()
-        scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
-                            city, result["weather"], condition, humidity, temp, pressure, wind,
-                            insight, crop_tip, why, language, alt1, alt2, source="voice")
-        result["scan_id"] = scan_id
+        try:
+            user    = get_current_user()
+            db      = get_db()
+            scan_id = save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
+                                city, result["weather"], condition, humidity, temp, pressure, wind,
+                                insight, crop_tip, why, language, alt1, alt2, source="voice")
+            result["scan_id"] = scan_id
+        except Exception as db_err:
+            print(f"DB save skipped: {db_err}")
         return jsonify(result)
 
     except Exception as e:
