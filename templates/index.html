@@ -418,6 +418,12 @@ body.farmer-mode .btn-pdf{font-size:18px;padding:16px;border-radius:16px;}
 body.farmer-mode #toast{font-size:16px;padding:14px 20px;border-radius:16px;}
 @keyframes slIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:translateY(0)}}
 
+/* ═══ SOCIAL LINKS ═══ */
+.social-link{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:rgba(168,230,61,0.08);border:1px solid rgba(168,230,61,0.18);transition:all .25s;text-decoration:none;}
+.social-link:hover{background:rgba(168,230,61,0.28);border-color:rgba(168,230,61,0.55);transform:translateY(-3px);box-shadow:0 6px 20px rgba(168,230,61,0.2);}
+.social-link svg{transition:filter .25s;}
+.social-link:hover svg{filter:drop-shadow(0 0 5px rgba(168,230,61,0.7));}
+
 /* ═══ FOOTER ═══ */
 footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:1px solid rgba(168,230,61,.06);font-size:11px;color:#2a4a12;margin-top:2rem;}
 
@@ -432,11 +438,6 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
   .main-card{border-radius:16px;}
   .sg{grid-template-columns:1fr 1fr;}
   a,button,input,select,label,.dropzone,.prev-chg,.h-item,.t-btn,.cal-m,.v-btn,.mic-btn,.up-btn,.app-tab,.mtab,.fc-day,.fh-lang-btn{cursor:pointer!important;}
-
- .social-link{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:rgba(168,230,61,0.08);border:1px solid rgba(168,230,61,0.18);transition:all .25s;text-decoration:none;}
-.social-link:hover{background:rgba(168,230,61,0.28);border-color:rgba(168,230,61,0.55);transform:translateY(-3px);box-shadow:0 6px 20px rgba(168,230,61,0.2);}
-.social-link svg{transition:filter .25s;}
-.social-link:hover svg{filter:drop-shadow(0 0 5px rgba(168,230,61,0.7));}
 }
 </style>
 
@@ -753,7 +754,7 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
 
 <footer>
  
-  AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + SQLite + Teachable Machine Offline AI
+  AgriShield AI — Hackathon 2026 🌱 Flask + Groq (Llama 4) + OpenWeatherMap + Supabase + Teachable Machine Offline AI
   <div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:12px;">
 
     <!-- Instagram -->
@@ -795,6 +796,12 @@ footer{position:relative;z-index:1;text-align:center;padding:1.25rem;border-top:
 
 <script>
 'use strict';
+
+/* ═══════════ SECURITY HELPER ═══════════ */
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
 
 /* ═══════════ CONSTANTS ═══════════ */
 const WI = { Clear:'☀️',Clouds:'☁️',Rain:'🌧️',Drizzle:'🌦️',Thunderstorm:'⛈️',Snow:'❄️',Mist:'🌫️',Haze:'🌫️',Smoke:'🌫️',Fog:'🌫️' };
@@ -948,16 +955,18 @@ async function startLiveInference(){
   } else if(isOnline){
     document.getElementById('liveAiBadge').classList.add('show');
     document.getElementById('liveScanStatus').textContent='🌐 Server AI streaming…';
+    let liveServerBusy=false;
     liveInferInterval=setInterval(async()=>{
-      if(!liveStream||video.readyState<2||video.videoWidth===0) return;
+      if(!liveStream||video.readyState<2||video.videoWidth===0||liveServerBusy) return;
       try{
         canvas.width=video.videoWidth; canvas.height=video.videoHeight; ctx.drawImage(video,0,0,canvas.width,canvas.height);
         canvas.toBlob(async blob=>{
-          if(!blob) return;
+          if(!blob||liveServerBusy) return;
+          liveServerBusy=true;
           const fd=new FormData(); fd.append('image',new File([blob],'frame.jpg',{type:'image/jpeg'})); fd.append('city',document.getElementById('cityInput').value||'Chennai'); fd.append('language',document.getElementById('langInput').value);
-          try{ const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include',signal:AbortSignal.timeout(4000)}); if(r.ok){ const d=await r.json(); renderLiveOverlayFromResult(d); liveLastResult={fromServer:true,data:d}; } }catch(e){}
+          try{ const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include',signal:AbortSignal.timeout(4000)}); if(r.ok){ const d=await r.json(); renderLiveOverlayFromResult(d); liveLastResult={fromServer:true,data:d}; } }catch(e){} finally{ liveServerBusy=false; }
         },'image/jpeg',0.65);
-      }catch(e){ console.warn('Live server infer err:',e); }
+      }catch(e){ console.warn('Live server infer err:',e); liveServerBusy=false; }
     },2500);
   } else { document.getElementById('liveScanStatus').textContent='⚠️ No model — capture only'; }
 }
@@ -1086,17 +1095,54 @@ function setFarmerLang(lang,code){
 /* ═══════════ FARMER VOICE ═══════════ */
 const SR_API=window.SpeechRecognition||window.webkitSpeechRecognition;
 let fvRecognition=null;
+const VALID_CROPS=['rice','paddy','wheat','maize','corn','cotton','sugarcane','tomato','potato','chili','chilli','banana','grape','apple'];
+const VALID_SYMPTOMS=['spot','spots','yellow','yellowing','wilt','wilting','blight','rust','mildew','powdery','rot','mosaic','curl','scab','lesion','holes','drooping'];
+function normalizeVoiceText(text){ return (text||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').replace(/\s+/g,' ').trim(); }
+/* ═══════════ IMPROVED VALIDATION (REPLACE ENTIRELY) ═══════════ */
+function isValidVoiceQuery(text) {
+    if (!text || typeof text !== 'string') return false;
+    
+    // Normalize: remove punctuation and extra spaces
+    const cleanText = text.toLowerCase().replace(/[.,!?;:]/g, '').trim();
+    const words = cleanText.split(/\s+/);
+    
+    // 1. Length Check: Rejects tiny mumbles (< 2 words) or huge stories (> 12 words)
+    if (words.length < 2 || words.length > 30) return false;
+
+    // 2. Strict Match: Using exact word matching to avoid partial word triggers
+    const foundCrops = VALID_CROPS.filter(crop => words.includes(crop));
+    const foundSymptoms = VALID_SYMPTOMS.filter(sym => words.includes(sym));
+
+    // 3. Meaningful Density: Keywords must make up a good chunk of the sentence
+    // This stops "Rice is a food and yellow is a color random words" from passing
+    const keywordCount = foundCrops.length + foundSymptoms.length;
+    const meaningfulRatio = keywordCount / words.length;
+
+    // VALID IF:
+    // - Has at least 1 crop
+    // - Has at least 1 symptom
+    // - At least 30% of the sentence is actual keywords
+    return foundCrops.length > 0 && foundSymptoms.length > 0 && (meaningfulRatio >= 0.3);
+}
+function showListeningState() {
+  const lbl = document.getElementById('fvLabel');
+  if (lbl) lbl.textContent = '🎤 Listening…';
+}
+function showProcessingState() {
+  const lbl = document.getElementById('fvLabel');
+  if (lbl) lbl.textContent = '🧠 Analyzing…';
+}
 function toggleFarmerVoice(){ farmerVoiceActive?stopFarmerVoice():startFarmerVoice(); }
 function startFarmerVoice(){
   if(!SR_API){ showToast('⚠️ Voice not supported in this browser'); return; }
   if(fvRecognition){ fvRecognition.onend=null; fvRecognition.stop(); fvRecognition=null; }
-  fvRecognition=new SR_API(); fvRecognition.lang=farmerLangCode; fvRecognition.continuous=true; fvRecognition.interimResults=true; fvRecognition.maxAlternatives=1;
+  fvRecognition=new SR_API(); fvRecognition.lang=farmerLangCode; fvRecognition.continuous=false; fvRecognition.interimResults=true; fvRecognition.maxAlternatives=1;
   const btn=document.getElementById('fvMicBtn'), box=document.getElementById('farmerVoiceBox'), tr=document.getElementById('fvTranscript');
   btn.classList.add('listening'); btn.textContent='🔴'; box.classList.add('listening'); farmerVoiceActive=true;
-  document.getElementById('fvLabel').textContent='🎤 Listening…';
-  fvRecognition.onresult=e=>{ let final='',interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal) final+=e.results[i][0].transcript; else interim+=e.results[i][0].transcript; } if(final) farmerTranscript+=(farmerTranscript?' ':'')+final; tr.textContent=farmerTranscript+(interim?' '+interim:''); tr.classList.add('has-text'); if(farmerTranscript.trim()) document.getElementById('fvSendBtn').classList.add('show'); };
-  fvRecognition.onend=()=>{ if(farmerVoiceActive&&fvRecognition) fvRecognition.start(); };
-  fvRecognition.onerror=e=>{ console.warn('Voice err:',e.error); stopFarmerVoice(); showToast('🎤 Voice error: '+e.error); };
+  showListeningState();
+  fvRecognition.onresult=e=>{ let final='',interim=''; for(let i=e.resultIndex;i<e.results.length;i++){ if(e.results[i].isFinal) final+=e.results[i][0].transcript; else interim+=e.results[i][0].transcript; } if(final){ farmerTranscript+=(farmerTranscript?' ':'')+final; if(fvRecognition){ fvRecognition.onend=null; fvRecognition.stop(); } } tr.textContent=farmerTranscript+(interim?' '+interim:''); tr.classList.add('has-text'); document.getElementById('fvSendBtn').classList.toggle('show', farmerTranscript.trim().split(/\s+/).length >= 2); };
+  fvRecognition.onend=()=>{ if(!farmerVoiceActive) return; farmerVoiceActive=false; fvRecognition=null; btn.classList.remove('listening'); btn.textContent='🎤'; box.classList.remove('listening'); const txt=FARMER_LANGS[farmerLang]||FARMER_LANGS.English; document.getElementById('fvLabel').textContent=txt.mic; };
+  fvRecognition.onerror=e=>{ console.warn('Voice err:',e.error); farmerVoiceActive=false; fvRecognition=null; btn.classList.remove('listening'); btn.textContent='🎤'; box.classList.remove('listening'); const txt=FARMER_LANGS[farmerLang]||FARMER_LANGS.English; document.getElementById('fvLabel').textContent=txt.mic; showToast('🎤 Voice error: '+e.error); };
   fvRecognition.start();
 }
 function stopFarmerVoice(){
@@ -1109,15 +1155,29 @@ function stopFarmerVoice(){
 async function sendVoiceQuery(){
   const query=farmerTranscript.trim(); if(!query){ showToast('⚠️ No voice input detected'); return; }
   stopFarmerVoice();
+  showProcessingState();
   const city=document.getElementById('cityInput').value.trim()||'Chennai';
-  showToast('🤖 AI analyzing your voice query…',5000);
-  const btn=document.getElementById('fvSendBtn'); btn.textContent='⏳ Processing…'; btn.disabled=true;
+  showToast('🧠 AI analyzing your voice query…',5000);
+  const btn=document.getElementById('fvSendBtn'); btn.innerHTML='⏳ Analyzing…'; btn.disabled=true;
   try{
-    const r=await fetch('/voice-diagnose',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({query,city,language:farmerLang})});
-    if(!r.ok) throw new Error('Server error '+r.status);
-    const d=await r.json(); if(d.error) throw new Error(d.error);
+    const r=await fetch('/voice-diagnose',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',signal:AbortSignal.timeout(30000),body:JSON.stringify({query,city,language:farmerLang})});
+    const d=await r.json();
+    if(!r.ok) throw new Error((d&&d.error)||('Server error '+r.status));
+    // Handle AI-rejected input (confidence 0 / UNKNOWN)
+    if(d.confidence===0||d.disease==='UNKNOWN'){
+      const friendlyMsg=(d.organic&&d.organic.startsWith('⚠️'))?d.organic.replace('⚠️ ',''):'Please describe your crop symptoms more clearly. Example: "My tomato leaves have yellow spots and are wilting."';
+      showToast('⚠️ '+friendlyMsg, 5000);
+      document.getElementById('fvLabel').textContent='💬 Try: "Tomato leaves have yellow spots"';
+      const txt3=FARMER_LANGS[farmerLang]||FARMER_LANGS.English;
+      setTimeout(()=>{ document.getElementById('fvLabel').textContent=txt3.mic; }, 5000);
+      return;
+    }
     renderResult(d,false); showToast('✅ Voice diagnosis complete!'); setTimeout(()=>speak(),600);
-  }catch(e){ const result=textQueryFallback(query); renderResult(result,true); showToast('⚡ Offline voice analysis (connect for better results)'); setTimeout(()=>speak(),600); }
+  }catch(e){
+    const msg=(e&&e.message)||'Voice diagnosis failed';
+    if(msg.includes('valid crop/symptom')){ showToast('⚠️ Please describe plant symptoms clearly'); return; }
+    const result=textQueryFallback(query); renderResult(result,true); showToast('⚡ Offline voice analysis (connect for better results)'); setTimeout(()=>speak(),600);
+  }
   finally{
     const txt2=FARMER_LANGS[farmerLang]||FARMER_LANGS.English; btn.innerHTML=`🔍 ${txt2.send}`; btn.disabled=false;
     farmerTranscript=''; document.getElementById('fvTranscript').textContent=''; document.getElementById('fvTranscript').classList.remove('has-text'); document.getElementById('fvSendBtn').classList.remove('show');
@@ -1164,7 +1224,7 @@ async function googleLogin(){
     window.open(d.redirect_url,'GoogleOAuth','width=500,height=600,left=100,top=100');
     let oauthHandler;
     const oauthTimeout=setTimeout(()=>window.removeEventListener('message',oauthHandler),300000);
-    oauthHandler=e=>{ if(e.data&&e.data.success){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); setUser(e.data.user); closeModal('authModal'); showToast(`🎉 Welcome, ${e.data.user.name}!`); } else if(e.data&&e.data.error){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); showToast('❌ Google login failed'); } };
+    oauthHandler=e=>{ if(!e.origin||!window.location.origin.startsWith(e.origin.replace(/:\d+$/,''))) return; if(e.data&&e.data.success){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); setUser(e.data.user); closeModal('authModal'); showToast(`🎉 Welcome, ${escapeHtml(e.data.user.name)}!`); } else if(e.data&&e.data.error){ window.removeEventListener('message',oauthHandler); clearTimeout(oauthTimeout); showToast('❌ Google login failed'); } };
     window.addEventListener('message',oauthHandler);
   }catch(e){ showToast('❌ Google OAuth error'); }
 }
@@ -1209,9 +1269,14 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
 dz.addEventListener('drop',e=>{ e.preventDefault(); dz.classList.remove('drag-over'); const f=e.dataTransfer.files[0]; if(f) handleFile(f); });
 function handleFile(file){
   if(!file) return;
+  const allowed=['image/jpeg','image/jpg','image/png','image/webp','image/heic'];
+  if(!allowed.includes(file.type)&&!file.name.match(/\.(jpe?g|png|webp|heic)$/i)){
+    showToast('❌ Unsupported file type. Use JPG, PNG, or WebP.'); return;
+  }
+  if(file.size>8*1024*1024){ showToast('❌ Image too large. Max 8MB.'); return; }
   lastImageFile=file;
   const reader=new FileReader();
-  reader.onload=e=>{ document.getElementById('preview').src=e.target.result; document.getElementById('preview-wrap').style.display='block'; dz.style.display='none'; document.getElementById('live-camera-wrap').style.display='none'; showToast('📸 Image loaded — ready to analyze!'); };
+  reader.onload=e=>{ document.getElementById('preview').src=e.target.result; document.getElementById('preview-wrap').style.display='block'; dz.style.display='none'; document.getElementById('live-camera-wrap').style.display='none'; document.getElementById('analyzeBtn').disabled=false; document.getElementById('btnText').textContent='Analyze Plant Disease'; showToast('📸 Image loaded — ready to analyze!'); };
   reader.readAsDataURL(file);
   document.getElementById('analyzeBtn').disabled=false;
   document.getElementById('btnText').textContent='Analyze Plant Disease';
@@ -1254,14 +1319,20 @@ async function analyze(){
       const preds=await runTMOnFile(lastImageFile); renderResult(tmResultToData(preds),true);
     } else {
       const fd=new FormData(); fd.append('image',lastImageFile); fd.append('city',document.getElementById('cityInput').value.trim()||'Chennai'); fd.append('language',document.getElementById('langInput').value);
-      const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include'}); const d=await r.json();
+      const r=await fetch('/predict',{method:'POST',body:fd,credentials:'include',signal:AbortSignal.timeout(30000)}); const d=await r.json();
       if(!r.ok) throw new Error(d.error||'Server error');
       renderResult(d,false);
       const city=document.getElementById('cityInput').value.trim(); if(city) fetchForecast(city,currentLat,currentLon);
     }
   }catch(err){
-    const ec=document.getElementById('error-card'); ec.innerHTML=`⚠️ <strong>Error:</strong> ${err.message}`; ec.style.display='block';
-    document.getElementById('btnText').textContent='Try Again'; showToast('❌ Analysis failed');
+    let userMsg='Analysis failed. Please try again.';
+    if(err.name==='TimeoutError'||err.name==='AbortError') userMsg='Request timed out. Check your connection and try again.';
+    else if(err.message&&err.message.includes('Failed to fetch')) userMsg='Could not reach server. Check your internet connection.';
+    else if(err.message&&err.message.includes('413')) userMsg='Image too large. Please use a smaller photo.';
+    else if(err.message&&err.message.includes('429')) userMsg='Too many requests. Please wait a moment and try again.';
+    else if(err.message) userMsg=err.message;
+    const ec=document.getElementById('error-card'); ec.textContent=''; const strong=document.createElement('strong'); strong.textContent='⚠️ '; ec.appendChild(strong); ec.appendChild(document.createTextNode(userMsg)); ec.style.display='block';
+    document.getElementById('btnText').textContent='Try Again'; showToast('❌ '+userMsg,4000);
   }finally{
     clearInterval(aiTimer); document.getElementById('spinner').style.display='none'; document.getElementById('btnIcon').style.display='inline'; document.getElementById('btnIcon').textContent='🔍'; document.getElementById('analyzeBtn').disabled=false; document.getElementById('statusTopText').textContent='Ready';
   }
@@ -1305,7 +1376,7 @@ function animCounter(id,start,end,dur,suf=''){
 /* ═══════════ RENDER RESULT ═══════════ */
 function renderResult(data,isOffline=false){
   lastResult=data; stopVoice(); activeTab='organic'; switchTab('organic');
-  const isH=data.disease.toLowerCase().includes('health');
+  const isH=(data.disease||'').toLowerCase().includes('health');
   document.getElementById('statusIcon').textContent=isH?'✅':'⚠️';
   document.getElementById('diseaseTag').textContent=isH?'HEALTHY PLANT':'DISEASE DETECTED';
   document.getElementById('diseaseName').textContent=data.disease;
@@ -1347,11 +1418,11 @@ function renderCalendar(){
 }
 async function loadScanHistoryWidget(){
   if(!currentUser) return;
-  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length) return; document.getElementById('history-section').style.display='block'; document.getElementById('historyList').innerHTML=data.slice(0,5).map(s=>`<div class="h-item"><div><div class="h-dis">${s.disease}</div><div class="h-met">📍 ${s.city} · ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${s.risk}">${s.risk}</span></div>`).join(''); }catch(e){}
+  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length) return; document.getElementById('history-section').style.display='block'; document.getElementById('historyList').innerHTML=data.slice(0,5).map(s=>`<div class="h-item"><div><div class="h-dis">${escapeHtml(s.disease)}</div><div class="h-met">📍 ${escapeHtml(s.city)} · ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${escapeHtml(s.risk)}">${escapeHtml(s.risk)}</span></div>`).join(''); }catch(e){}
 }
 async function loadDbHistory(){
   const c=document.getElementById('dbHistoryList'); c.innerHTML='<div class="no-data">Loading…</div>';
-  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length){ c.innerHTML='<div class="no-data">No scans yet. Scan a plant to start!</div>'; return; } c.innerHTML=data.map(s=>`<div class="h-item"><div><div class="h-dis">${s.disease}</div><div class="h-met">📍 ${s.city} · 🌡️ ${s.temp}°C · 💧${s.humidity}% · Conf: ${s.confidence}%</div><div class="h-met">🕐 ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${s.risk}">${s.risk}</span></div>`).join(''); }catch(e){ c.innerHTML='<div class="no-data">Failed to load history.</div>'; }
+  try{ const r=await fetch('/api/history',{credentials:'include'}); const data=await r.json(); if(!data||!data.length){ c.innerHTML='<div class="no-data">No scans yet. Scan a plant to start!</div>'; return; } c.innerHTML=data.map(s=>`<div class="h-item"><div><div class="h-dis">${escapeHtml(s.disease)}</div><div class="h-met">📍 ${escapeHtml(s.city)} · 🌡️ ${escapeHtml(String(s.temp))}°C · 💧${escapeHtml(String(s.humidity))}% · Conf: ${escapeHtml(String(s.confidence))}%</div><div class="h-met">🕐 ${new Date(s.timestamp).toLocaleString('en-IN',{day:'2-digit',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'})}</div></div><span class="h-risk ${escapeHtml(s.risk)}">${escapeHtml(s.risk)}</span></div>`).join(''); }catch(e){ c.innerHTML='<div class="no-data">Failed to load history.</div>'; }
 }
 async function loadAnalytics(){
   try{
