@@ -55,9 +55,9 @@ GOOGLE_CLIENT_SEC = os.environ.get("GOOGLE_CLIENT_SECRET", "")
 GOOGLE_REDIRECT   = os.environ.get("GOOGLE_REDIRECT_URI", "https://agrishield-ai.vercel.app/auth/google/callback")
 
 if not GROQ_API_KEY:
-    raise Exception("CRITICAL: GROQ_API_KEY environment variable missing!")
+    print("⚠️  GROQ_API_KEY not set — AI features will fail until configured.")
 
-client = Groq(api_key=GROQ_API_KEY)
+client = Groq(api_key=GROQ_API_KEY) if GROQ_API_KEY else None
 
 # Rate limiter with periodic cleanup
 _rate_store = defaultdict(list)
