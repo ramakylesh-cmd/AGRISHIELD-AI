@@ -2,7 +2,8 @@ import os
 import re
 import uuid
 import json
-import sqlite3
+import psycopg2
+import psycopg2.extras
 import requests
 import io
 import base64
@@ -33,14 +34,25 @@ except ImportError:
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "agrishield-secret-2026-CHANGE-IN-PROD")
 
-ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "http://localhost:10000").split(",")
+# Custom JSON encoder for PostgreSQL datetime/date objects
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        if hasattr(obj, 'isoformat'):  # date objects
+            return obj.isoformat()
+        return super().default(obj)
+
+app.json_encoder = CustomJSONEncoder
+
+ALLOWED_ORIGINS = os.environ.get("ALLOWED_ORIGINS", "https://agrishield-ai.vercel.app").split(",")
 CORS(app, supports_credentials=True, origins=ALLOWED_ORIGINS)
 
 GROQ_API_KEY      = os.environ.get("GROQ_API_KEY")
 WEATHER_API_KEY   = os.environ.get("WEATHER_API_KEY")
 GOOGLE_CLIENT_ID  = os.environ.get("GOOGLE_CLIENT_ID", "")
 GOOGLE_CLIENT_SEC = os.environ.get("GOOGLE_CLIENT_SECRET", "")
-GOOGLE_REDIRECT   = os.environ.get("GOOGLE_REDIRECT_URI", "http://localhost:10000/auth/google/callback")
+GOOGLE_REDIRECT   = os.environ.get("GOOGLE_REDIRECT_URI", "https://agrishield-ai.vercel.app/auth/google/callback")
 
 if not GROQ_API_KEY:
     raise Exception("CRITICAL: GROQ_API_KEY environment variable missing!")
@@ -85,15 +97,38 @@ def check_password(password: str, hashed: str) -> bool:
             pass
     return hashlib.sha256(password.encode()).hexdigest() == hashed
 
-# ── DATABASE ──────────────────────────────────────────────────────────────────
+# ── DATABASE (Supabase PostgreSQL) ────────────────────────────────────────────
 
-DATABASE = "agrishield.db"
+DATABASE_URL = os.environ.get("DATABASE_URL")
+
+if not DATABASE_URL:
+    print("⚠️  DATABASE_URL not set — database features will fail until configured.")
+
+class PgDatabase:
+    """Thin wrapper so psycopg2 works with the existing db.execute() pattern."""
+
+    def __init__(self, dsn):
+        self._conn = psycopg2.connect(dsn)
+
+    def execute(self, query, params=None):
+        cur = self._conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        cur.execute(query, params or ())
+        return cur
+
+    def commit(self):
+        self._conn.commit()
+
+    def rollback(self):
+        self._conn.rollback()
+
+    def close(self):
+        self._conn.close()
+
 
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(DATABASE)
-        db.row_factory = sqlite3.Row
+        db = g._database = PgDatabase(DATABASE_URL)
     return db
 
 @app.teardown_appcontext
@@ -104,10 +139,12 @@ def close_connection(exception):
 
 def init_db():
     """Create tables and run any missing migrations automatically."""
-    with app.app_context():
-        db = get_db()
-        # Create all tables fresh
-        db.executescript("""
+    if not DATABASE_URL:
+        return
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        cur = conn.cursor()
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS users (
                 id            TEXT PRIMARY KEY,
                 email         TEXT UNIQUE NOT NULL,
@@ -115,9 +152,11 @@ def init_db():
                 name          TEXT,
                 avatar        TEXT,
                 provider      TEXT DEFAULT 'email',
-                created_at    TEXT DEFAULT (datetime('now')),
+                created_at    TIMESTAMPTZ DEFAULT NOW(),
                 plan          TEXT DEFAULT 'free'
             );
+        """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS scans (
                 id          TEXT PRIMARY KEY,
                 user_id     TEXT,
@@ -138,24 +177,30 @@ def init_db():
                 why_disease TEXT,
                 language    TEXT DEFAULT 'English',
                 source      TEXT DEFAULT 'image',
-                timestamp   TEXT DEFAULT (datetime('now')),
+                created_ts  TIMESTAMPTZ DEFAULT NOW(),
                 FOREIGN KEY (user_id) REFERENCES users(id)
             );
+        """)
+        cur.execute("""
             CREATE TABLE IF NOT EXISTS login_attempts (
                 ip          TEXT,
-                timestamp   REAL,
+                attempt_ts  DOUBLE PRECISION,
                 success     INTEGER
             );
-            CREATE INDEX IF NOT EXISTS idx_scans_user ON scans(user_id);
-            CREATE INDEX IF NOT EXISTS idx_scans_ts   ON scans(timestamp);
-            CREATE INDEX IF NOT EXISTS idx_login_ip   ON login_attempts(ip, timestamp);
         """)
-        db.commit()
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_scans_user ON scans(user_id);")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_scans_ts   ON scans(created_ts);")
+        cur.execute("CREATE INDEX IF NOT EXISTS idx_login_ip   ON login_attempts(ip, attempt_ts);")
+        conn.commit()
 
         # ── AUTO-MIGRATION: add missing columns without losing data ──────────
-        _run_migrations(db)
+        _run_migrations(conn)
+        conn.close()
+        print("✅ Database initialized successfully (Supabase PostgreSQL)")
+    except Exception as e:
+        print(f"⚠️  Database init error: {e}")
 
-def _run_migrations(db):
+def _run_migrations(conn):
     """Safely add any columns that may be missing from older DB schemas."""
     migrations = [
         # (table, column, definition)
@@ -163,15 +208,21 @@ def _run_migrations(db):
         ("scans", "alt1",    "TEXT DEFAULT 'N/A'"),
         ("scans", "alt2",    "TEXT DEFAULT 'N/A'"),
     ]
+    cur = conn.cursor()
     for table, col, defn in migrations:
         try:
-            existing = db.execute(f"PRAGMA table_info({table})").fetchall()
-            col_names = [row[1] for row in existing]
+            cur.execute(
+                "SELECT column_name FROM information_schema.columns "
+                "WHERE table_name = %s AND table_schema = 'public'",
+                (table,)
+            )
+            col_names = [row[0] for row in cur.fetchall()]
             if col not in col_names:
-                db.execute(f"ALTER TABLE {table} ADD COLUMN {col} {defn}")
-                db.commit()
+                cur.execute(f"ALTER TABLE {table} ADD COLUMN {col} {defn}")
+                conn.commit()
                 print(f"✅ Migration: added column '{col}' to table '{table}'")
         except Exception as e:
+            conn.rollback()
             print(f"⚠️  Migration warning for {table}.{col}: {e}")
 
 init_db()
@@ -182,20 +233,20 @@ def get_current_user():
     user_id = session.get("user_id")
     if not user_id:
         return None
-    return get_db().execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+    return get_db().execute("SELECT * FROM users WHERE id = %s", (user_id,)).fetchone()
 
 def record_login_attempt(ip, success):
     db = get_db()
-    db.execute("INSERT INTO login_attempts (ip, timestamp, success) VALUES (?, ?, ?)",
+    db.execute("INSERT INTO login_attempts (ip, attempt_ts, success) VALUES (%s, %s, %s)",
                (ip, time.time(), 1 if success else 0))
-    db.execute("DELETE FROM login_attempts WHERE timestamp < ?", (time.time() - 86400,))
+    db.execute("DELETE FROM login_attempts WHERE attempt_ts < %s", (time.time() - 86400,))
     db.commit()
 
 def is_login_blocked(ip):
     db = get_db()
     cutoff = time.time() - 300
     fails = db.execute(
-        "SELECT COUNT(*) as c FROM login_attempts WHERE ip=? AND timestamp>? AND success=0",
+        "SELECT COUNT(*) as c FROM login_attempts WHERE ip=%s AND attempt_ts>%s AND success=0",
         (ip, cutoff)
     ).fetchone()["c"]
     return fails >= 5
@@ -216,10 +267,10 @@ def register():
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
         return jsonify({"error": "Invalid email address"}), 400
     db = get_db()
-    if db.execute("SELECT id FROM users WHERE email=?", (email,)).fetchone():
+    if db.execute("SELECT id FROM users WHERE email=%s", (email,)).fetchone():
         return jsonify({"error": "Email already registered"}), 409
     uid = str(uuid.uuid4())
-    db.execute("INSERT INTO users (id,email,password_hash,name,provider) VALUES (?,?,?,?,'email')",
+    db.execute("INSERT INTO users (id,email,password_hash,name,provider) VALUES (%s,%s,%s,%s,'email')",
                (uid, email, hash_password(password), name))
     db.commit()
     session["user_id"] = uid
@@ -236,7 +287,7 @@ def login():
     email    = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
     db = get_db()
-    user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+    user = db.execute("SELECT * FROM users WHERE email=%s", (email,)).fetchone()
     if not user or not check_password(password, user["password_hash"] or ""):
         record_login_attempt(ip, False)
         return jsonify({"error": "Invalid email or password"}), 401
@@ -328,26 +379,24 @@ def google_oauth_callback():
             raise ValueError("No email from Google")
 
         db = get_db()
-        user = db.execute("SELECT * FROM users WHERE email=?", (email,)).fetchone()
+        user = db.execute("SELECT * FROM users WHERE email=%s", (email,)).fetchone()
         if user:
             uid = user["id"]
-            db.execute("UPDATE users SET avatar=?, name=?, provider='google' WHERE id=?",
+            db.execute("UPDATE users SET avatar=%s, name=%s, provider='google' WHERE id=%s",
                        (avatar, name, uid))
         else:
             uid = str(uuid.uuid4())
             db.execute(
-                "INSERT INTO users (id,email,name,avatar,provider) VALUES (?,?,?,?,'google')",
+                "INSERT INTO users (id,email,name,avatar,provider) VALUES (%s,%s,%s,%s,'google')",
                 (uid, email, name, avatar)
             )
         db.commit()
         session["user_id"] = uid
 
-        safe_name = name.replace("'", "\\'")
+        payload = json.dumps({"success": True, "user": {"id": uid, "email": email, "name": name, "avatar": avatar}})
+        origin  = os.environ.get("ALLOWED_ORIGINS", "http://localhost:10000").split(",")[0].strip()
         return f"""<script>
-            window.opener.postMessage({{
-                success: true,
-                user: {{ id: '{uid}', email: '{email}', name: '{safe_name}', avatar: '{avatar}' }}
-            }}, '*');
+            window.opener.postMessage({payload}, {json.dumps(origin)});
             window.close();
         </script>"""
 
@@ -479,6 +528,151 @@ def safe_int(text, lo, hi, default):
         return default
     return max(lo, min(hi, int(digits[:3])))
 
+VALID_CROP_ALIASES = {
+    "rice": {"rice", "paddy", "arisi", "dhaan"},
+    "wheat": {"wheat", "gehun"},
+    "maize": {"maize", "corn", "makka"},
+    "cotton": {"cotton", "kapas"},
+    "sugarcane": {"sugarcane", "cane", "ganna"},
+    "tomato": {"tomato", "tamatar"},
+    "potato": {"potato", "aloo"},
+    "chili": {"chili", "chilli", "pepper", "mirchi"},
+    "banana": {"banana", "kela"},
+    "grape": {"grape", "draksha"},
+    "apple": {"apple", "seb"},
+}
+
+VALID_SYMPTOM_ALIASES = {
+    "leaf_spots": {"spot", "spots", "leaf spot", "black spot", "brown spot"},
+    "yellowing": {"yellow", "yellowing", "chlorosis"},
+    "wilting": {"wilt", "wilting", "drooping"},
+    "blight": {"blight", "leaf burn", "burn"},
+    "rust": {"rust", "orange powder"},
+    "mildew": {"mildew", "powdery", "white powder"},
+    "rot": {"rot", "rotting", "root rot", "stem rot"},
+    "mosaic": {"mosaic", "mottled", "patchy"},
+    "leaf_curl": {"curl", "leaf curl", "curly leaves"},
+    "scab": {"scab", "lesion", "crust"},
+    "holes": {"holes", "eaten leaves", "chewed leaves"},
+}
+
+def _normalize_query(text: str) -> str:
+    cleaned = re.sub(r"\s+", " ", (text or "").strip().lower())
+    return re.sub(r"[^a-z0-9\s\-]", " ", cleaned)
+
+def _match_aliases(text: str, alias_map: dict) -> set:
+    matches = set()
+    for canonical, aliases in alias_map.items():
+        for alias in aliases:
+            alias_norm = alias.strip().lower()
+            if alias_norm and re.search(rf"\b{re.escape(alias_norm)}\b", text):
+                matches.add(canonical)
+                break
+    return matches
+
+def validate_voice_query(query: str):
+    normalized = _normalize_query(query)
+    if len(normalized) < 5:
+        return False, normalized, set(), set()
+    crops    = _match_aliases(normalized, VALID_CROP_ALIASES)
+    symptoms = _match_aliases(normalized, VALID_SYMPTOM_ALIASES)
+    # Lenient: pass if we find a crop OR a symptom (LLM already did strict intent check above)
+    valid = bool(crops or symptoms)
+    return valid, normalized, crops, symptoms
+
+
+# ── AI INTENT CLASSIFIER ──────────────────────────────────────────────────────
+
+def classify_farmer_intent(text: str):
+    """Use Groq LLM to validate that the voice input is about plant disease symptoms."""
+    # Sanitize: strip control chars, hard-cap at 400 chars, prevent injection
+    safe_text = re.sub(r'[\x00-\x1F\x7F]', ' ', (text or "").strip())[:400]
+    # Rudimentary prompt-injection guard: if text contains instruction-like patterns, reject early
+    injection_patterns = [
+        r'ignore (all |previous |above )?instructions',
+        r'disregard (all |previous )?',
+        r'you are now',
+        r'act as',
+        r'pretend (you are|to be)',
+        r'system\s*:',
+        r'</?(s|S)ystem>',
+    ]
+    for pat in injection_patterns:
+        if re.search(pat, safe_text, re.IGNORECASE):
+            return {"valid": False, "reason": "Input rejected by safety filter.", "cleaned_input": safe_text}
+
+    try:
+        response = client.chat.completions.create(
+            model="llama3-70b-8192",
+            messages=[
+                {
+                    "role": "system",
+                    "content": (
+                        "You are a classifier. The user may write in ANY language "
+                        "(Tamil, Hindi, Telugu, English, etc.).\n"
+                        "Decide if the message is about plant/crop disease symptoms.\n\n"
+                        "You MUST reply with ONLY this exact JSON — no other text:\n"
+                        '{"valid": true, "reason": "crop symptom described", '
+                        '"cleaned_input": "rewrite input clearly in English"}\n\n'
+                        "Rules:\n"
+                        "- valid=true  → user mentions a crop OR plant AND a symptom/problem\n"
+                        "- valid=false → greetings, random talk, unrelated topics\n"
+                        "- cleaned_input → always write in English for the diagnosis engine\n"
+                        "- DO NOT add markdown, DO NOT explain, output ONLY the JSON object"
+                    )
+                },
+                {
+                    "role": "user",
+                    "content": safe_text
+                }
+            ],
+            temperature=0,
+            max_tokens=250,
+            timeout=12,
+        )
+        raw = response.choices[0].message.content.strip()
+        print(f"[Intent raw]: {raw[:200]}")
+
+        # ── Try 1: direct parse ───────────────────────────────────────────────
+        cleaned = raw.replace("```json", "").replace("```", "").strip()
+        try:
+            return json.loads(cleaned)
+        except json.JSONDecodeError:
+            pass
+
+        # ── Try 2: extract JSON object with regex ─────────────────────────────
+        match = re.search(r'\{.*?\}', cleaned, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group())
+            except json.JSONDecodeError:
+                pass
+
+        # ── Try 3: manually parse key fields ─────────────────────────────────
+        valid_val  = True  if '"valid": true'  in cleaned.lower() else \
+                     False if '"valid": false' in cleaned.lower() else None
+        ci_match   = re.search(r'"cleaned_input"\s*:\s*"([^"]+)"', cleaned)
+        reason_match = re.search(r'"reason"\s*:\s*"([^"]+)"', cleaned)
+        if valid_val is not None:
+            return {
+                "valid":        valid_val,
+                "reason":       reason_match.group(1) if reason_match else "parsed",
+                "cleaned_input": ci_match.group(1) if ci_match else text
+            }
+
+        # ── Final fallback: keyword check ─────────────────────────────────────
+        print(f"[Intent] JSON parse fully failed, using keyword fallback")
+        raise ValueError("Unparseable response")
+
+    except Exception as e:
+        print(f"[Intent classifier fallback] {e}")
+        is_valid, normalized, crops, symptoms = validate_voice_query(text)
+        return {
+            "valid":        is_valid,
+            "reason":       "keyword check (AI parse failed)",
+            "cleaned_input": text
+        }
+
 def save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
               city, weather_str, condition, humidity, temp, pressure, wind,
               insight, crop_tip, why, language, alt1="N/A", alt2="N/A", source="image"):
@@ -489,7 +683,7 @@ def save_scan(db, user, disease, organic, chemical, risk, confidence, severity,
           (id, user_id, disease, organic, chemical, risk, confidence, severity,
            city, weather, condition, humidity, temp, wind, pressure,
            insight, crop_tip, why_disease, language, alt1, alt2, source)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)
     """, (scan_id, user["id"] if user else None,
           disease, organic, chemical, risk, confidence, severity,
           city, weather_str, condition, humidity, temp, wind, pressure,
@@ -564,6 +758,7 @@ Alternative 2: [third most likely disease — name only]"""
             }],
             max_tokens=800,
             temperature=0.2,
+            timeout=20,
         )
 
         text  = (response.choices[0].message.content or "").strip()
@@ -627,7 +822,7 @@ Alternative 2: [third most likely disease — name only]"""
 
     except Exception as e:
         print(f"ERROR in /predict: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Image analysis failed. Please try again or upload a clearer photo."}), 500
 
 
 # ── VOICE DIAGNOSE ────────────────────────────────────────────────────────────
@@ -647,36 +842,83 @@ def voice_diagnose():
         if len(query) > 2000:
             query = query[:2000]
 
+        # ── AI INTENT CLASSIFICATION (smarter than keyword matching) ──────────
+        intent = classify_farmer_intent(query)
+        if not intent.get("valid"):
+            return jsonify({
+                "disease":    "UNKNOWN",
+                "organic":    f"⚠️ {intent.get('reason', 'Please describe plant symptoms clearly.')}",
+                "chemical":   "N/A",
+                "risk":       "LOW",
+                "confidence": 0,
+                "severity":   0,
+                "crop_tip":   "Try saying: 'Leaves have yellow spots' or upload an image.",
+                "why":        "Input not related to plant disease symptoms.",
+                "alt1":       "N/A",
+                "alt2":       "N/A",
+                "weather":    "--°C · --%",
+                "condition":  "N/A",
+                "humidity":   0,
+                "temp":       0,
+                "wind":       0,
+                "pressure":   0,
+                "insight":    "Please describe your crop symptoms clearly for accurate AI diagnosis.",
+                "city":       city,
+                "language":   language,
+                "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
+            })
+
+        # ✅ Use the AI-cleaned, improved version of the input
+        voice_text = intent.get("cleaned_input", query)
+
+        # Also run legacy keyword extractor for crop/symptom anchors
+        _, normalized_query, matched_crops, matched_symptoms = validate_voice_query(voice_text)
+        if not normalized_query:
+            normalized_query = _normalize_query(voice_text)
+
         temp, humidity, condition, pressure, wind = get_weather(city)
 
-        prompt = f"""You are an expert plant pathologist AI helping a farmer.
-The farmer described their crop problem in {language}:
+        prompt = f"""You are a professional agricultural disease diagnosis AI.
 
-"{query}"
+Farmer described symptoms:
+"{voice_text}"
 
-Current weather in {city}: {temp}°C, {humidity}% humidity, {condition}, wind {wind} m/s.
-
-Based ONLY on the verbal description, give the most likely diagnosis.
+Weather in {city}: {temp}°C, {humidity}% humidity, {condition}, wind {wind} m/s.
 
 CRITICAL: Respond ENTIRELY in {language}.
 
-Reply in EXACTLY this format:
-Disease Name: [name]
+STRICT RULES:
+- Only diagnose if symptoms are clearly described
+- If uncertain → return UNKNOWN
+- Be accurate, not random
+
+Reply in EXACTLY this format (no extra lines, no markdown):
+Disease Name: [name or UNKNOWN]
 Organic Solution: [2-3 sentence organic treatment]
-Chemical Solution: [2-3 sentence chemical treatment]
+Chemical Solution: [2-3 sentence chemical treatment or N/A]
 Risk Level: [LOW or MEDIUM or HIGH]
-Confidence: [integer 45-88 — be honest, this is from description not photo]
-Severity: [integer 1-10]
-Crop Tip: [one short actionable tip]
-Why This Disease: [one sentence explaining which symptoms in their description suggest this diagnosis]
-Alternative 1: [second most likely disease]
-Alternative 2: [third most likely disease]"""
+Confidence: [0 if unknown, else 60-99]
+Severity: [0 if unknown, else 1-10]
+Crop Tip: [one practical tip based on weather in {city}]
+Why This Disease: [one sentence based on described symptoms]
+Alternative 1: [second most likely disease or N/A]
+Alternative 2: [third most likely disease or N/A]"""
+
+        crop_list    = ", ".join(sorted(matched_crops))    if matched_crops    else "as described"
+        symptom_list = ", ".join(sorted(matched_symptoms)) if matched_symptoms else "as described"
+        if matched_crops or matched_symptoms:
+            prompt += (
+                f"\n\nDetected crop(s): {crop_list}\n"
+                f"Detected symptom(s): {symptom_list}\n"
+                "Use these as primary anchors while diagnosing."
+            )
 
         response = client.chat.completions.create(
             model="meta-llama/llama-4-scout-17b-16e-instruct",
             messages=[{"role": "user", "content": prompt}],
             max_tokens=700,
             temperature=0.3,
+            timeout=20,
         )
 
         text  = (response.choices[0].message.content or "").strip()
@@ -720,6 +962,7 @@ Alternative 2: [third most likely disease]"""
             "alt2":       alt2,
             "city":       city,
             "language":   language,
+            "validated_query": normalized_query,
             "timestamp":  datetime.now().strftime("%d %b %Y, %I:%M %p"),
         }
 
@@ -733,7 +976,7 @@ Alternative 2: [third most likely disease]"""
 
     except Exception as e:
         print(f"ERROR in /voice-diagnose: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Voice diagnosis failed. Please try again or upload a photo instead."}), 500
 
 # ── HISTORY & ANALYTICS ───────────────────────────────────────────────────────
 
@@ -743,12 +986,12 @@ def api_history():
     db   = get_db()
     if user:
         rows = db.execute(
-            "SELECT * FROM scans WHERE user_id=? ORDER BY timestamp DESC LIMIT 20",
+            "SELECT * FROM scans WHERE user_id=%s ORDER BY created_ts DESC LIMIT 20",
             (user["id"],)
         ).fetchall()
     else:
         rows = db.execute(
-            "SELECT * FROM scans WHERE user_id IS NULL ORDER BY timestamp DESC LIMIT 10"
+            "SELECT * FROM scans WHERE user_id IS NULL ORDER BY created_ts DESC LIMIT 10"
         ).fetchall()
     return jsonify([dict(r) for r in rows])
 
@@ -759,7 +1002,7 @@ def api_analytics():
     db     = get_db()
 
     if user:
-        uid_filter = "user_id = ?"
+        uid_filter = "user_id = %s"
         params     = (user["id"],)
     else:
         uid_filter = "user_id IS NULL"
@@ -773,9 +1016,9 @@ def api_analytics():
         params
     ).fetchall()
     weekly    = db.execute(
-        f"""SELECT date(timestamp) as day, COUNT(*) as cnt
+        f"""SELECT CAST(created_ts AS DATE) as day, COUNT(*) as cnt
             FROM scans
-            WHERE {uid_filter} AND timestamp >= date('now','-7 days')
+            WHERE {uid_filter} AND created_ts >= CURRENT_DATE - INTERVAL '7 days'
             GROUP BY day ORDER BY day""",
         params
     ).fetchall()
@@ -853,7 +1096,7 @@ def download_report():
 
     except Exception as e:
         print(f"PDF Error: {e}")
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "PDF generation failed. Please try again."}), 500
 
 # ── PWA ───────────────────────────────────────────────────────────────────────
 
@@ -866,6 +1109,6 @@ def sw():
     return send_from_directory('static', 'sw.js', mimetype='application/javascript')
 
 
+# ── LOCAL DEV ONLY (Vercel uses api/index.py as the entrypoint) ───────────────
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port, debug=False)
+    app.run(host="0.0.0.0", port=5000, debug=True)
