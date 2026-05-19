@@ -5,3 +5,5 @@ __pycache__/
 *.db
 agrishield.db
 .vercel/
+*.zip
+_zip_extract/

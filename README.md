@@ -6,7 +6,7 @@
 
 **An intelligent crop disease detection & advisory platform combining AI, real-time scanning, and weather intelligence — built for Indian farmers.**
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-brightgreen?style=for-the-badge)](YOUR_DEPLOYED_LINK_HERE)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Visit_App-brightgreen?style=for-the-badge)](https://agrishield-ai-nine.vercel.app)
 [![GitHub](https://img.shields.io/badge/GitHub-ramakylesh--cmd-black?style=for-the-badge&logo=github)](https://github.com/ramakylesh-cmd/AGRISHIELD-AI)
 [![Made with Love](https://img.shields.io/badge/Made_with-❤️_for_Indian_Farmers-orange?style=for-the-badge)](https://github.com/ramakylesh-cmd/AGRISHIELD-AI)
 
@@ -18,9 +18,7 @@
 
 | Home & Weather | Disease Detection | AI Results | Farmer Mode (Tamil) |
 |---|---|---|---|
-| ![Home](screenshot-home.png) | ![Scan](screenshot-scan.png) | ![Result](screenshot-result.png) | ![Tamil](screenshot-tamil.png) |
-
-> *Replace the image filenames above with actual screenshot paths in your repo*
+| ![Home](docs/screenshots/screenshot-home.png) | ![Scan](docs/screenshots/screenshot-scan.png) | ![Result](docs/screenshots/screenshot-result.png) | ![Tamil](docs/screenshots/screenshot-tamil.png) |
 
 ---
 
@@ -204,14 +202,14 @@ AgriShield solves this by:
 **Akylesh Ram**
 2nd Year ECE Student | SRM Institute of Science and Technology
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](YOUR_LINKEDIN_URL)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue?style=flat&logo=linkedin)](https://www.linkedin.com/in/akylesh-ram-168713214/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-black?style=flat&logo=github)](https://github.com/ramakylesh-cmd)
 
 ---
 
 ## 📄 License
 
-This project is open source and available under the [MIT License](LICENSE).
+This project is open source and available under the MIT License.
 
 ---
 
